@@ -2,7 +2,7 @@
  * Живой градиент для hero: WebGL-шейдер без библиотек.
  * Цветные ленты хаотично перетекают, как густая жидкость; на курсор не реагирует.
  * Цвета берутся из CSS-переменных
- * `--hero-colors` (стопы «#hex N%», до 16) элемента, чтобы палитра жила рядом со стилями.
+ * `--hero-colors` (стопы «#hex N%», до 24) элемента, чтобы палитра жила рядом со стилями.
  */
 
 const VERTEX = /* glsl */ `
@@ -17,7 +17,7 @@ precision highp float;
 
 uniform vec2 uResolution;
 uniform float uTime;
-#define MAX_COLORS 16
+#define MAX_COLORS 24
 uniform vec3 uColors[MAX_COLORS];
 uniform float uStops[MAX_COLORS]; // позиции цветов в кольце палитры, 0..1
 uniform float uCount;
@@ -225,7 +225,7 @@ export function mountHeroGradient(
   // Формат как у стопов CSS-градиента: «#hex N%, #hex N%, …».
   const stops = [
     ...styles.getPropertyValue('--hero-colors').matchAll(/(#[0-9a-f]{3,6})\s+([\d.]+)%/gi),
-  ].slice(0, 16);
+  ].slice(0, 24);
   const colors = stops.flatMap(([, hex]) => hexToRgb(hex!));
   gl.uniform1fv(
     gl.getUniformLocation(program, 'uStops'),
