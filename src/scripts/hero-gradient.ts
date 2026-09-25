@@ -2,7 +2,7 @@
  * Живой градиент для hero: WebGL-шейдер без библиотек.
  * Пятна цвета медленно перетекают (шум с деформацией), курсор сдвигает палитру
  * вокруг себя и слегка — во всём блоке. Цвета берутся из CSS-переменных
- * `--hero-c0…--hero-c4` элемента, чтобы палитра жила рядом со стилями.
+ * `--hero-colors` (список hex, до 10) элемента, чтобы палитра жила рядом со стилями.
  */
 
 const VERTEX = /* glsl */ `
@@ -19,7 +19,9 @@ uniform vec2 uResolution;
 uniform float uTime;
 uniform vec2 uMouse;   // 0..1, y вверх, сглаженный
 uniform float uHover;  // 0..1, насколько курсор «внутри» блока
-uniform vec3 uColors[5];
+#define MAX_COLORS 10
+uniform vec3 uColors[MAX_COLORS];
+uniform float uCount;
 
 // Simplex noise 3D — Ashima Arts / Stefan Gustavson (MIT).
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -70,14 +72,14 @@ float snoise(vec3 v) {
   return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
 }
 
-// Палитра из 5 опорных цветов, t в 0..1. Опоры неравномерные: жёлтой и
-// фиолетовой зонам — по ~40%, розовый (c2) — узкий переход между ними.
+// Палитра из uCount (до MAX_COLORS) опорных цветов, равномерно по t в 0..1.
 vec3 palette(float t) {
-  t = clamp(t, 0.0, 1.0);
-  vec3 c = mix(uColors[0], uColors[1], smoothstep(0.0, 0.38, t));
-  c = mix(c, uColors[2], smoothstep(0.38, 0.5, t));
-  c = mix(c, uColors[3], smoothstep(0.5, 0.62, t));
-  c = mix(c, uColors[4], smoothstep(0.62, 1.0, t));
+  float x = clamp(t, 0.0, 1.0) * (uCount - 1.0);
+  vec3 c = uColors[0];
+  for (int i = 1; i < MAX_COLORS; i++) {
+    if (float(i) >= uCount) break;
+    c = mix(c, uColors[i], smoothstep(float(i - 1), float(i), x));
+  }
   return c;
 }
 
@@ -93,20 +95,24 @@ void main() {
   vec2 m = vec2(uMouse.x * aspect, uMouse.y);
   float t = uTime;
 
-  // Влияние курсора: мягкое пятно вокруг него.
+  // Влияние курсора: небольшое пятно вокруг него.
   float d = length(p - m);
-  float influence = exp(-d * d * 2.5) * uHover;
+  float influence = exp(-d * d * 22.5) * uHover;
 
   // Деформированный шум — перетекающие пятна; курсор слегка «тянет» поле.
-  vec2 q = vec2(snoise(vec3(p * 0.8, t * 0.05)), snoise(vec3(p * 0.8 + 7.3, t * 0.05)));
-  float f = snoise(vec3(p * 0.6 + q * 0.9 - (p - m) * influence * 0.8, t * 0.07));
+  vec2 q = vec2(snoise(vec3(p * 0.8, t * 0.06)), snoise(vec3(p * 0.8 + 7.3, t * 0.06)));
+  float f = snoise(vec3(p * 0.7 + q * 1.0 - (p - m) * influence * 0.6, t * 0.08));
+  // Второй, крупный слой — медленно «гуляет» по всей палитре.
+  float drift = snoise(vec3(p * 0.3 + 3.1, t * 0.035));
 
-  // База: жёлтый слева → фиолетовый справа, поверх — шум.
-  float v = uv.x * 0.8 + (1.0 - uv.y) * 0.15;
-  v = v * 0.8 + f * 0.32;
+  // База: тёплые цвета слева → холодные справа, поверх — шум.
+  float v = uv.x * 0.7 + (1.0 - uv.y) * 0.15;
+  v = v * 0.75 + f * 0.4 + drift * 0.25;
+  // Со временем вся палитра плавно смещается — оттенки постоянно сменяются.
+  v += sin(t * 0.09) * 0.2 + sin(t * 0.037 + 1.7) * 0.12;
 
   // Курсор меняет цвет: локально вокруг себя и немного во всём блоке.
-  v += influence * 0.45;
+  v += influence * 0.5;
   v += (uMouse.x - 0.5) * 0.25 * uHover;
 
   vec3 color = palette(pingpong(v));
@@ -184,9 +190,12 @@ export function mountHeroGradient(
   const uMouse = gl.getUniformLocation(program, 'uMouse');
   const uHover = gl.getUniformLocation(program, 'uHover');
   const uColors = gl.getUniformLocation(program, 'uColors');
+  const uCount = gl.getUniformLocation(program, 'uCount');
 
   const styles = getComputedStyle(root);
-  const colors = [0, 1, 2, 3, 4].flatMap((i) => hexToRgb(styles.getPropertyValue(`--hero-c${i}`)));
+  const hexes = (styles.getPropertyValue('--hero-colors').match(/#[0-9a-f]{3,6}\b/gi) ?? []).slice(0, 10);
+  const colors = hexes.flatMap(hexToRgb);
+  gl.uniform1f(uCount, hexes.length);
   gl.uniform3fv(uColors, colors);
 
   // Градиент мягкий — рендерим в половинном разрешении, браузер растянет.
