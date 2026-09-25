@@ -1,2 +1,7 @@
 @import './reset.css';
 @import './tokens.css';
+
+/* Явный фон страницы: без него mix-blend-mode (сетка) не видна на белом. */
+html {
+  background: #fff;
+}

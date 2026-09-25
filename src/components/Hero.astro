@@ -10,7 +10,7 @@ interface Props {
 const { title, preset = 'vivid' } = Astro.props;
 ---
 
-<section class="hero" data-hero data-preset={preset}>
+<section class="hero" data-hero data-bleed data-preset={preset}>
   <canvas class="hero__canvas" aria-hidden="true"></canvas>
   <div class="hero__grain" aria-hidden="true"></div>
   <h1 class="hero__title">{title}</h1>
@@ -19,8 +19,8 @@ const { title, preset = 'vivid' } = Astro.props;
 <style>
   .hero {
     /* Палитра градиента, от тёплого к холодному (порядок = порядок в шейдере).
-       Печёный жёлтый → медовый → персик → розовый → фуксия → орхидея → фиолетовый → индиго. */
-    --hero-colors: #e0a33a #f0bd4f #ff9a7a #ff6fae #f2408f #cf4ae8 #9446ff #5d4cf0;
+       Печёный жёлтый → медовый → персик → розовый → фуксия → орхидея → фиолетовый → лавандовый. */
+    --hero-colors: #e0a33a #f0bd4f #ff9a7a #ff6fae #f2408f #cf4ae8 #9446ff #7f6bff;
 
     position: relative;
     isolation: isolate;
@@ -29,7 +29,7 @@ const { title, preset = 'vivid' } = Astro.props;
     height: 100dvh;
     overflow: hidden;
     /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
-    background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #5d4cf0);
+    background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #7f6bff);
   }
 
   .hero__canvas {
@@ -58,7 +58,8 @@ const { title, preset = 'vivid' } = Astro.props;
   }
 
   .hero__title {
-    padding-inline: 1rem;
+    /* Поля сетки: имя не заходит за --gutter. */
+    max-width: calc(100% - 2 * var(--gutter));
     color: #fff;
     font-size: clamp(3rem, 13vw, 13rem);
     font-weight: 500;

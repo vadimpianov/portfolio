@@ -1,6 +1,8 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import DevGrid from '../components/DevGrid.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { DEV_GRID } from '../config/dev';
 import { locales } from '../i18n/ui';
 import { getLocaleFromUrl, switchLocalePath, useTranslations } from '../i18n/utils';
 import '../styles/global.css';
@@ -41,6 +43,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <main>
       <slot />
     </main>
+    {DEV_GRID && <DevGrid />}
     <script>
       import '../scripts/motion';
     </script>
@@ -48,14 +51,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 </html>
 
 <style>
-  /* Временная шапка поверх контента — до появления настоящей навигации. */
+  /* Шапка: полоса --header-h сверху, остаётся на месте при скролле.
+     Элементы — по центру по вертикали, в пределах полей --gutter. */
   header {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
+    left: 0;
     z-index: 10;
-    margin: 1rem 1.25rem;
-    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: var(--header-h);
+    padding-inline: var(--gutter);
+  }
+
+  /* Временный переключатель языка — до появления настоящей навигации. */
+  header :global(nav) {
+    padding: 0.3rem 0.9rem;
     border-radius: 999px;
     color: #fff;
     background: rgb(20 20 20 / 0.4);
@@ -78,5 +91,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
   header :global(a[aria-current]) {
     opacity: 1;
+  }
+
+  /* Контент — под шапкой и в пределах полей. Блоки с data-bleed (например,
+     hero) идут в край; их собственный контент держит поля сам. */
+  main {
+    padding-top: var(--header-h);
+  }
+
+  main > :global(:not([data-bleed])) {
+    margin-inline: var(--gutter);
+  }
+
+  main > :global([data-bleed]:first-child) {
+    margin-top: calc(-1 * var(--header-h));
   }
 </style>
