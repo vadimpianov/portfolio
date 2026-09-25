@@ -1,7 +1,7 @@
 /**
  * Живой градиент для hero: WebGL-шейдер без библиотек.
- * Пятна цвета медленно перетекают (шум с деформацией), курсор сдвигает палитру
- * вокруг себя и слегка — во всём блоке. Цвета берутся из CSS-переменных
+ * Цветные ленты хаотично перетекают, как густая жидкость; на курсор не реагирует.
+ * Цвета берутся из CSS-переменных
  * `--hero-colors` (стопы «#hex N%», до 16) элемента, чтобы палитра жила рядом со стилями.
  */
 
@@ -17,8 +17,6 @@ precision highp float;
 
 uniform vec2 uResolution;
 uniform float uTime;
-uniform vec2 uMouse;   // 0..1, y вверх, сглаженный
-uniform float uHover;  // 0..1, насколько курсор «внутри» блока
 #define MAX_COLORS 16
 uniform vec3 uColors[MAX_COLORS];
 uniform float uStops[MAX_COLORS]; // позиции цветов в кольце палитры, 0..1
@@ -95,12 +93,7 @@ void main() {
   vec2 uv = gl_FragCoord.xy / uResolution;
   float aspect = uResolution.x / uResolution.y;
   vec2 p = vec2(uv.x * aspect, uv.y);
-  vec2 m = vec2(uMouse.x * aspect, uMouse.y);
   float t = uTime;
-
-  // Зона влияния курсора: небольшое пятно вокруг него.
-  float d = length(p - m);
-  float influence = exp(-d * d * 22.5) * uHover;
 
   // «Густой поток»: цветные ленты текут и изгибаются, как густая жидкость.
   // Цвет = проекция на направление потока в деформированных координатах w.
@@ -113,8 +106,7 @@ void main() {
   // Изгибы: 4 последовательные слабые деформации. Каждая сама по себе обратима
   // (A·F·max|∇шума|·√2 < 1), значит и цепочка обратима — поле без вершин и впадин,
   // но в сумме изгибы сильные, как разводы густой жидкости.
-  // Первое звено — курсор: мягко раздвигает поток вокруг себя (без своего цвета).
-  vec2 w = p + (p - m) * influence * 0.2;
+  vec2 w = p;
   for (int i = 0; i < 4; i++) {
     float fi = float(i);
     // Каждый слой дрейфует в свою сторону со своей скоростью и ещё блуждает —
@@ -133,8 +125,6 @@ void main() {
   // виден одним куском, без повторов.
   float extent = aspect * abs(dir.x) + abs(dir.y);
   float v = dot(w, dir) * (0.9 / extent) - phase;
-  // Положение курсора по горизонтали слегка сдвигает всю палитру.
-  v += (uMouse.x - 0.5) * 0.15 * uHover;
 
   vec3 color = palette(v);
   // Лёгкий дизеринг против полос на плавных переходах.
@@ -176,7 +166,7 @@ export const HERO_PRESETS = {
 export type HeroPreset = keyof typeof HERO_PRESETS;
 
 interface Options {
-  /** Статичная картинка без анимации и реакции на курсор. */
+  /** Статичная картинка без анимации. */
   reducedMotion: boolean;
   preset?: HeroPreset;
   /** Подписка на кадры (например, gsap.ticker); возвращает отписку. */
@@ -221,8 +211,6 @@ export function mountHeroGradient(
 
   const uResolution = gl.getUniformLocation(program, 'uResolution');
   const uTime = gl.getUniformLocation(program, 'uTime');
-  const uMouse = gl.getUniformLocation(program, 'uMouse');
-  const uHover = gl.getUniformLocation(program, 'uHover');
   const uColors = gl.getUniformLocation(program, 'uColors');
   const uCount = gl.getUniformLocation(program, 'uCount');
 
@@ -254,8 +242,6 @@ export function mountHeroGradient(
     gl.uniform2f(uResolution, width, height);
   };
 
-  const mouse = { x: 0.5, y: 0.5, hover: 0 };
-  const target = { x: 0.5, y: 0.5, hover: 0 };
   let time = 0;
   let lastFrame: number | null = null;
   let visible = true;
@@ -264,25 +250,8 @@ export function mountHeroGradient(
   const draw = () => {
     if (lost) return;
     gl.uniform1f(uTime, time);
-    gl.uniform2f(uMouse, mouse.x, mouse.y);
-    gl.uniform1f(uHover, mouse.hover);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     canvas.dataset.ready = '';
-  };
-
-  const onPointerMove = (event: PointerEvent) => {
-    const rect = root.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width;
-    const y = (event.clientY - rect.top) / rect.height;
-    const inside = x >= 0 && x <= 1 && y >= 0 && y <= 1;
-    target.hover = inside ? 1 : 0;
-    if (inside) {
-      target.x = x;
-      target.y = 1 - y;
-    }
-  };
-  const onPointerLeave = () => {
-    target.hover = 0;
   };
 
   const onLost = (event: Event) => {
@@ -314,20 +283,12 @@ export function mountHeroGradient(
   });
   intersectionObserver.observe(root);
 
-  window.addEventListener('pointermove', onPointerMove, { passive: true });
-  document.documentElement.addEventListener('pointerleave', onPointerLeave);
-
   const unsubscribe = onFrame((now) => {
     const dt = lastFrame === null ? 0 : Math.min(now - lastFrame, 0.1);
     lastFrame = now;
     if (!visible || document.hidden) return;
     // timeScale замедляет всё движение градиента целиком (поток, изгибы, оттенки).
     time += dt * timeScale;
-    // Плавное следование за курсором, не зависящее от частоты кадров.
-    const k = 1 - Math.pow(1 - 0.06, dt * 60);
-    mouse.x += (target.x - mouse.x) * k;
-    mouse.y += (target.y - mouse.y) * k;
-    mouse.hover += (target.hover - mouse.hover) * k * 0.6;
     draw();
   });
 
@@ -335,8 +296,6 @@ export function mountHeroGradient(
     unsubscribe();
     intersectionObserver.disconnect();
     resizeObserver.disconnect();
-    window.removeEventListener('pointermove', onPointerMove);
-    document.documentElement.removeEventListener('pointerleave', onPointerLeave);
     canvas.removeEventListener('webglcontextlost', onLost);
     gl.getExtension('WEBGL_lose_context')?.loseContext();
   };
