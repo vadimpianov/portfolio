@@ -102,6 +102,7 @@
 - `src/i18n/` — строки интерфейса (`ui.ts`), хелперы ссылок, выборка кейсов по локали
 - `src/content/{ru,en}/cases/*.mdx` — кейсы; `hello-world.mdx` тестовый, удалить при появлении настоящих
 - `src/scripts/motion.ts` — Lenis + GSAP; анимации страницы регистрируются через `onPage()`, чистятся сами при переходах
+- `src/components/Hero.astro` + `src/scripts/hero-gradient.ts` — hero на весь экран с WebGL-градиентом, реагирует на курсор. Палитра — `--hero-colors` в `Hero.astro`. Пресеты `HERO_PRESETS`: `soft` (первая версия: медленная смена оттенков, мягкие границы) и `vivid` (текущая: быстрее, границы резче); вернуть — `<Hero preset="soft" />`
 - `src/styles/tokens.css` — пустой, ждёт дизайн-библиотеку
 - `site` в `astro.config.mjs` — заглушка, заменить на реальный домен
 

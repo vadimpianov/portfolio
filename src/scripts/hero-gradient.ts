@@ -22,6 +22,8 @@ uniform float uHover;  // 0..1, насколько курсор «внутри»
 #define MAX_COLORS 10
 uniform vec3 uColors[MAX_COLORS];
 uniform float uCount;
+uniform float uHueSpeed; // скорость смены оттенков (1 = пресет soft)
+uniform float uEdge;     // ширина перехода между цветами: 1 = мягко, меньше — резче
 
 // Simplex noise 3D — Ashima Arts / Stefan Gustavson (MIT).
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -78,7 +80,8 @@ vec3 palette(float t) {
   vec3 c = uColors[0];
   for (int i = 1; i < MAX_COLORS; i++) {
     if (float(i) >= uCount) break;
-    c = mix(c, uColors[i], smoothstep(float(i - 1), float(i), x));
+    float center = float(i) - 0.5;
+    c = mix(c, uColors[i], smoothstep(center - uEdge * 0.5, center + uEdge * 0.5, x));
   }
   return c;
 }
@@ -103,13 +106,14 @@ void main() {
   vec2 q = vec2(snoise(vec3(p * 0.8, t * 0.06)), snoise(vec3(p * 0.8 + 7.3, t * 0.06)));
   float f = snoise(vec3(p * 0.7 + q * 1.0 - (p - m) * influence * 0.6, t * 0.08));
   // Второй, крупный слой — медленно «гуляет» по всей палитре.
-  float drift = snoise(vec3(p * 0.3 + 3.1, t * 0.035));
+  float th = t * uHueSpeed;
+  float drift = snoise(vec3(p * 0.3 + 3.1, th * 0.035));
 
   // База: тёплые цвета слева → холодные справа, поверх — шум.
   float v = uv.x * 0.7 + (1.0 - uv.y) * 0.15;
   v = v * 0.75 + f * 0.4 + drift * 0.25;
   // Со временем вся палитра плавно смещается — оттенки постоянно сменяются.
-  v += sin(t * 0.09) * 0.2 + sin(t * 0.037 + 1.7) * 0.12;
+  v += sin(th * 0.09) * 0.2 + sin(th * 0.037 + 1.7) * 0.12;
 
   // Курсор меняет цвет: локально вокруг себя и немного во всём блоке.
   v += influence * 0.5;
@@ -142,9 +146,21 @@ function hexToRgb(value: string): [number, number, number] {
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 
+/**
+ * Пресеты характера градиента. Переключаются атрибутом `data-preset` у hero.
+ * - `soft` — первая согласованная версия: медленная смена оттенков, мягкие границы.
+ * - `vivid` — быстрее смена оттенков, границы пятен резче.
+ */
+export const HERO_PRESETS = {
+  soft: { hueSpeed: 1, edge: 1 },
+  vivid: { hueSpeed: 2.5, edge: 0.35 },
+} as const;
+export type HeroPreset = keyof typeof HERO_PRESETS;
+
 interface Options {
   /** Статичная картинка без анимации и реакции на курсор. */
   reducedMotion: boolean;
+  preset?: HeroPreset;
   /** Подписка на кадры (например, gsap.ticker); возвращает отписку. */
   onFrame: (callback: (timeSeconds: number) => void) => () => void;
 }
@@ -153,7 +169,7 @@ interface Options {
 export function mountHeroGradient(
   root: HTMLElement,
   canvas: HTMLCanvasElement,
-  { reducedMotion, onFrame }: Options,
+  { reducedMotion, onFrame, preset = 'soft' }: Options,
 ) {
   const gl = canvas.getContext('webgl', {
     alpha: false,
@@ -196,6 +212,9 @@ export function mountHeroGradient(
   const hexes = (styles.getPropertyValue('--hero-colors').match(/#[0-9a-f]{3,6}\b/gi) ?? []).slice(0, 10);
   const colors = hexes.flatMap(hexToRgb);
   gl.uniform1f(uCount, hexes.length);
+  const { hueSpeed, edge } = HERO_PRESETS[preset];
+  gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
+  gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
   gl.uniform3fv(uColors, colors);
 
   // Градиент мягкий — рендерим в половинном разрешении, браузер растянет.
