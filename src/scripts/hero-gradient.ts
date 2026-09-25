@@ -1,5 +1,5 @@
 /**
- * Живой градиент для hero: WebGL-шейдер без библиотек.
+ * Живой фон для hero: WebGL-шейдер без библиотек (см. HERO_PRESETS).
  * Пятна цвета медленно перетекают (шум с деформацией), курсор сдвигает палитру
  * вокруг себя и слегка — во всём блоке. Цвета берутся из CSS-переменных
  * `--hero-colors` (список hex, до 10) элемента, чтобы палитра жила рядом со стилями.
@@ -22,6 +22,7 @@ uniform float uHover;  // 0..1, насколько курсор «внутри»
 #define MAX_COLORS 10
 uniform vec3 uColors[MAX_COLORS];
 uniform float uCount;
+uniform float uMode;     // 0 — перетекающий градиент, 1 — павлинье перо
 uniform float uHueSpeed; // скорость смены оттенков (1 = пресет soft)
 uniform float uEdge;     // ширина перехода между цветами: 1 = мягко, меньше — резче
 
@@ -91,17 +92,8 @@ float pingpong(float x) { return abs(mod(x + 1.0, 2.0) - 1.0); }
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 
-void main() {
-  vec2 uv = gl_FragCoord.xy / uResolution;
-  float aspect = uResolution.x / uResolution.y;
-  vec2 p = vec2(uv.x * aspect, uv.y);
-  vec2 m = vec2(uMouse.x * aspect, uMouse.y);
-  float t = uTime;
-
-  // Влияние курсора: небольшое пятно вокруг него.
-  float d = length(p - m);
-  float influence = exp(-d * d * 22.5) * uHover;
-
+// Перетекающий градиент (пресеты soft, vivid).
+vec3 flow(vec2 uv, vec2 p, vec2 m, float t, float influence) {
   // Деформированный шум — перетекающие пятна; курсор слегка «тянет» поле.
   vec2 q = vec2(snoise(vec3(p * 0.8, t * 0.06)), snoise(vec3(p * 0.8 + 7.3, t * 0.06)));
   float f = snoise(vec3(p * 0.7 + q * 1.0 - (p - m) * influence * 0.6, t * 0.08));
@@ -119,7 +111,110 @@ void main() {
   v += influence * 0.5;
   v += (uMouse.x - 0.5) * 0.25 * uHover;
 
-  vec3 color = palette(pingpong(v));
+  return palette(pingpong(v));
+}
+
+// --- Павлинье перо (пресет peacock) ---
+// Цвета uColors по ролям: 0 центр глазка, 1 кобальт, 2 бирюза, 3 медь,
+// 4 розовая бронза, 5 зелёный, 6 тёмная олива, 7 золото, 8 светлое золото.
+
+// Центры «глазков» в долях блока (x, y снизу) и их размер.
+vec3 eye(int i) {
+  if (i == 0) return vec3(0.13, 0.76, 1.0);
+  if (i == 1) return vec3(0.54, 0.82, 0.85);
+  if (i == 2) return vec3(0.90, 0.50, 1.05);
+  if (i == 3) return vec3(0.46, 0.26, 1.15);
+  return vec3(0.08, 0.10, 0.9);
+}
+
+// Кольца глазка по «эллиптическому радиусу» e (1 ≈ зелёное кольцо).
+vec3 rings(float e) {
+  vec3 c = uColors[0];
+  c = mix(c, uColors[1], smoothstep(0.15, 0.42, e));
+  c = mix(c, uColors[2], smoothstep(0.48, 0.54, e));
+  c = mix(c, uColors[3], smoothstep(0.64, 0.7, e));
+  c = mix(c, uColors[4], smoothstep(0.76, 0.9, e));
+  c = mix(c, uColors[5], smoothstep(0.97, 1.02, e));
+  c = mix(c, uColors[6], smoothstep(1.1, 1.35, e));
+  return c;
+}
+
+// Поворот оттенка вокруг серой оси — радужный перелив пера.
+vec3 hueShift(vec3 c, float a) {
+  const vec3 k = vec3(0.57735);
+  float ca = cos(a);
+  return c * ca + cross(k, c) * sin(a) + k * dot(k, c) * (1.0 - ca);
+}
+
+vec3 peacock(vec2 p, vec2 m, float aspect, float t, float influence) {
+  float n1 = snoise(vec3(p * 0.8, t * 0.03));
+  float n2 = snoise(vec3(p * 3.0 + 11.0, t * 0.05));
+
+  // Ближайший глазок: эллипс, наклон, «сердечко» и лёгкая деформация шумом.
+  float e = 10.0;
+  float ang = 0.0;
+  for (int i = 0; i < 5; i++) {
+    float fi = float(i);
+    vec3 eyeData = eye(i);
+    vec2 c = vec2(eyeData.x * aspect, eyeData.y);
+    c += 0.025 * vec2(sin(t * 0.15 + fi * 1.9), cos(t * 0.12 + fi * 2.7));
+    vec2 d = p - c + vec2(n1, n2 * 0.3) * 0.025;
+    float rot = -0.5 + fi * 0.35;
+    d = mat2(cos(rot), -sin(rot), sin(rot), cos(rot)) * d;
+    float s = eyeData.z;
+    float a = atan(d.y, d.x);
+    float ei = length(vec2(d.x / (0.2 * s), d.y / (0.155 * s)));
+    ei *= 1.0 + 0.14 * exp(-pow(a - 1.3, 2.0) * 5.0); // выемка сверху
+    if (ei < e) {
+      e = ei;
+      ang = a;
+    }
+  }
+
+  // Бородки пера: тонкие волнистые волокна поверх всего.
+  float w = dot(p, vec2(0.8, 0.6)) + n1 * 0.4 + 0.25 * sin(p.x * 1.3 + t * 0.05);
+  float fibers = mix(0.5 + 0.5 * sin(w * 150.0 + n2 * 2.0), 0.5 + 0.5 * sin(w * 330.0 + n2 * 5.0 + 1.3), 0.4);
+  fibers = smoothstep(0.15, 0.95, fibers);
+
+  // Фон: олива → золото по волокнам (без «зебры»), пятна зелёного отлива, блики.
+  vec3 bg = mix(uColors[6], uColors[7], 0.3 + 0.55 * fibers);
+  float green = smoothstep(0.1, 0.6, snoise(vec3(p * 1.4 + 4.0, t * 0.04)));
+  bg = mix(bg, uColors[5] * mix(0.6, 1.1, fibers), green * 0.55);
+  bg = mix(bg, uColors[8], pow(fibers, 6.0) * 0.35);
+
+  // Глазок с тонкими радиальными лучами; внешний край «разлохмачен» лучами.
+  float rays = 0.5 + 0.5 * sin(ang * 90.0 + n2 * 3.0);
+  float fringe = 0.5 + 0.5 * sin(ang * 37.0 + n1 * 9.0);
+  e -= 0.09 * fringe * smoothstep(0.85, 1.25, e);
+  vec3 eyeColor = rings(e) * (0.9 + 0.12 * rays);
+  float mask = 1.0 - smoothstep(1.22, 1.3, e);
+  vec3 color = mix(bg, eyeColor, mask);
+  color *= 0.85 + 0.22 * mix(fibers, 0.6, mask * 0.7);
+
+  // Отдельные золотые волоски поверх, в т.ч. через глазки.
+  float w2 = dot(p, vec2(0.95, -0.3)) + n1 * 0.7 + 0.3 * sin(p.y * 2.1 + t * 0.04);
+  float strands = smoothstep(0.82, 0.98, 0.5 + 0.5 * sin(w2 * 38.0 + n2 * 4.0));
+  strands *= smoothstep(-0.2, 0.4, snoise(vec3(p * 2.2 + 20.0, t * 0.03)));
+  vec3 strandColor = mix(uColors[7], uColors[8], 0.5 + 0.5 * sin(w2 * 400.0));
+  color = mix(color, strandColor, strands * 0.75);
+
+  // Перелив: курсор поворачивает оттенок вокруг себя и слегка во всём блоке.
+  float shift = influence * 1.4 + (uMouse.x - 0.5) * 0.35 * uHover + sin(t * 0.12 * uHueSpeed) * 0.08;
+  return hueShift(color, shift);
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uResolution;
+  float aspect = uResolution.x / uResolution.y;
+  vec2 p = vec2(uv.x * aspect, uv.y);
+  vec2 m = vec2(uMouse.x * aspect, uMouse.y);
+  float t = uTime;
+
+  // Влияние курсора: небольшое пятно вокруг него.
+  float d = length(p - m);
+  float influence = exp(-d * d * 22.5) * uHover;
+
+  vec3 color = uMode > 0.5 ? peacock(p, m, aspect, t, influence) : flow(uv, p, m, t, influence);
   // Лёгкий дизеринг против полос на плавных переходах.
   color += (hash(gl_FragCoord.xy) - 0.5) / 128.0;
   gl_FragColor = vec4(color, 1.0);
@@ -147,13 +242,18 @@ function hexToRgb(value: string): [number, number, number] {
 }
 
 /**
- * Пресеты характера градиента. Переключаются атрибутом `data-preset` у hero.
- * - `soft` — первая согласованная версия: медленная смена оттенков, мягкие границы.
- * - `vivid` — быстрее смена оттенков, границы пятен резче.
+ * Пресеты hero. Переключаются атрибутом `data-preset` у hero.
+ * - `soft` — перетекающий градиент: медленная смена оттенков, мягкие границы.
+ * - `vivid` — тот же градиент: быстрее смена оттенков, границы пятен резче.
+ * - `peacock` — павлинье перо: глазки из колец, золотые волокна, радужный перелив.
+ *
+ * `colors` — CSS-переменная с палитрой, `resolution` — доля от разрешения экрана.
  */
 export const HERO_PRESETS = {
-  soft: { hueSpeed: 1, edge: 1 },
-  vivid: { hueSpeed: 2.5, edge: 0.35 },
+  soft: { mode: 0, hueSpeed: 1, edge: 1, colors: '--hero-colors', resolution: 0.5 },
+  vivid: { mode: 0, hueSpeed: 2.5, edge: 0.35, colors: '--hero-colors', resolution: 0.5 },
+  // Тонкие волокна — рендерим почти в полном разрешении.
+  peacock: { mode: 1, hueSpeed: 1, edge: 1, colors: '--hero-colors-peacock', resolution: 0.75 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
 
@@ -208,18 +308,19 @@ export function mountHeroGradient(
   const uColors = gl.getUniformLocation(program, 'uColors');
   const uCount = gl.getUniformLocation(program, 'uCount');
 
+  const { mode, hueSpeed, edge, colors: colorsVar, resolution } = HERO_PRESETS[preset];
   const styles = getComputedStyle(root);
-  const hexes = (styles.getPropertyValue('--hero-colors').match(/#[0-9a-f]{3,6}\b/gi) ?? []).slice(0, 10);
+  const hexes = (styles.getPropertyValue(colorsVar).match(/#[0-9a-f]{3,6}\b/gi) ?? []).slice(0, 10);
   const colors = hexes.flatMap(hexToRgb);
   gl.uniform1f(uCount, hexes.length);
-  const { hueSpeed, edge } = HERO_PRESETS[preset];
+  gl.uniform1f(gl.getUniformLocation(program, 'uMode'), mode);
   gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
   gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
   gl.uniform3fv(uColors, colors);
 
-  // Градиент мягкий — рендерим в половинном разрешении, браузер растянет.
+  // Градиент мягкий — рендерим в пониженном разрешении, браузер растянет.
   const resize = () => {
-    const scale = Math.min(window.devicePixelRatio || 1, 2) * 0.5;
+    const scale = Math.min(window.devicePixelRatio || 1, 2) * resolution;
     const width = Math.max(1, Math.round(canvas.clientWidth * scale));
     const height = Math.max(1, Math.round(canvas.clientHeight * scale));
     if (canvas.width === width && canvas.height === height) return;
