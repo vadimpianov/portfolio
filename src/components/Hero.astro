@@ -61,13 +61,13 @@ const { title, lead, preset = 'soft' } = Astro.props;
   }
 
   /* Плёночное зерно поверх градиента. */
-  /* Затемнение всего блока: чёрный слой 7% поверх градиента, под текстом. */
+  /* Затемнение всего блока: чёрный слой поверх градиента (сейчас 0% — выключен, оставлен для быстрого возврата), под текстом. */
   .hero__shade {
     position: absolute;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background: rgb(0 0 0 / 0.07);
+    background: rgb(0 0 0 / 0);
   }
 
   .hero__grain {
