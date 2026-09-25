@@ -1,0 +1,27 @@
+---
+/**
+ * Фолбэк для `/`. На Cloudflare Pages сюда не попадём — `functions/index.ts`
+ * перехватывает запрос и редиректит по cookie/стране. Страница нужна для
+ * локального `astro dev` / `astro preview` и на случай отказа функции.
+ */
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <title>Vadim Pianov</title>
+    <script is:inline>
+      (function () {
+        var m = document.cookie.match(/(?:^|; )lang=(ru|en)(?:;|$)/);
+        var lang = m ? m[1] : (navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+        location.replace('/' + lang + '/');
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="/en/">English</a> · <a href="/ru/">Русский</a>
+  </body>
+</html>

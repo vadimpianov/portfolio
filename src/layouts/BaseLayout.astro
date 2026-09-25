@@ -1,0 +1,48 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { locales } from '../i18n/ui';
+import { getLocaleFromUrl, switchLocalePath, useTranslations } from '../i18n/utils';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const siteTitle = t('site.title');
+const { title, description = t('site.description') } = Astro.props;
+const pageTitle = title ? `${title} — ${siteTitle}` : siteTitle;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {locales.map((l) => (
+      <link rel="alternate" hreflang={l} href={new URL(switchLocalePath(Astro.url, l), Astro.site)} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <ClientRouter />
+  </head>
+  <body>
+    <header>
+      <LanguageSwitcher />
+    </header>
+    <main>
+      <slot />
+    </main>
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

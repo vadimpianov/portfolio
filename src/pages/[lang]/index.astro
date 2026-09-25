@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCases, parseCaseId } from '../../i18n/content';
+import type { Locale } from '../../i18n/ui';
+import { getLocaleStaticPaths, localePath, useTranslations } from '../../i18n/utils';
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const cases = await getCases(lang);
+---
+
+<BaseLayout>
+  <h1 data-reveal>{t('home.heading')}</h1>
+  <p data-reveal>{t('home.lead')}</p>
+
+  {cases.length > 0 && (
+    <section>
+      <h2>{t('home.cases')}</h2>
+      <ul>
+        {cases.map((entry) => (
+          <li>
+            <a href={localePath(lang, `cases/${parseCaseId(entry.id).slug}`)}>{entry.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</BaseLayout>
+
+<script>
+  import { onPage, gsap } from '../../scripts/motion';
+
+  // Проверка связки GSAP + View Transitions. Заменим настоящими анимациями.
+  onPage(({ reducedMotion }) => {
+    if (reducedMotion) return;
+    gsap.from('[data-reveal]', { y: 16, autoAlpha: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' });
+  });
+</script>

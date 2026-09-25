@@ -1,0 +1,36 @@
+---
+import { locales, localeNames } from '../i18n/ui';
+import { getLocaleFromUrl, switchLocalePath, useTranslations } from '../i18n/utils';
+
+const current = getLocaleFromUrl(Astro.url);
+const t = useTranslations(current);
+---
+
+<nav aria-label={t('lang.switch')}>
+  <ul>
+    {locales.map((locale) => (
+      <li>
+        <a
+          href={switchLocalePath(Astro.url, locale)}
+          hreflang={locale}
+          lang={locale}
+          data-set-lang={locale}
+          aria-current={locale === current ? 'true' : undefined}
+        >
+          {localeNames[locale]}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  // Ручной выбор языка запоминается на год и важнее геолокации (см. functions/index.ts).
+  // Делегирование на document: работает и после переходов View Transitions.
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('[data-set-lang]');
+    if (!link) return;
+    const lang = link.dataset.setLang;
+    document.cookie = `lang=${lang}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  });
+</script>
