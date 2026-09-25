@@ -7,7 +7,7 @@ interface Props {
   preset?: HeroPreset;
 }
 
-const { title, preset = 'peacock' } = Astro.props;
+const { title, preset = 'soft' } = Astro.props;
 ---
 
 <section class="hero" data-hero data-bleed data-preset={preset}>
@@ -21,9 +21,6 @@ const { title, preset = 'peacock' } = Astro.props;
     /* Палитра градиента, от тёплого к холодному (порядок = порядок в шейдере).
        Печёный жёлтый → медовый → персик → розовый → фуксия → орхидея → фиолетовый → лавандовый. */
     --hero-colors: #e0a33a #f0bd4f #ff9a7a #ff6fae #f2408f #cf4ae8 #9446ff #7f6bff;
-    /* Пресет peacock, по ролям: центр глазка, кобальт, бирюза, медь, розовая бронза,
-       зелёный, тёмная олива, золото, светлое золото. */
-    --hero-colors-peacock: #1d1b6b #2f3ed8 #1fb5d9 #a8674a #c58a6c #2fd13c #3d3a0e #b59a2a #d9c25a;
 
     position: relative;
     isolation: isolate;
@@ -33,10 +30,6 @@ const { title, preset = 'peacock' } = Astro.props;
     overflow: hidden;
     /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
     background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #7f6bff);
-  }
-
-  .hero[data-preset='peacock'] {
-    background: linear-gradient(120deg, #3d3a0e, #b59a2a 40%, #2fd13c 60%, #1fb5d9 80%, #2f3ed8);
   }
 
   .hero__canvas {
