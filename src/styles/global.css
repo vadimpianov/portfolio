@@ -2,6 +2,7 @@
 @import './reset.css';
 @import './tokens.css';
 
+/* Явный фон страницы: без него mix-blend-mode (сетка) не видна. */
 html {
   background: var(--color-bg);
   color: var(--color-text);

@@ -1,0 +1,111 @@
+---
+import type { HeroPreset } from '../scripts/hero-gradient';
+
+interface Props {
+  title: string;
+  lead?: string;
+  /** Характер градиента, см. HERO_PRESETS. */
+  preset?: HeroPreset;
+}
+
+const { title, lead, preset = 'soft' } = Astro.props;
+---
+
+<section class="hero" data-hero data-bleed data-preset={preset}>
+  <canvas class="hero__canvas" aria-hidden="true"></canvas>
+  <div class="hero__grain" aria-hidden="true"></div>
+  <div class="hero__content">
+    <h1 class="hero__title">{title}</h1>
+    {lead && <p class="hero__lead">{lead}</p>}
+  </div>
+</section>
+
+<style>
+  .hero {
+    /* Палитра — кольцо со стопами, как у CSS-градиента: последний цвет = первому,
+       оттенки сдвигаются по кругу только вперёд. Жёлтым (печёный + медовый) —
+       ~40% кольца. Дальше: персик → розовый → фуксия → орхидея → фиолетовый →
+       сиреневый → через розовый обратно в жёлтый. */
+    --hero-colors:
+      #e0a33a 0%, #f0bd4f 17%, #e0a33a 33%, #ff9a7a 43%, #ff6fae 51%, #f2408f 58%, #cf4ae8 65%, #9446ff 73%,
+      #b58cff 81%, #ff6fae 91%, #e0a33a 100%;
+
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    /* Текст — к левой линии сетки (--gutter), по вертикали — по центру экрана. */
+    align-items: center;
+    justify-items: start;
+    padding-inline: var(--gutter);
+    height: 100dvh;
+    overflow: hidden;
+    /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
+    background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #b58cff);
+  }
+
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .hero__canvas[data-ready] {
+    opacity: 1;
+  }
+
+  /* Плёночное зерно поверх градиента. */
+  .hero__grain {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .hero__content {
+    max-width: 72rem;
+    color: #fff;
+  }
+
+  .hero__title {
+    font-size: var(--text-display);
+    font-weight: var(--weight-heavy);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .hero__lead {
+    max-width: 47.5rem;
+    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    text-wrap: pretty;
+  }
+</style>
+
+<script>
+  import { gsap, onPage } from '../scripts/motion';
+  import { HERO_PRESETS, mountHeroGradient, type HeroPreset } from '../scripts/hero-gradient';
+
+  onPage(({ reducedMotion }) => {
+    const root = document.querySelector<HTMLElement>('[data-hero]');
+    const canvas = root?.querySelector('canvas');
+    if (!root || !canvas) return;
+    const preset = root.dataset.preset;
+    return mountHeroGradient(root, canvas, {
+      reducedMotion,
+      preset: preset && preset in HERO_PRESETS ? (preset as HeroPreset) : undefined,
+      onFrame: (callback) => {
+        gsap.ticker.add(callback);
+        return () => gsap.ticker.remove(callback);
+      },
+    });
+  });
+</script>

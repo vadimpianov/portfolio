@@ -36,7 +36,15 @@ let pageContext: gsap.Context | null = null;
 export function onPage(setup: PageSetup) {
   setups.add(setup);
   // Если страница уже загружена (скрипт подключился позже) — запускаем сразу.
-  if (pageContext) pageContext.add(() => setup({ reducedMotion: prefersReducedMotion() }));
+  if (pageContext) pageContext.add(() => runSetup(setup, prefersReducedMotion()));
+}
+
+/** Функции очистки, которые вернули `setup` (WebGL, слушатели и т.п.). */
+let cleanups: (() => void)[] = [];
+
+function runSetup(setup: PageSetup, reducedMotion: boolean) {
+  const cleanup = setup({ reducedMotion });
+  if (cleanup) cleanups.push(cleanup);
 }
 
 document.addEventListener('astro:page-load', () => {
@@ -44,12 +52,14 @@ document.addEventListener('astro:page-load', () => {
   lenis?.resize();
   const reducedMotion = prefersReducedMotion();
   pageContext = gsap.context(() => {
-    setups.forEach((setup) => setup({ reducedMotion }));
+    setups.forEach((setup) => runSetup(setup, reducedMotion));
   });
   ScrollTrigger.refresh();
 });
 
 document.addEventListener('astro:before-swap', () => {
+  cleanups.forEach((cleanup) => cleanup());
+  cleanups = [];
   pageContext?.revert();
   pageContext = null;
 });

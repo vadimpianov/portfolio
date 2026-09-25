@@ -1,0 +1,50 @@
+---
+/**
+ * Временная сетка поверх сайта: поля контента (`--gutter`) и нижняя граница
+ * шапки (`--header-h`). Включается флагом `DEV_GRID` в `src/config/dev.ts`.
+ */
+---
+
+<div class="dev-grid" aria-hidden="true">
+  <span class="dev-grid__line dev-grid__line--left"></span>
+  <span class="dev-grid__line dev-grid__line--right"></span>
+  <span class="dev-grid__line dev-grid__line--header"></span>
+</div>
+
+<style>
+  .dev-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+    /* Белая линия в режиме difference контрастна к любому фону. */
+    mix-blend-mode: difference;
+  }
+
+  .dev-grid__line {
+    position: absolute;
+    background: #fff;
+  }
+
+  .dev-grid__line--left,
+  .dev-grid__line--right {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  .dev-grid__line--left {
+    left: var(--gutter);
+  }
+
+  .dev-grid__line--right {
+    right: var(--gutter);
+  }
+
+  .dev-grid__line--header {
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    height: 1px;
+  }
+</style>

@@ -13,8 +13,9 @@ export const ui = {
     'site.description': 'Портфолио Вадима Пьянова',
     'nav.home': 'Главная',
     'lang.switch': 'Язык',
-    'home.heading': 'Архитектура, дизайн, процессы, ИИ',
-    'home.lead':
+    'home.heading': 'Вадим Пьянов',
+    'home.intro.title': 'Архитектура, дизайн, процессы, ИИ',
+    'home.intro.lead':
       'Выстраиваю процессы вокруг дизайна, разрабатываю архитектуру продукта и принимаю участие в разработке фич. И всё это — при помощи ИИ.',
     'home.cases': 'Кейсы',
   },
@@ -23,8 +24,9 @@ export const ui = {
     'site.description': 'Portfolio of Vadim Pianov',
     'nav.home': 'Home',
     'lang.switch': 'Language',
-    'home.heading': 'Architecture, design, processes, AI',
-    'home.lead':
+    'home.heading': 'Vadim Pianov',
+    'home.intro.title': 'Architecture, design, processes, AI',
+    'home.intro.lead':
       'I build processes around design, shape the product architecture and take part in feature development. All of it — with the help of AI.',
     'home.cases': 'Cases',
   },
