@@ -26,12 +26,12 @@ const { title, lead, preset = 'soft' } = Astro.props;
   .hero {
     /* Палитра — кольцо со стопами, как у CSS-градиента: последний цвет = первому,
        оттенки сдвигаются по кругу только вперёд. Каждый цвет — один сплошной участок
-       кольца (не дробим на части). Доли: жёлтый (печёный + медовый) ≥30%, голубой ~10%,
+       кольца (не дробим на части). Доли: жёлтый (печёный + медовый) ~30% в среднем, голубой ~10%,
        остальные поровну по ~12%: персик, розовый (с фуксией внутри), орхидея,
        фиолетовый, сиреневый. Между голубым и жёлтым — короткий кремовый мостик. */
     --hero-colors:
-      #f6e7c1 0%, #e0a33a 3%, #f0bd4f 16%, #e0a33a 30%, #ff9a7a 39%, #ff6fae 48%, #f2408f 52%, #cf4ae8 61%,
-      #9446ff 72%, #b58cff 84%, #7ccfff 92%, #7ccfff 97%, #f6e7c1 100%;
+      #f6e7c1 0%, #e0a33a 3%, #f0bd4f 14%, #e0a33a 25%, #ff9a7a 35%, #ff6fae 45%, #f2408f 50%, #cf4ae8 59%,
+      #9446ff 70%, #b58cff 82%, #7ccfff 92%, #7ccfff 97%, #f6e7c1 100%;
 
     position: relative;
     isolation: isolate;
@@ -80,14 +80,14 @@ const { title, lead, preset = 'soft' } = Astro.props;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Наклонная сетка поверх градиента, под текстом: линии 1px, без заливки. */
+  /* Наклонная сетка поверх градиента, под текстом: линии 2px почти чёрные, без заливки. */
   .hero__stripes {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.5;
-    background: repeating-linear-gradient(45deg, transparent 0 7px, rgb(0 0 0 / 0.17) 7px 8px);
+    opacity: 0.25;
+    background: repeating-linear-gradient(45deg, transparent 0 6px, #141414 6px 8px);
   }
 
   .hero__content {
