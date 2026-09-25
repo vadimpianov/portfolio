@@ -19,8 +19,8 @@ const { title, preset = 'soft' } = Astro.props;
 <style>
   .hero {
     /* Палитра градиента, от тёплого к холодному (порядок = порядок в шейдере).
-       Печёный жёлтый → медовый → персик → розовый → фуксия → орхидея → фиолетовый → лавандовый. */
-    --hero-colors: #e0a33a #f0bd4f #ff9a7a #ff6fae #f2408f #cf4ae8 #9446ff #7f6bff;
+       Печёный жёлтый → медовый → персик → розовый → фуксия → орхидея → фиолетовый → сиреневый. */
+    --hero-colors: #e0a33a #f0bd4f #ff9a7a #ff6fae #f2408f #cf4ae8 #9446ff #b58cff;
 
     position: relative;
     isolation: isolate;
@@ -29,7 +29,7 @@ const { title, preset = 'soft' } = Astro.props;
     height: 100dvh;
     overflow: hidden;
     /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
-    background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #7f6bff);
+    background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #b58cff);
   }
 
   .hero__canvas {
