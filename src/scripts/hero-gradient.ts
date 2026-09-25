@@ -158,10 +158,12 @@ function hexToRgb(value: string): [number, number, number] {
  * - `soft` — основной: медленная смена оттенков, мягкие границы, всё движение ×0.525.
  * - `vivid` — быстрее смена оттенков, границы пятен резче.
  * `timeScale` — общая скорость движения (1 — исходная).
+ * `startTime` — с какого момента анимации начинать при каждой загрузке.
  */
 export const HERO_PRESETS = {
-  soft: { hueSpeed: 1, edge: 1, timeScale: 0.525 },
-  vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1 },
+  // startTime 9.3 — согласованный стартовый кадр (жёлтый слева, розовый в центре).
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.525, startTime: 9.3 },
+  vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
 
@@ -225,7 +227,7 @@ export function mountHeroGradient(
     stops.map(([, , pos]) => Number(pos) / 100),
   );
   gl.uniform1f(uCount, stops.length);
-  const { hueSpeed, edge, timeScale } = HERO_PRESETS[preset];
+  const { hueSpeed, edge, timeScale, startTime } = HERO_PRESETS[preset];
   gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
   gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
   gl.uniform3fv(uColors, colors);
@@ -242,7 +244,8 @@ export function mountHeroGradient(
     gl.uniform2f(uResolution, width, height);
   };
 
-  let time = 0;
+  // Градиент детерминирован: одно время — одна картинка, поэтому старт всегда одинаковый.
+  let time: number = startTime;
   let lastFrame: number | null = null;
   let visible = true;
   let lost = false;
