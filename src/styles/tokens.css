@@ -21,10 +21,10 @@
   --color-line: #d9d5cd;
 
   /* Типографическая шкала: плавно от мобилы (360px) к десктопу (1400px) */
-  --text-display: clamp(2.75rem, 1.3rem + 6.4vw, 5.5rem);
+  --text-display: clamp(2.2rem, 1.04rem + 5.12vw, 4.4rem);
   --leading-display: 1.02;
   --tracking-display: -0.03em;
-  --text-lead: clamp(1.125rem, 1rem + 0.55vw, 1.625rem);
+  --text-lead: clamp(0.9rem, 0.8rem + 0.44vw, 1.3rem);
   --leading-lead: 1.5;
 }
 
