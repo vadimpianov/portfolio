@@ -159,7 +159,7 @@ function hexToRgb(value: string): [number, number, number] {
 
 /**
  * Пресеты характера градиента. Переключаются атрибутом `data-preset` у hero.
- * - `soft` — основной: медленная смена оттенков, мягкие границы, всё движение ×0.525.
+ * - `soft` — основной: медленная смена оттенков, мягкие границы, всё движение ×1.05.
  * - `vivid` — быстрее смена оттенков, границы пятен резче.
  * `timeScale` — общая скорость движения (1 — исходная).
  * `startTime` — с какого момента анимации начинать при каждой загрузке.
@@ -167,7 +167,7 @@ function hexToRgb(value: string): [number, number, number] {
 export const HERO_PRESETS = {
   // startTime 94 — сбалансированный стартовый кадр (подобран перебором: жёлтый ~27%,
   // персик, розовый, орхидея, фиолетовый — по 14–20%, каждый цвет одним куском).
-  soft: { hueSpeed: 1, edge: 1, timeScale: 0.525, startTime: 94 },
+  soft: { hueSpeed: 1, edge: 1, timeScale: 1.05, startTime: 94 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
