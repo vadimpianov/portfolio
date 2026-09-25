@@ -1,0 +1,89 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<section class="hero" data-hero>
+  <canvas class="hero__canvas" aria-hidden="true"></canvas>
+  <div class="hero__grain" aria-hidden="true"></div>
+  <h1 class="hero__title">{title}</h1>
+</section>
+
+<style>
+  .hero {
+    /* Палитра градиента: жёлтый → янтарный → розовый → фиолетовый → индиго. */
+    --hero-c0: #ffe04a;
+    --hero-c1: #ffc21a;
+    --hero-c2: #ff4f9a;
+    --hero-c3: #b44bff;
+    --hero-c4: #6a35ff;
+    --hero-gap: clamp(0.5rem, 1.2vw, 1rem);
+
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    height: calc(100dvh - 2 * var(--hero-gap));
+    margin: var(--hero-gap);
+    overflow: hidden;
+    border-radius: clamp(1rem, 2vw, 1.75rem);
+    /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
+    background: linear-gradient(100deg, var(--hero-c0), var(--hero-c2) 55%, var(--hero-c4));
+  }
+
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .hero__canvas[data-ready] {
+    opacity: 1;
+  }
+
+  /* Плёночное зерно поверх градиента. */
+  .hero__grain {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .hero__title {
+    padding-inline: 1rem;
+    color: #fff;
+    font-size: clamp(3rem, 13vw, 13rem);
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    text-align: center;
+  }
+</style>
+
+<script>
+  import { gsap, onPage } from '../scripts/motion';
+  import { mountHeroGradient } from '../scripts/hero-gradient';
+
+  onPage(({ reducedMotion }) => {
+    const root = document.querySelector<HTMLElement>('[data-hero]');
+    const canvas = root?.querySelector('canvas');
+    if (!root || !canvas) return;
+    return mountHeroGradient(root, canvas, {
+      reducedMotion,
+      onFrame: (callback) => {
+        gsap.ticker.add(callback);
+        return () => gsap.ticker.remove(callback);
+      },
+    });
+  });
+</script>
