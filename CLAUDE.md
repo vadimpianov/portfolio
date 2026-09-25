@@ -79,8 +79,9 @@
    ```sh
    curl -sSI https://vadimpianov.pages.dev/ru/   # 200
    curl -sSI https://vadimpianov.pages.dev/en/   # 200
-   curl -sSI https://vadimpianov.pages.dev/      # 302/307, Location: /en/ (или /ru/ из РФ)
+   curl -sS -o /dev/null -D - https://vadimpianov.pages.dev/   # 302, Location: /en/ (или /ru/ из РФ)
    ```
+   Для `/` — именно GET, не `curl -I`: функция обрабатывает только GET, на HEAD отдаётся статический `index.html` (200).
 6. **Обновить «Состояние проекта»** ниже: дата деплоя, адрес. Закоммитить и запушить.
 
 ### Если не выходит
@@ -101,6 +102,8 @@
 - `src/scripts/motion.ts` — Lenis + GSAP; анимации страницы регистрируются через `onPage()`, чистятся сами при переходах
 - `src/styles/tokens.css` — пустой, ждёт дизайн-библиотеку
 - `site` в `astro.config.mjs` — заглушка, заменить на реальный домен
+
+Задеплоено (2026-09-25): https://vadimpianov.pages.dev — `/ru/`, `/en/` отдают 200, `/` редиректит (302) по cookie/стране.
 
 ## Следующий шаг
 
