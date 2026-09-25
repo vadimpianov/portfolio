@@ -108,7 +108,7 @@ void main() {
   // ленты никогда не замыкаются в кольца, «дырок» и мишеней не бывает.
   float th = t * uHueSpeed;
   // Направление потока медленно и непредсказуемо поворачивается.
-  float dirAngle = 0.34 + 0.9 * snoise(vec3(th * 0.015, 3.3, 1.1));
+  float dirAngle = 0.34 + 1.3 * snoise(vec3(th * 0.028, 3.3, 1.1));
   vec2 dir = vec2(cos(dirAngle), sin(dirAngle));
   // Изгибы: 4 последовательные слабые деформации. Каждая сама по себе обратима
   // (A·F·max|∇шума|·√2 < 1), значит и цепочка обратима — поле без вершин и впадин,
@@ -119,11 +119,11 @@ void main() {
     float fi = float(i);
     // Каждый слой дрейфует в свою сторону со своей скоростью и ещё блуждает —
     // вместо «конвейера» получается завихрение.
-    float layerAngle = dirAngle + (fi - 1.5) * 1.1;
+    float layerAngle = dirAngle + (fi - 1.5) * 1.6;
     vec2 drift = vec2(cos(layerAngle), sin(layerAngle)) * th * (0.012 + 0.006 * fi);
-    drift += 0.6 * vec2(snoise(vec3(th * 0.03, fi * 7.1, 0.0)), snoise(vec3(th * 0.03, fi * 7.1, 9.0)));
+    drift += 1.0 * vec2(snoise(vec3(th * 0.05, fi * 7.1, 0.0)), snoise(vec3(th * 0.05, fi * 7.1, 9.0)));
     vec2 q = (w - drift) * 0.9 + fi * 3.7;
-    w += 0.25 * vec2(snoise(vec3(q, t * 0.07 + fi)), snoise(vec3(q + 5.2, t * 0.07 + fi)));
+    w += 0.25 * vec2(snoise(vec3(q, t * 0.1 + fi)), snoise(vec3(q + 5.2, t * 0.1 + fi)));
   }
 
   // В каждом кадре все цвета в нужной пропорции (см. плотность лент ниже). Сдвиг по кольцу — только вперёд; скорость плавает, но всегда > 0
@@ -165,12 +165,12 @@ function hexToRgb(value: string): [number, number, number] {
 
 /**
  * Пресеты характера градиента. Переключаются атрибутом `data-preset` у hero.
- * - `soft` — основной: медленная смена оттенков, мягкие границы, всё движение ×0.5.
+ * - `soft` — основной: медленная смена оттенков, мягкие границы, всё движение ×0.525.
  * - `vivid` — быстрее смена оттенков, границы пятен резче.
  * `timeScale` — общая скорость движения (1 — исходная).
  */
 export const HERO_PRESETS = {
-  soft: { hueSpeed: 1, edge: 1, timeScale: 0.5 },
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.525 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
