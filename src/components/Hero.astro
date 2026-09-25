@@ -13,6 +13,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
 
 <section class="hero" data-hero data-bleed data-preset={preset}>
   <canvas class="hero__canvas" aria-hidden="true"></canvas>
+  <div class="hero__shade" aria-hidden="true"></div>
   <div class="hero__grain" aria-hidden="true"></div>
   <div class="hero__content">
     <h1 class="hero__title">{title}</h1>
@@ -23,12 +24,12 @@ const { title, lead, preset = 'soft' } = Astro.props;
 <style>
   .hero {
     /* Палитра — кольцо со стопами, как у CSS-градиента: последний цвет = первому,
-       оттенки сдвигаются по кругу только вперёд. Жёлтым (печёный + медовый) —
-       ~30% кольца, розовым — ~30%. Дальше: персик → розовый → фуксия → орхидея → фиолетовый →
-       сиреневый → через розовый обратно в жёлтый. */
+       оттенки сдвигаются по кругу только вперёд. Доли кольца: жёлтый (печёный +
+       медовый) ~20%, розовый ~30%, голубой ~10%. Порядок: жёлтый → персик → розовый →
+       фуксия → розовый → орхидея → фиолетовый → сиреневый → голубой → розовый → жёлтый. */
     --hero-colors:
-      #e0a33a 0%, #f0bd4f 12%, #e0a33a 23%, #ff9a7a 33%, #ff6fae 41%, #f2408f 48%, #ff6fae 56%, #cf4ae8 65%,
-      #9446ff 73%, #b58cff 81%, #ff6fae 91%, #e0a33a 100%;
+      #e0a33a 0%, #f0bd4f 6%, #e0a33a 11%, #ff9a7a 21%, #ff6fae 29%, #f2408f 36%, #ff6fae 44%, #cf4ae8 53%,
+      #9446ff 61%, #b58cff 68%, #7ccfff 76%, #7ccfff 85%, #ff6fae 92%, #e0a33a 100%;
 
     position: relative;
     isolation: isolate;
@@ -58,6 +59,15 @@ const { title, lead, preset = 'soft' } = Astro.props;
   }
 
   /* Плёночное зерно поверх градиента. */
+  /* Затемнение всего блока: чёрный слой 20% поверх градиента, под текстом. */
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: rgb(0 0 0 / 0.2);
+  }
+
   .hero__grain {
     position: absolute;
     inset: 0;

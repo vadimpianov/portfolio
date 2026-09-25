@@ -164,12 +164,13 @@ function hexToRgb(value: string): [number, number, number] {
 
 /**
  * Пресеты характера градиента. Переключаются атрибутом `data-preset` у hero.
- * - `soft` — первая согласованная версия: медленная смена оттенков, мягкие границы.
+ * - `soft` — основной: медленная смена оттенков, мягкие границы, всё движение ×0.5.
  * - `vivid` — быстрее смена оттенков, границы пятен резче.
+ * `timeScale` — общая скорость движения (1 — исходная).
  */
 export const HERO_PRESETS = {
-  soft: { hueSpeed: 1, edge: 1 },
-  vivid: { hueSpeed: 2.5, edge: 0.35 },
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.5 },
+  vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
 
@@ -235,7 +236,7 @@ export function mountHeroGradient(
     stops.map(([, , pos]) => Number(pos) / 100),
   );
   gl.uniform1f(uCount, stops.length);
-  const { hueSpeed, edge } = HERO_PRESETS[preset];
+  const { hueSpeed, edge, timeScale } = HERO_PRESETS[preset];
   gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
   gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
   gl.uniform3fv(uColors, colors);
@@ -319,7 +320,8 @@ export function mountHeroGradient(
     const dt = lastFrame === null ? 0 : Math.min(now - lastFrame, 0.1);
     lastFrame = now;
     if (!visible || document.hidden) return;
-    time += dt;
+    // timeScale замедляет всё движение градиента целиком (поток, изгибы, оттенки).
+    time += dt * timeScale;
     // Плавное следование за курсором, не зависящее от частоты кадров.
     const k = 1 - Math.pow(1 - 0.06, dt * 60);
     mouse.x += (target.x - mouse.x) * k;
