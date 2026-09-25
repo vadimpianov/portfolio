@@ -1,2 +1,10 @@
+@import '@fontsource-variable/onest/wght.css';
 @import './reset.css';
 @import './tokens.css';
+
+html {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-regular);
+}
