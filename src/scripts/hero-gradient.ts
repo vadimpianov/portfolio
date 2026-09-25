@@ -247,13 +247,14 @@ function hexToRgb(value: string): [number, number, number] {
  * - `vivid` — тот же градиент: быстрее смена оттенков, границы пятен резче.
  * - `peacock` — павлинье перо: глазки из колец, золотые волокна, радужный перелив.
  *
- * `colors` — CSS-переменная с палитрой, `resolution` — доля от разрешения экрана.
+ * `colors` — CSS-переменная с палитрой, `resolution` — доля от разрешения экрана,
+ * `blur` — размытие поверх, px (0 — без него).
  */
 export const HERO_PRESETS = {
-  soft: { mode: 0, hueSpeed: 1, edge: 1, colors: '--hero-colors', resolution: 0.5 },
-  vivid: { mode: 0, hueSpeed: 2.5, edge: 0.35, colors: '--hero-colors', resolution: 0.5 },
-  // Тонкие волокна — рендерим почти в полном разрешении.
-  peacock: { mode: 1, hueSpeed: 1, edge: 1, colors: '--hero-colors-peacock', resolution: 0.75 },
+  soft: { mode: 0, hueSpeed: 1, edge: 1, colors: '--hero-colors', resolution: 0.5, blur: 0 },
+  vivid: { mode: 0, hueSpeed: 2.5, edge: 0.35, colors: '--hero-colors', resolution: 0.5, blur: 0 },
+  // Всё сильно размыто: рисуем в низком разрешении и добавляем CSS-блюр.
+  peacock: { mode: 1, hueSpeed: 1, edge: 1, colors: '--hero-colors-peacock', resolution: 0.35, blur: 48 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
 
@@ -308,7 +309,12 @@ export function mountHeroGradient(
   const uColors = gl.getUniformLocation(program, 'uColors');
   const uCount = gl.getUniformLocation(program, 'uCount');
 
-  const { mode, hueSpeed, edge, colors: colorsVar, resolution } = HERO_PRESETS[preset];
+  const { mode, hueSpeed, edge, colors: colorsVar, resolution, blur } = HERO_PRESETS[preset];
+  if (blur > 0) {
+    // Увеличиваем холст, чтобы блюр не «съедал» края блока.
+    canvas.style.filter = `blur(${blur}px)`;
+    canvas.style.transform = `scale(${1 + (blur * 4) / Math.max(canvas.clientWidth, 1)})`;
+  }
   const styles = getComputedStyle(root);
   const hexes = (styles.getPropertyValue(colorsVar).match(/#[0-9a-f]{3,6}\b/gi) ?? []).slice(0, 10);
   const colors = hexes.flatMap(hexToRgb);
