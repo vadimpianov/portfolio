@@ -47,6 +47,48 @@
 - Домен
 - Визуальный стиль, типографика, палитра — определяем вместе на этапе дизайн-библиотеки
 
+## Деплой (Cloudflare Pages)
+
+Когда пользователь говорит «задеплой», делаем всё по этой инструкции **без переспрашивания**. Пользователь не должен повторять её заново.
+
+- Проект Cloudflare Pages: **`vadimpianov`**, production-ветка **`main`**, адрес **https://vadimpianov.pages.dev**
+- Ключи — в переменных окружения облачного окружения: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+
+### Шаги
+
+1. **Подготовить ключи.** Значения могли быть сохранены в угловых скобках (`<…>`). Wrangler такие отвергает, поэтому перед командами снимаем скобки и пробелы:
+   ```sh
+   export CLOUDFLARE_ACCOUNT_ID="$(printf %s "$CLOUDFLARE_ACCOUNT_ID" | tr -d '<> ')"
+   export CLOUDFLARE_API_TOKEN="$(printf %s "$CLOUDFLARE_API_TOKEN" | tr -d '<> ')"
+   ```
+   (Правильнее исправить сами значения в настройках окружения — сказать об этом пользователю, если скобки есть.)
+2. **Собрать** (из корня репозитория):
+   ```sh
+   pnpm install --frozen-lockfile && pnpm build
+   ```
+3. **Проверить, что проект существует; если нет — создать:**
+   ```sh
+   npx wrangler pages project list
+   npx wrangler pages project create vadimpianov --production-branch main   # только если его нет
+   ```
+4. **Выложить в production** — строго из корня репозитория, чтобы вместе с `dist/` задеплоилась папка `functions/` (редирект по языку):
+   ```sh
+   npx wrangler pages deploy dist --project-name vadimpianov --branch main
+   ```
+5. **Проверить:**
+   ```sh
+   curl -sSI https://vadimpianov.pages.dev/ru/   # 200
+   curl -sSI https://vadimpianov.pages.dev/en/   # 200
+   curl -sSI https://vadimpianov.pages.dev/      # 302/307, Location: /en/ (или /ru/ из РФ)
+   ```
+6. **Обновить «Состояние проекта»** ниже: дата деплоя, адрес. Закоммитить и запушить.
+
+### Если не выходит
+
+- **`fetch failed` / 403 от прокси на `api.cloudflare.com`**: это сетевая политика облачного окружения. Сказать пользователю: меню окружения в заголовке сессии → Edit → Network access → добавить в разрешённые домены `api.cloudflare.com` и `vadimpianov.pages.dev` (или выбрать уровень доступа шире). Не обходить.
+- **`Invalid account ID "<…>"`**: см. шаг 1.
+- В CLAUDE.md не писать «задеплоено», пока шаг 5 не прошёл.
+
 ## Состояние проекта
 
 Скаффолд готов (2026-09-25): Astro 7 + TS (strict) + MDX + i18n `/ru/`, `/en/` + GSAP/ScrollTrigger + Lenis + View Transitions.
