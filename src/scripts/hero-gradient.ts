@@ -2,7 +2,7 @@
  * Живой градиент для hero: WebGL-шейдер без библиотек.
  * Пятна цвета медленно перетекают (шум с деформацией), курсор сдвигает палитру
  * вокруг себя и слегка — во всём блоке. Цвета берутся из CSS-переменных
- * `--hero-colors` (список hex, до 10) элемента, чтобы палитра жила рядом со стилями.
+ * `--hero-colors` (стопы «#hex N%», до 16) элемента, чтобы палитра жила рядом со стилями.
  */
 
 const VERTEX = /* glsl */ `
@@ -19,8 +19,9 @@ uniform vec2 uResolution;
 uniform float uTime;
 uniform vec2 uMouse;   // 0..1, y вверх, сглаженный
 uniform float uHover;  // 0..1, насколько курсор «внутри» блока
-#define MAX_COLORS 10
+#define MAX_COLORS 16
 uniform vec3 uColors[MAX_COLORS];
+uniform float uStops[MAX_COLORS]; // позиции цветов в кольце палитры, 0..1
 uniform float uCount;
 uniform float uHueSpeed; // скорость смены оттенков (1 = пресет soft)
 uniform float uEdge;     // ширина перехода между цветами: 1 = мягко, меньше — резче
@@ -74,20 +75,19 @@ float snoise(vec3 v) {
   return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
 }
 
-// Палитра из uCount (до MAX_COLORS) опорных цветов, равномерно по t в 0..1.
-vec3 palette(float t) {
-  float x = clamp(t, 0.0, 1.0) * (uCount - 1.0);
+// Палитра-кольцо: uCount цветов на позициях uStops (0..1), последний = первому.
+// x берётся по модулю 1, поэтому сдвиг идёт по кругу без разворотов.
+vec3 palette(float x) {
+  x = fract(x);
   vec3 c = uColors[0];
   for (int i = 1; i < MAX_COLORS; i++) {
     if (float(i) >= uCount) break;
-    float center = float(i) - 0.5;
-    c = mix(c, uColors[i], smoothstep(center - uEdge * 0.5, center + uEdge * 0.5, x));
+    float mid = (uStops[i - 1] + uStops[i]) * 0.5;
+    float width = (uStops[i] - uStops[i - 1]) * uEdge;
+    c = mix(c, uColors[i], smoothstep(mid - width * 0.5, mid + width * 0.5, x));
   }
   return c;
 }
-
-// «Пинг-понг»: сдвиг за край палитры отражается обратно, без резких швов.
-float pingpong(float x) { return abs(mod(x + 1.0, 2.0) - 1.0); }
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 
@@ -111,15 +111,16 @@ void main() {
 
   // База: крупные медленно плывущие пятна — любой цвет может оказаться где угодно.
   float big = snoise(vec3(p * 0.45 + vec2(th * 0.02, -th * 0.015), th * 0.04));
-  float v = 0.5 + big * 0.5 + f * 0.35 + drift * 0.2;
-  // Со временем вся палитра плавно смещается — оттенки постоянно сменяются.
-  v += sin(th * 0.09) * 0.2 + sin(th * 0.037 + 1.7) * 0.12;
+  // Разброс > 1 круга палитры: в каждом кадре есть все цвета в нужной пропорции.
+  float v = (big * 0.5 + f * 0.35 + drift * 0.2) * 2.0;
+  // Со временем палитра сдвигается по кольцу с постоянной скоростью — только вперёд.
+  v += th * 0.012;
 
   // Курсор меняет цвет: локально вокруг себя и немного во всём блоке.
   v += influence * 0.5;
   v += (uMouse.x - 0.5) * 0.25 * uHover;
 
-  vec3 color = palette(pingpong(v));
+  vec3 color = palette(v);
   // Лёгкий дизеринг против полос на плавных переходах.
   color += (hash(gl_FragCoord.xy) - 0.5) / 128.0;
   gl_FragColor = vec4(color, 1.0);
@@ -209,9 +210,16 @@ export function mountHeroGradient(
   const uCount = gl.getUniformLocation(program, 'uCount');
 
   const styles = getComputedStyle(root);
-  const hexes = (styles.getPropertyValue('--hero-colors').match(/#[0-9a-f]{3,6}\b/gi) ?? []).slice(0, 10);
-  const colors = hexes.flatMap(hexToRgb);
-  gl.uniform1f(uCount, hexes.length);
+  // Формат как у стопов CSS-градиента: «#hex N%, #hex N%, …».
+  const stops = [
+    ...styles.getPropertyValue('--hero-colors').matchAll(/(#[0-9a-f]{3,6})\s+([\d.]+)%/gi),
+  ].slice(0, 16);
+  const colors = stops.flatMap(([, hex]) => hexToRgb(hex!));
+  gl.uniform1fv(
+    gl.getUniformLocation(program, 'uStops'),
+    stops.map(([, , pos]) => Number(pos) / 100),
+  );
+  gl.uniform1f(uCount, stops.length);
   const { hueSpeed, edge } = HERO_PRESETS[preset];
   gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
   gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
