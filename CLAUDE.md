@@ -87,6 +87,7 @@
 
 - **`fetch failed` / 403 от прокси на `api.cloudflare.com`**: это сетевая политика облачного окружения. Сказать пользователю: меню окружения в заголовке сессии → Edit → Network access → добавить в разрешённые домены `api.cloudflare.com` и `vadimpianov.pages.dev` (или выбрать уровень доступа шире). Не обходить.
 - **`Invalid account ID "<…>"`**: см. шаг 1.
+- **`Invalid format for Authorization header` [6111]**: в `CLOUDFLARE_API_TOKEN` лежит не API-токен (например, значение с `|` или Global API Key). Нужен API Token: dash.cloudflare.com → My Profile → API Tokens → Create Token → шаблон «Edit Cloudflare Workers» (или Custom: Account → Cloudflare Pages → Edit). Попросить пользователя заменить значение в настройках окружения.
 - В CLAUDE.md не писать «задеплоено», пока шаг 5 не прошёл.
 
 ## Состояние проекта
