@@ -82,6 +82,8 @@ const { title, lead, preset = 'soft' } = Astro.props;
 
   /* Наклонная сетка поверх градиента, под текстом: линии 2px почти чёрные, без заливки. */
   .hero__stripes {
+    /* Сейчас скрыта. Вернуть — убрать display: none. */
+    display: none;
     position: absolute;
     inset: 0;
     z-index: 1;
