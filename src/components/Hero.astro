@@ -203,7 +203,9 @@ const { title, lead, preset = 'soft' } = Astro.props;
       const lefts = [...new Set(items.map((item) => item.offsetLeft))].sort((x, y) => x - y);
       const STAGGER = 0.15; // доля сцены между стартами соседних колонок
       const ALIGN = 0.75; // к этой доле сцены все плитки выровнены по верху и полностью видны, дальше едут рядом
-      const START_OPACITY = 0.1;
+      const START_OPACITY = 0.1; // плашка на старте
+      const BODY_LAG = 0.1; // на сколько содержимое плитки запаздывает от плашки (доля сцены)
+      const BODY_SHIFT = 80; // стартовый сдвиг содержимого вниз внутри плитки, px
       const timeline = gsap.timeline({ scrollTrigger: scene(sceneLength) });
       items.forEach((item) => {
         const delay = lefts.indexOf(item.offsetLeft) * STAGGER;
@@ -217,12 +219,27 @@ const { title, lead, preset = 'soft' } = Astro.props;
           );
         }
         timeline.to(item, { y: 0, duration: ALIGN - delay, ease: 'none' }, delay);
-        timeline.fromTo(
-          item,
-          { opacity: START_OPACITY },
-          { opacity: 1, duration: ALIGN - delay, ease: 'none' },
-          delay,
-        );
+        // Плашка (фон) проявляется вместе с движением.
+        const plate = item.querySelector('.tiles__plate');
+        if (plate) {
+          timeline.fromTo(
+            plate,
+            { opacity: START_OPACITY },
+            { opacity: 1, duration: ALIGN - delay, ease: 'none' },
+            delay,
+          );
+        }
+        // Содержимое — чуть позже плашки и со своим параллаксом: отстаёт и доезжает внутри неё.
+        const body = item.querySelector('.tiles__body');
+        if (body) {
+          const start = delay + BODY_LAG;
+          timeline.fromTo(
+            body,
+            { opacity: 0, y: BODY_SHIFT },
+            { opacity: 1, y: 0, duration: ALIGN + BODY_LAG - start, ease: 'none' },
+            start,
+          );
+        }
       });
       // Хвост сцены: плитки едут рядом до места под шапкой (таймлайн должен длиться всю сцену).
       timeline.set({}, {}, 1);
