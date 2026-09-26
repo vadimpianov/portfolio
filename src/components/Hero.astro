@@ -455,7 +455,8 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
       }
 
       // Очередь по колонкам: номер колонки — по горизонтальной позиции плитки.
-      const items = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
+      // В сцене — только основные плитки (прямые дети .tiles); карточки ниже стоят как есть.
+      const items = [...tiles.querySelectorAll<HTMLElement>(':scope > .tiles__item')];
       const lefts = [...new Set(items.map((item) => item.offsetLeft))].sort((x, y) => x - y);
       const STAGGER = 0.15; // доля сцены между стартами соседних колонок
       const ALIGN = 1; // к этой доле сцены все плитки выровнены по верху и полностью видны (1 — в самом финале)
@@ -516,7 +517,9 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
         const SNAP_IDLE = 90; // мс без движения — скролл считается остановившимся
         let points: number[] = [];
         const updatePoints = () => {
-          const rows = [...new Set(items.map((item) => docTop(item)))];
+          // Доводка — ко всем рядам, включая карточки ниже основных плиток.
+          const all = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
+          const rows = [...new Set(all.map((item) => docTop(item)))].sort((a, b) => a - b);
           points = rows.map((top) => Math.round(top - cssPx('--tiles-final-top')));
         };
         let snapping = false;
