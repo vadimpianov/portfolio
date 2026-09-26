@@ -290,6 +290,10 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   }
 
   .hero__content {
+    /* Блок текста на 20px выше центра экрана (портрет не сдвигается).
+       Через top, а не transform: transform занят анимацией скролла. */
+    position: relative;
+    top: -20px;
     max-width: 72rem;
     color: #fff;
   }
