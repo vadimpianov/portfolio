@@ -39,6 +39,7 @@ const LOGOS: { name: string; src: string; scale: number }[] = [
   { name: 'BelkaCar', src: '/logos/belkacar.svg', scale: 0.62 },
   { name: 'MAPS.ME', src: '/logos/mapsme.svg', scale: 1.2 },
   { name: t('tiles.4.title'), src: '/logos/m2.svg', scale: 1.1 },
+  { name: 'Parity', src: '/logos/parity.svg', scale: 1 },
 ];
 const MARQUEE_AFTER = 2;
 // Логотипы повторены, чтобы одной группы хватало на самый широкий экран; групп две — для бесшовного цикла.
@@ -179,6 +180,7 @@ const tiles = TITLE_KEYS.map((key) => ({
   .tiles__marquee {
     grid-column: 1 / -1;
     margin-inline: calc(-1 * var(--gutter));
+    padding-block: 4px;
     overflow: hidden;
     color: var(--color-text);
     /* Края растворяются, логотипы появляются и уходят мягко. */
@@ -188,7 +190,7 @@ const tiles = TITLE_KEYS.map((key) => ({
   .tiles__marquee-track {
     display: flex;
     width: max-content;
-    animation: tiles-marquee 40s linear infinite;
+    animation: tiles-marquee 80s linear infinite;
   }
 
   .tiles__marquee-group {
@@ -200,18 +202,17 @@ const tiles = TITLE_KEYS.map((key) => ({
     list-style: none;
   }
 
+  /* Высота строки — по самому высокому логотипу, чтобы ни один не обрезался сверху и снизу. */
   .tiles__logo {
     display: flex;
     flex: none;
     align-items: center;
-    height: var(--marquee-logo-h);
   }
 
-  /* Логотипы — в тёмно-сером монохроме (рисунок внутри значков сохраняется), чтобы строка была ровной. */
+  /* Логотипы — в своих фирменных цветах. */
   .tiles__logo img {
-    height: calc(100% * var(--logo-scale, 1));
+    height: calc(var(--marquee-logo-h) * var(--logo-scale, 1));
     width: auto;
-    filter: grayscale(1) brightness(0.55) contrast(1.6);
   }
 
   @keyframes tiles-marquee {
