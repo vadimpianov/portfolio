@@ -185,6 +185,23 @@ const { title, lead, preset = 'soft' } = Astro.props;
         );
       }
 
+      // Текст hero — наоборот: растворяется и исчезает, когда его верх доходит до низа шапки.
+      gsap.fromTo(
+        content,
+        { opacity: 1 },
+        {
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: root,
+            start: 'top top',
+            end: () => `+=${Math.max(1, docTop(content) - cssPx('--header-h'))}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+
       gsap.fromTo(
         tiles,
         { opacity: 0, y: 0 },

@@ -14,10 +14,10 @@
   --tile-h: 600px;
   --tile-gap: 20px;
   --tile-radius: 16px;
-  /* Финальная заливка плиток (90% непрозрачности). */
-  --tile-bg: rgb(255 255 255 / 0.9);
+  /* Финальная заливка плиток (60% непрозрачности). */
+  --tile-bg: rgb(255 255 255 / 0.6);
   /* Где на первом экране появляется верх плиток. */
-  --tiles-start: 80dvh;
+  --tiles-start: 90dvh;
 
   /* Шрифт */
   --font-sans: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
