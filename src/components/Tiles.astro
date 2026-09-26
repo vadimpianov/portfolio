@@ -372,7 +372,7 @@ const more = MORE_KEYS.map((key) => ({
 
   /* Пауза — только пока курсор над строкой или логотип в фокусе с клавиатуры.
      Не :focus-within: после клика ссылка остаётся в фокусе, и строка стояла бы после возврата. */
-  .tiles__marquee:hover .tiles__marquee-track,
+  .tiles__marquee:not([data-resumed]):hover .tiles__marquee-track,
   .tiles__marquee:has(a:focus-visible) .tiles__marquee-track {
     animation-play-state: paused;
   }
@@ -437,3 +437,23 @@ const more = MORE_KEYS.map((key) => ({
     }
   }
 </style>
+
+<script>
+  // После клика по логотипу лента сразу едет дальше, даже если курсор остался над ней
+  // (при возврате со стороннего сайта браузер снимает :hover только после движения мыши).
+  // Пауза под курсором снова включается, когда курсор уйдёт с ленты и вернётся.
+  // Делегирование на document: работает и после переходов View Transitions.
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element | null)?.closest('.tiles__logo a');
+    link?.closest<HTMLElement>('.tiles__marquee')?.setAttribute('data-resumed', '');
+  });
+  document.addEventListener(
+    'mouseleave',
+    (event) => {
+      const target = event.target as Element | null;
+      if (target instanceof Element && target.matches('.tiles__marquee'))
+        target.removeAttribute('data-resumed');
+    },
+    true,
+  );
+</script>
