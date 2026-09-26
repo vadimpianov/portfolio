@@ -1,5 +1,6 @@
 ---
 import Hero from '../../components/Hero.astro';
+import Tiles from '../../components/Tiles.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCases, parseCaseId } from '../../i18n/content';
 import type { Locale } from '../../i18n/ui';
@@ -13,7 +14,9 @@ const cases = await getCases(lang);
 ---
 
 <BaseLayout>
-  <Hero title={t('home.intro.title')} lead={t('home.intro.lead')} />
+  <Hero title={t('home.intro.title')} lead={t('home.intro.lead')}>
+    <Tiles />
+  </Hero>
 
   {cases.length > 0 && (
     <section>

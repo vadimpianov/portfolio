@@ -12,14 +12,20 @@ const { title, lead, preset = 'soft' } = Astro.props;
 ---
 
 <section class="hero" data-hero data-bleed data-preset={preset}>
-  <canvas class="hero__canvas" aria-hidden="true"></canvas>
-  <div class="hero__shade" aria-hidden="true"></div>
-  <div class="hero__grain" aria-hidden="true"></div>
-  <div class="hero__content">
-    <h1 class="hero__title">{title}</h1>
-    {lead && <p class="hero__lead">{lead}</p>}
+  <!-- Фон прилипает к экрану на всю высоту блока: слайды едут поверх него. -->
+  <div class="hero__bg" data-hero-bg aria-hidden="true">
+    <canvas class="hero__canvas"></canvas>
+    <div class="hero__shade"></div>
+    <div class="hero__grain"></div>
+    <div class="hero__stripes"></div>
   </div>
-  <div class="hero__stripes" aria-hidden="true"></div>
+  <div class="hero__intro">
+    <div class="hero__content">
+      <h1 class="hero__title">{title}</h1>
+      {lead && <p class="hero__lead">{lead}</p>}
+    </div>
+  </div>
+  <slot />
 </section>
 
 <style>
@@ -38,15 +44,29 @@ const { title, lead, preset = 'soft' } = Astro.props;
 
     position: relative;
     isolation: isolate;
-    display: grid;
-    /* Текст — к левой линии сетки (--gutter), по вертикали — по центру экрана. */
-    align-items: center;
-    justify-items: start;
-    padding-inline: var(--gutter);
+  }
+
+  /* Фон: липкий слой высотой в экран. margin-bottom съедает его место в потоке,
+     поэтому первый слайд начинается с того же верха. */
+  .hero__bg {
+    position: sticky;
+    top: 0;
+    z-index: -1;
     height: 100dvh;
+    margin-bottom: -100dvh;
     overflow: hidden;
+    isolation: isolate;
     /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
     background: linear-gradient(100deg, #e0a33a, #ff6fae 50%, #b58cff);
+  }
+
+  /* Первый слайд: текст — к левой линии сетки (--gutter), по вертикали — по центру экрана. */
+  .hero__intro {
+    display: grid;
+    align-items: center;
+    justify-items: start;
+    height: 100dvh;
+    padding-inline: var(--gutter);
   }
 
   .hero__canvas {
@@ -96,9 +116,6 @@ const { title, lead, preset = 'soft' } = Astro.props;
   }
 
   .hero__content {
-    /* Текст — над наклонной сеткой. */
-    position: relative;
-    z-index: 2;
     max-width: 72rem;
     color: #fff;
   }
@@ -121,7 +138,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
 </style>
 
 <script>
-  import { gsap, onPage } from '../scripts/motion';
+  import { gsap, onPage, ScrollTrigger } from '../scripts/motion';
   import { HERO_PRESETS, mountHeroGradient, type HeroPreset } from '../scripts/hero-gradient';
 
   onPage(({ reducedMotion }) => {
@@ -129,6 +146,27 @@ const { title, lead, preset = 'soft' } = Astro.props;
     const canvas = root?.querySelector('canvas');
     if (!root || !canvas) return;
     const preset = root.dataset.preset;
+
+    // Пока первый слайд уезжает (один экран прокрутки), градиент плавно становится монохромным.
+    const bg = root.querySelector<HTMLElement>('[data-hero-bg]');
+    if (bg) {
+      gsap.fromTo(
+        bg,
+        { filter: 'grayscale(0)' },
+        {
+          filter: 'grayscale(1)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: root,
+            start: 'top top',
+            end: () => `+=${window.innerHeight}`,
+            scrub: true,
+          },
+        },
+      );
+      ScrollTrigger.refresh();
+    }
+
     return mountHeroGradient(root, canvas, {
       reducedMotion,
       preset: preset && preset in HERO_PRESETS ? (preset as HeroPreset) : undefined,

@@ -10,6 +10,11 @@
   /* Высота логотипа в шапке. */
   --logo-h: 16px;
 
+  /* Плитки второго слайда. */
+  --tile-h: 600px;
+  --tile-gap: 20px;
+  --tile-radius: 16px;
+
   /* Шрифт */
   --font-sans: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --weight-regular: 400;

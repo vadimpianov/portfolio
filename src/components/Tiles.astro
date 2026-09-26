@@ -1,0 +1,32 @@
+---
+/** Второй слайд: сетка плиток 3 × 2. Пока пустые — контент решим позже. */
+const tiles = Array.from({ length: 6 });
+---
+
+<section class="tiles">
+  {tiles.map(() => (
+    <div class="tiles__item" />
+  ))}
+</section>
+
+<style>
+  /* От линии до линии сетки (--gutter), между плитками — --tile-gap. */
+  .tiles {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--tile-gap);
+    padding: var(--header-h) var(--gutter) var(--tile-gap);
+  }
+
+  @media (min-width: 768px) {
+    .tiles {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tiles__item {
+    height: var(--tile-h);
+    border-radius: var(--tile-radius);
+    background: rgb(255 255 255 / 0.16);
+  }
+</style>
