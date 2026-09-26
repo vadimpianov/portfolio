@@ -113,6 +113,26 @@ float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.545
 
 // Сдвиг лент поперёк себя в точке (along, across) — изгиб «гнущегося листа».
 // Параметры порыва и дрейфа общие для всего кадра.
+// Завихрения: два плавающих центра подкручивают ленты вокруг себя до ±90° — лента
+// загибается крюком или S-петлёй, по или против часовой (знак меняется со временем).
+// Поворот зависит только от расстояния до центра — это обратимое преобразование
+// с сохранением площади: ни дырок, ни пиков, толщина лент сохраняется.
+// Центры плывут через экран только в одну сторону и уходят за край.
+vec2 swirl(vec2 q, float aspect, float th) {
+  for (int k = 0; k < 2; k++) {
+    float fk = float(k);
+    float span = aspect + 1.6;
+    vec2 c = vec2(mod(th * 0.018 + fk * span * 0.5, span) - 0.8,
+                  0.5 + 0.3 * snoise(vec3(th * 0.015, fk * 4.3, 1.7)));
+    float angle = 1.6 * snoise(vec3(th * 0.025, fk * 6.1, 8.8));
+    vec2 d = q - c;
+    float a = angle * exp(-dot(d, d) / 0.09);
+    float ca = cos(a), sa = sin(a);
+    q = c + vec2(ca * d.x - sa * d.y, sa * d.x + ca * d.y);
+  }
+  return q;
+}
+
 float bendAt(float along, float across, float th, float t, float gust, vec3 travel) {
   // Только крупные размашистые изгибы: мелкие слои и короткие волны убраны.
   float b = gust * (0.48 * snoise(vec3(along * 0.45 - travel.x, across * 0.25, t * 0.21))
@@ -164,8 +184,9 @@ void main() {
   // глубины (across) даёт соседним лентам гнуться чуть по-разному: толщина ±15%.
   // Производная сдвига поперёк лент < 1 → поток не складывается: ни дырок, ни пиков.
   vec2 tangent = vec2(-dir.y, dir.x);
-  float along = dot(p, tangent);
-  float across = dot(p, dir);
+  vec2 ps = swirl(p, aspect, th);
+  float along = dot(ps, tangent);
+  float across = dot(ps, dir);
   // Хаос: «порывы» — сила изгибов то нарастает, то стихает (0.2…1.4); изгибы плывут
   // вдоль лент ТОЛЬКО В ОДНУ СТОРОНУ: скорость дрейфа плавает, но всегда > 0
   // (амплитуда блуждания · частота · max|∇шума| < базовой скорости), оба слоя — в одну сторону.
@@ -180,7 +201,7 @@ void main() {
   // Жёлтый всегда посередине: палитра не прокручивается, а цвет в центре экрана
   // привязан к uAnchor. Изгибы в центре вычитаются, поэтому жёлтая лента всегда
   // проходит через центр, а остальные цвета лежат по обе стороны от неё.
-  vec2 c = vec2(aspect * 0.5, 0.5);
+  vec2 c = swirl(vec2(aspect * 0.5, 0.5), aspect, th);
   float alongC = dot(c, tangent);
   float acrossC = dot(c, dir);
   float bendC = bendAt(alongC, acrossC, th, t, gust, travel);
