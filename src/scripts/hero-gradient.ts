@@ -173,9 +173,9 @@ function hexToRgb(value: string): [number, number, number] {
  * `startTime` — с какого момента анимации начинать при каждой загрузке.
  */
 export const HERO_PRESETS = {
-  // startTime 94 — сбалансированный стартовый кадр (подобран перебором: жёлтый ~27%,
-  // персик, розовый, орхидея, фиолетовый — по 14–20%, каждый цвет одним куском).
-  soft: { hueSpeed: 1, edge: 1, timeScale: 1.05, startTime: 94 },
+  // startTime 102 — стартовый кадр по скриншоту пользователя (розовый сверху, персик,
+  // жёлтый в центре, кремовая полоса, голубой внизу); найден сравнением кадров.
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.84, startTime: 102 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
