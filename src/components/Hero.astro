@@ -12,6 +12,8 @@ interface Props {
 
 const { title, lead, portraitAlt, preset = 'soft' } = Astro.props;
 const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.webp 860w';
+// Кадр с подмигиванием — показывается на мгновение при наведении на портрет.
+const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-860.webp 860w';
 ---
 
 <section class="hero" data-hero data-bleed data-preset={preset}>
@@ -43,6 +45,16 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
             height="1123"
             fetchpriority="high"
           />
+          <img
+            class="hero__portrait-img hero__portrait-wink"
+            src="/images/portrait-wink-600.webp"
+            srcset={winkSrcset}
+            sizes="(min-width: 768px) 30vw, 220px"
+            alt=""
+            width="860"
+            height="1123"
+            fetchpriority="low"
+          />
         </div>
         {/* Верхний слой: та же картинка, видна только выше середины круга —
               голова выходит за верхний край круга. */}
@@ -55,6 +67,16 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
             alt=""
             width="860"
             height="1123"
+          />
+          <img
+            class="hero__portrait-img hero__portrait-wink"
+            src="/images/portrait-wink-600.webp"
+            srcset={winkSrcset}
+            sizes="(min-width: 768px) 30vw, 220px"
+            alt=""
+            width="860"
+            height="1123"
+            fetchpriority="low"
           />
         </div>
       </div>
@@ -194,7 +216,27 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
   /* Всё, что выше середины круга, — поверх круга и без обрезки. */
   .hero__portrait-pop {
     clip-path: inset(-60% -20% 50% -20%);
-    pointer-events: none;
+  }
+
+  /* Подмигивание: при наведении на портрет кадр с закрытым глазом мелькает на полсекунды.
+     Голова над кругом тоже ловит наведение (попадание ограничено clip-path слоя). */
+  .hero__portrait-wink {
+    opacity: 0;
+  }
+
+  .hero__portrait:hover .hero__portrait-wink {
+    animation: hero-wink 0.6s ease-out;
+  }
+
+  @keyframes hero-wink {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    10%,
+    70% {
+      opacity: 1;
+    }
   }
 
   .hero__portrait-img {
