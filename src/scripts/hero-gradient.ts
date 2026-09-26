@@ -23,6 +23,7 @@ uniform float uStops[MAX_COLORS]; // позиции цветов в кольце
 uniform float uCount;
 uniform float uHueSpeed; // скорость смены оттенков (1 = пресет soft)
 uniform float uEdge;     // ширина перехода между цветами: 1 = мягко, меньше — резче
+uniform float uAnchor;   // позиция в кольце палитры, которая всегда в центре экрана (жёлтый)
 
 // Simplex noise 3D — Ashima Arts / Stefan Gustavson (MIT).
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -74,7 +75,7 @@ float snoise(vec3 v) {
 }
 
 // Палитра-кольцо: uCount цветов на позициях uStops (0..1), последний = первому.
-// x берётся по модулю 1, поэтому сдвиг идёт по кругу без разворотов.
+// x берётся по модулю 1.
 vec3 palette(float x) {
   x = fract(x);
   vec3 c = uColors[0];
@@ -88,6 +89,17 @@ vec3 palette(float x) {
 }
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+
+// Сдвиг лент поперёк себя в точке (along, across) — изгиб «гнущегося листа».
+// Параметры порыва и дрейфа общие для всего кадра.
+float bendAt(float along, float across, float th, float t, float gust, vec3 travel) {
+  float b = gust * (0.4 * snoise(vec3(along * 0.5 - travel.x, across * 0.25, t * 0.21))
+                  + 0.18 * snoise(vec3(along * 1.2 + travel.y, across * 0.25 + 4.0, t * 0.27 + 2.0))
+                  + 0.06 * snoise(vec3(along * 2.2 - travel.z, across * 0.25 + 9.0, t * 0.36 + 5.0)));
+  // Бегущие волны: длинные и пологие — не бросаются в глаза, гребни мягкие.
+  b += 0.06 * sin(along * 2.5 - th * 0.175) + 0.03 * sin(along * 4.25 + th * 0.11 + 1.7);
+  return b;
+}
 
 void main() {
   vec2 uv = gl_FragCoord.xy / uResolution;
@@ -105,10 +117,6 @@ void main() {
   float dirAngle = 1.22 + 0.5 * snoise(vec3(th * 0.045, 3.3, 1.1));
   vec2 dir = vec2(cos(dirAngle), sin(dirAngle));
 
-  // Сдвиг по кольцу — только вперёд; скорость плавает, но всегда > 0
-  // (производная фазы: 0.004 − 0.0022 − 0.00043 > 0). Медленно: быстрый сдвиг выглядел так,
-  // будто новый цвет выталкивает соседей; движение даёт в основном изгиб листа.
-  float phase = th * 0.004 + 0.02 * sin(th * 0.11) + 0.01 * sin(th * 0.043 + 1.3);
   // Плотность лент подстраивается под направление: поперёк экрана ~0.92 круга (меньше одного) — каждый цвет
   // виден одним куском, без повторов.
   float extent = aspect * abs(dir.x) + abs(dir.y);
@@ -127,17 +135,21 @@ void main() {
   // вдоль лент с непостоянной скоростью (то догоняют, то отстают) и быстро меняются.
   // Даже на пике порыва производная поперёк лент ≈ 0.55 < 1 — правило «листа» держится.
   float gust = max(0.2, 0.75 + 0.675 * snoise(vec3(th * 0.04, 7.7, 2.2)));
-  float travel1 = th * 0.03 + 1.2 * snoise(vec3(th * 0.02, 1.1, 0.0));
-  float travel2 = th * 0.025 + 0.9 * snoise(vec3(th * 0.025, 2.3, 0.0));
-  float travel3 = th * 0.04 + 0.75 * snoise(vec3(th * 0.03, 3.7, 0.0));
-  float bend = gust * (0.4 * snoise(vec3(along * 0.5 - travel1, across * 0.25, t * 0.21))
-                     + 0.18 * snoise(vec3(along * 1.2 + travel2, across * 0.25 + 4.0, t * 0.27 + 2.0))
-                     + 0.06 * snoise(vec3(along * 2.2 - travel3, across * 0.25 + 9.0, t * 0.36 + 5.0)));
-  // Бегущие волны: рябь бежит вдоль лент.
-  // Длинные (×2 к прежним) и пологие — не бросаются в глаза, гребни мягкие.
-  bend += 0.06 * sin(along * 2.5 - th * 0.175) + 0.03 * sin(along * 4.25 + th * 0.11 + 1.7);
+  vec3 travel = vec3(
+    th * 0.03 + 1.2 * snoise(vec3(th * 0.02, 1.1, 0.0)),
+    th * 0.025 + 0.9 * snoise(vec3(th * 0.025, 2.3, 0.0)),
+    th * 0.04 + 0.75 * snoise(vec3(th * 0.03, 3.7, 0.0)));
+  float bend = bendAt(along, across, th, t, gust, travel);
 
-  float v = (across + bend) * density - phase;
+  // Жёлтый всегда посередине: палитра не прокручивается, а цвет в центре экрана
+  // привязан к uAnchor. Изгибы в центре вычитаются, поэтому жёлтая лента всегда
+  // проходит через центр, а остальные цвета лежат по обе стороны от неё.
+  vec2 c = vec2(aspect * 0.5, 0.5);
+  float alongC = dot(c, tangent);
+  float acrossC = dot(c, dir);
+  float bendC = bendAt(alongC, acrossC, th, t, gust, travel);
+
+  float v = uAnchor + ((across - acrossC) + (bend - bendC)) * density;
 
   vec3 color = palette(v);
   // Лёгкий дизеринг против полос на плавных переходах.
@@ -241,6 +253,9 @@ export function mountHeroGradient(
     stops.map(([, , pos]) => Number(pos) / 100),
   );
   gl.uniform1f(uCount, stops.length);
+  // Позиция в кольце, которая всегда в центре экрана («--hero-anchor: N%»).
+  const anchor = parseFloat(styles.getPropertyValue('--hero-anchor')) || 0;
+  gl.uniform1f(gl.getUniformLocation(program, 'uAnchor'), anchor / 100);
   const { hueSpeed, edge, timeScale, startTime } = HERO_PRESETS[preset];
   gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
   gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
