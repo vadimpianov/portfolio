@@ -370,8 +370,10 @@ const more = MORE_KEYS.map((key) => ({
     outline-offset: 6px;
   }
 
+  /* Пауза — только пока курсор над строкой или логотип в фокусе с клавиатуры.
+     Не :focus-within: после клика ссылка остаётся в фокусе, и строка стояла бы после возврата. */
   .tiles__marquee:hover .tiles__marquee-track,
-  .tiles__marquee:focus-within .tiles__marquee-track {
+  .tiles__marquee:has(a:focus-visible) .tiles__marquee-track {
     animation-play-state: paused;
   }
 
