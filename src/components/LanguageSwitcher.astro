@@ -76,6 +76,15 @@ const items = [...locales].sort((a, b) => (a === 'en' ? -1 : b === 'en' ? 1 : 0)
     height: 20px;
   }
 
+  /* Толщина иконок в кнопке — под вес логотипа (~2px на экране). */
+  .lang__toggle .lang__globe {
+    stroke-width: 2.4;
+  }
+
+  .lang__toggle .lang__chevron {
+    stroke-width: 3.2;
+  }
+
   .lang__chevron {
     width: 14px;
     height: 14px;
