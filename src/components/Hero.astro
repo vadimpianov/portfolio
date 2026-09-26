@@ -38,12 +38,10 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
         </ul>
       )}
       {chips.length > 0 &&
-        /* Варианты на сравнение (скрыты от скринридеров): accent — белая плотная таблетка;
-           ring-white — белая таблетка с градиентной обводкой; ring-glass — стекло с градиентной обводкой; ring-pink — стекло с розовой обводкой.
-           Варианты с обводкой показывают только первый ряд чипсов, чтобы блок влез в экран. */
-        (['accent', 'ring-white', 'ring-glass', 'ring-pink'] as const).map((variant) => (
+        /* Вариант на сравнение (скрыт от скринридеров): accent — белая плотная таблетка с тёмным текстом. */
+        (['accent'] as const).map((variant) => (
           <ul class={`hero__chips hero__chips--variant hero__chips--${variant}`} aria-hidden="true">
-            {(variant === 'accent' ? chips : chips.slice(0, 3)).map((chip) => (
+            {chips.map((chip) => (
               <li class="hero__chip">{chip}</li>
             ))}
           </ul>
@@ -359,47 +357,6 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     background: rgb(255 255 255 / 0.88);
     box-shadow: 0 6px 18px -10px rgb(20 20 20 / 0.35);
     color: var(--color-text);
-  }
-
-  /* Цветная обводка: градиент палитры hero (жёлтый → розовый → сиреневый → голубой) по краю таблетки.
-     Приём: две подложки — внутренняя (padding-box) и градиент (border-box) под прозрачной рамкой. */
-  .hero__chips--ring-white .hero__chip,
-  .hero__chips--ring-glass .hero__chip {
-    --chip-ring: linear-gradient(100deg, #f0bd4f, #ff6fae 40%, #b58cff 70%, #7ccfff);
-    border: 2px solid transparent;
-  }
-
-  .hero__chips--ring-white .hero__chip {
-    background:
-      linear-gradient(rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.92)) padding-box,
-      var(--chip-ring) border-box;
-    color: var(--color-text);
-  }
-
-  /* Стекло: внутри — то же стекло, что у базовых чипсов; градиент рисуется только по краю
-     (псевдоэлемент с маской «рамка = вся площадь минус внутренняя»), сквозь середину не просвечивает. */
-  .hero__chips--ring-glass .hero__chip {
-    position: relative;
-    background: rgb(255 255 255 / 0.16);
-  }
-
-  .hero__chips--ring-glass .hero__chip::before {
-    position: absolute;
-    inset: -2px;
-    padding: 2px;
-    border-radius: inherit;
-    background: var(--chip-ring);
-    content: '';
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  /* Однотонная обводка розовым из палитры, внутри — стекло. */
-  .hero__chips--ring-pink .hero__chip {
-    border: 2px solid #ff6fae;
   }
 </style>
 
