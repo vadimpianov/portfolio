@@ -52,6 +52,10 @@
   --leading-display: 1.02;
   --tracking-display: -0.03em;
   --text-lead: clamp(0.9rem, 0.8rem + 0.44vw, 1.3rem);
+  --text-chip: clamp(0.8125rem, 0.75rem + 0.25vw, 1rem); /* чипсы в hero */
+  --chip-pad-y: 0.5em;
+  --chip-pad-x: 1em;
+  --chip-gap: 0.5rem;
   --leading-lead: 1.5;
 }
 
