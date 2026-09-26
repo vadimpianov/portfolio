@@ -2,7 +2,8 @@
 import type { Locale } from '../i18n/ui';
 import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 
-/** Второй слайд: плитки 2 × 2 — проект, подпись и картинка (подпись и картинка пока заглушки). */
+/** Второй слайд: плитки 2 × 2 — год, проект, подпись и картинка; ниже ещё 6 карточек по 3 в ряд — год, проект, подпись.
+    Подписи, картинки и годы пока заглушки. */
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 // Фон каждой плашки — одна крупная абстрактная композиция «по мотивам» растений:
@@ -47,14 +48,31 @@ const LOGOS: { name: string; src: string; scale: number }[] = [
 const MARQUEE_AFTER = 2;
 // Логотипы повторены, чтобы одной группы хватало на самый широкий экран; групп две — для бесшовного цикла.
 const marqueeGroup = Array.from({ length: 4 }, () => LOGOS).flat();
+// Год над названием: одинаков в обеих локалях. Пока заглушка — заменить реальными годами проектов.
+const YEAR_PLACEHOLDER = '20XX';
 const tiles = TITLE_KEYS.map((key) => ({
+  year: YEAR_PLACEHOLDER,
+  title: t(key),
+  lead: t('tiles.placeholder.lead'),
+}));
+// Карточки ниже основных плиток: без картинки, 3 в ряд (на планшете 2, на мобиле 1).
+const MORE_KEYS = [
+  'tiles.5.title',
+  'tiles.6.title',
+  'tiles.7.title',
+  'tiles.8.title',
+  'tiles.9.title',
+  'tiles.10.title',
+] as const;
+const more = MORE_KEYS.map((key) => ({
+  year: YEAR_PLACEHOLDER,
   title: t(key),
   lead: t('tiles.placeholder.lead'),
 }));
 ---
 
 <section class="tiles" data-tiles>
-  {tiles.map(({ title, lead }, i) => (
+  {tiles.map(({ year, title, lead }, i) => (
     <>
       {i === MARQUEE_AFTER && (
         <div class="tiles__marquee" data-bleed>
@@ -81,6 +99,7 @@ const tiles = TITLE_KEYS.map((key) => ({
           />
         </div>
         <div class="tiles__body">
+          <p class="tiles__year">{year}</p>
           <h2 class="tiles__title">{title}</h2>
           <p class="tiles__lead">{lead}</p>
           <div class="tiles__image" aria-hidden="true">
@@ -94,6 +113,28 @@ const tiles = TITLE_KEYS.map((key) => ({
       </article>
     </>
   ))}
+  <div class="tiles__more">
+    {more.map(({ year, title, lead }, i) => (
+      <article
+        class="tiles__item tiles__item--small"
+        style={`--tile-color: var(--tile-color-${((i + 4) % 4) + 1})`}
+      >
+        <div class="tiles__plate" aria-hidden="true">
+          <svg
+            class="tiles__print"
+            viewBox="0 0 400 450"
+            preserveAspectRatio="xMidYMid slice"
+            set:html={PRINTS[(i + 1) % PRINTS.length]}
+          />
+        </div>
+        <div class="tiles__body">
+          <p class="tiles__year">{year}</p>
+          <h2 class="tiles__title">{title}</h2>
+          <p class="tiles__lead">{lead}</p>
+        </div>
+      </article>
+    ))}
+  </div>
 </section>
 
 <style>
@@ -172,6 +213,14 @@ const tiles = TITLE_KEYS.map((key) => ({
     padding: var(--tile-padding) var(--tile-padding) 0;
   }
 
+  /* Год — над названием, тем же кеглем, что и подпись. */
+  .tiles__year {
+    margin-bottom: 0.5rem;
+    font-size: var(--text-tile-lead);
+    line-height: 1.5;
+    color: var(--color-text-body);
+  }
+
   .tiles__title {
     font-size: var(--text-tile-title);
     font-weight: var(--weight-heavy);
@@ -185,6 +234,54 @@ const tiles = TITLE_KEYS.map((key) => ({
     font-size: var(--text-tile-lead);
     line-height: 1.5;
     color: var(--color-text-body);
+  }
+
+  /* Ещё 6 карточек под основными плитками: ширина — от полей и зазора сетки (3 в ряд на десктопе,
+     2 на планшете, 1 на мобиле), высота — не меньше ширины × --tile-small-ratio (3:4) и растёт,
+     если текст не влезает; все ряды одной высоты — по самой высокой карточке. */
+  .tiles__more {
+    --more-cols: 1;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(var(--more-cols), minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: var(--tile-gap);
+    container-type: inline-size;
+  }
+
+  @media (min-width: 768px) {
+    .tiles__more {
+      --more-cols: 2;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .tiles__more {
+      --more-cols: 3;
+    }
+  }
+
+  /* Обрезает принт сама плашка, а не карточка — тогда карточка может вырасти под длинный текст. */
+  .tiles__item--small {
+    min-height: calc(
+      (100cqw - (var(--more-cols) - 1) * var(--tile-gap)) / var(--more-cols) * var(--tile-small-ratio)
+    );
+    aspect-ratio: auto;
+    overflow: visible;
+  }
+
+  .tiles__item--small .tiles__plate {
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .tiles__item--small .tiles__body {
+    height: auto;
+    padding-bottom: var(--tile-padding);
+  }
+
+  .tiles__item--small .tiles__title {
+    font-size: var(--text-tile-small-title);
   }
 
   /* Бегущая строка с логотипами: на всю ширину экрана, между рядами плиток, едет влево без конца. */
