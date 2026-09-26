@@ -152,8 +152,8 @@ const { title, lead, preset = 'soft' } = Astro.props;
 
     // Сцена скролла первого слайда (всё — scrub, привязано к прокрутке):
     // — плитки стартуют от низа экрана (--tiles-start) и подтягиваются по очереди слева направо:
-    //   каждая колонка ждёт своей очереди на месте, потом едет и проявляется (opacity 0 → 1);
-    //   к концу сцены все стоят под шапкой с зазором --tile-gap;
+    //   каждая колонка ждёт своей очереди на месте, потом едет и проявляется (opacity 0.1 → 1);
+    //   к ALIGN все выровнены по верху, к концу сцены стоят под шапкой с зазором --tile-gap;
     // — градиент к концу сцены становится монохромным;
     // — текст hero растворяется и исчезает, когда целиком уходит под шапку.
     const tiles = document.querySelector<HTMLElement>('[data-tiles]');
@@ -202,6 +202,8 @@ const { title, lead, preset = 'soft' } = Astro.props;
       const items = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
       const lefts = [...new Set(items.map((item) => item.offsetLeft))].sort((x, y) => x - y);
       const STAGGER = 0.15; // доля сцены между стартами соседних колонок
+      const ALIGN = 0.75; // к этой доле сцены все плитки выровнены по верху и полностью видны, дальше едут рядом
+      const START_OPACITY = 0.1;
       const timeline = gsap.timeline({ scrollTrigger: scene(sceneLength) });
       items.forEach((item) => {
         const delay = lefts.indexOf(item.offsetLeft) * STAGGER;
@@ -214,9 +216,16 @@ const { title, lead, preset = 'soft' } = Astro.props;
             0,
           );
         }
-        timeline.to(item, { y: 0, duration: 1 - delay, ease: 'none' }, delay);
-        timeline.fromTo(item, { opacity: 0 }, { opacity: 1, duration: 1 - delay, ease: 'none' }, delay);
+        timeline.to(item, { y: 0, duration: ALIGN - delay, ease: 'none' }, delay);
+        timeline.fromTo(
+          item,
+          { opacity: START_OPACITY },
+          { opacity: 1, duration: ALIGN - delay, ease: 'none' },
+          delay,
+        );
       });
+      // Хвост сцены: плитки едут рядом до места под шапкой (таймлайн должен длиться всю сцену).
+      timeline.set({}, {}, 1);
     }
     ScrollTrigger.refresh();
 
