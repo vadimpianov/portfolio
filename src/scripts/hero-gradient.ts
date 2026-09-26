@@ -279,9 +279,9 @@ function hexToOklab(value: string): [number, number, number] {
  * `startTime` — с какого момента анимации начинать при каждой загрузке.
  */
 export const HERO_PRESETS = {
-  // startTime 102 — стартовый кадр по скриншоту пользователя (розовый сверху, персик,
-  // жёлтый в центре, кремовая полоса, голубой внизу); найден сравнением кадров.
-  soft: { hueSpeed: 1, edge: 0.8, timeScale: 0.53, startTime: 102 },
+  // startTime 140.75 — стартовый кадр по скриншоту пользователя (жёлтый во весь экран,
+  // розовый с кремовой каймой вверху справа и слева); найден сравнением кадров.
+  soft: { hueSpeed: 1, edge: 0.8, timeScale: 0.53, startTime: 140.75 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
