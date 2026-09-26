@@ -38,7 +38,7 @@ const tiles = TITLE_KEYS.map((key) => ({
 
 <section class="tiles" data-tiles>
   {tiles.map(({ title, lead }, i) => (
-    <article class="tiles__item">
+    <article class="tiles__item" style={`--tile-color: var(--tile-color-${(i % 4) + 1})`}>
       <div class="tiles__plate" aria-hidden="true">
         <svg
           class="tiles__print"
@@ -99,7 +99,7 @@ const tiles = TITLE_KEYS.map((key) => ({
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: var(--tile-bg);
+    background: color-mix(in srgb, var(--tile-color, #fff) var(--tile-bg-opacity), transparent);
   }
 
   /* Принт — крупные формы поверх заливки плашки, проявляются вместе с ней. */

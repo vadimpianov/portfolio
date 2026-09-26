@@ -20,8 +20,13 @@
   --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   --text-tile-title: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem);
   --text-tile-lead: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  /* Финальная заливка плашки: белый, 50% прозрачности. */
-  --tile-bg: rgb(255 255 255 / 0.5);
+  /* Финальная заливка плашки: цвет плитки, 50% прозрачности. */
+  --tile-bg-opacity: 50%;
+  /* Цвета плиток (пастель: крем, мята, пудра, лаванда). */
+  --tile-color-1: #f8e8ce;
+  --tile-color-2: #def5f0;
+  --tile-color-3: #fae9e3;
+  --tile-color-4: #e8ebff;
   /* Цвет линий принтов на плашках. */
   --tile-print: rgb(20 20 20 / 0.16);
   --tile-print-fill: rgb(20 20 20 / 0.06);
