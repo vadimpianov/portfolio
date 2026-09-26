@@ -325,12 +325,14 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     list-style: none;
   }
 
+  /* Белые чипсы: почти белая плотная таблетка, тёмный текст, лёгкая тень — акцент контрастом, без цвета. */
   .hero__chip {
     padding: var(--chip-pad-y) var(--chip-pad-x);
-    border: 1px solid rgb(255 255 255 / 0.55);
+    border: 1px solid rgb(255 255 255 / 0.9);
     border-radius: 999px;
-    background: rgb(255 255 255 / 0.16);
-    backdrop-filter: blur(8px);
+    background: rgb(255 255 255 / 0.88);
+    box-shadow: 0 6px 18px -10px rgb(20 20 20 / 0.35);
+    color: var(--color-text);
     font-size: var(--text-chip);
     font-weight: 500;
     line-height: 1.2;
