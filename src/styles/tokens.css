@@ -49,8 +49,15 @@
 
 @media (min-width: 768px) {
   :root {
-    --gutter: 200px;
+    --gutter: 100px;
     --tile-ratio: 4 / 4.5;
     --tile-gap: 100px;
+  }
+}
+
+/* Широкие экраны: поля 200px (на планшетах 200px съедали бы почти половину ширины). */
+@media (min-width: 1280px) {
+  :root {
+    --gutter: 200px;
   }
 }
