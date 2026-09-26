@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import DevGrid from '../components/DevGrid.astro';
+import Logo from '../components/Logo.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import { DEV_GRID } from '../config/dev';
 import { locales } from '../i18n/ui';
@@ -38,6 +39,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <header>
+      <Logo />
       <LanguageSwitcher />
     </header>
     <main>
@@ -61,7 +63,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     z-index: 10;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
+    color: #fff;
     height: var(--header-h);
     padding-inline: var(--gutter);
   }

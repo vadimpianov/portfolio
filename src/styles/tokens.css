@@ -7,6 +7,8 @@
   --gutter: 20px;
   /* Высота шапки: элементы шапки центрируются по вертикали в ней. */
   --header-h: 52px;
+  /* Высота логотипа в шапке. */
+  --logo-h: 16px;
 
   /* Шрифт */
   --font-sans: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

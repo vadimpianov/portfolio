@@ -1,0 +1,32 @@
+---
+import { getLocaleFromUrl, localePath, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<!-- Логотип PIANOV: монолиния с круглыми концами, цвет — currentColor. -->
+<a class="logo" href={localePath(locale)} aria-label={t('nav.home')}>
+  <svg viewBox="0 0 566 73" role="img" aria-label="PIANOV">
+    <g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 69V4h24.5a22.5 22.5 0 0 1 0 45H4" />
+      <path d="M107 4v65" />
+      <path d="M162.5 69 193.5 4 224.5 69" />
+      <path d="M276.5 69V4L329 69V4" />
+      <circle cx="422" cy="36.5" r="33" />
+      <path d="M501.5 4 531.5 69 561.5 4" />
+    </g>
+  </svg>
+</a>
+
+<style>
+  .logo {
+    display: block;
+    color: inherit;
+  }
+
+  .logo svg {
+    height: var(--logo-h);
+    width: auto;
+  }
+</style>
