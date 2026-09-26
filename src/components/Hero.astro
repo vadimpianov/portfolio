@@ -205,7 +205,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
       const items = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
       const lefts = [...new Set(items.map((item) => item.offsetLeft))].sort((x, y) => x - y);
       const STAGGER = 0.15; // доля сцены между стартами соседних колонок
-      const ALIGN = 0.75; // к этой доле сцены все плитки выровнены по верху и полностью видны, дальше едут рядом
+      const ALIGN = 1; // к этой доле сцены все плитки выровнены по верху и полностью видны (1 — в самом финале)
       const START_OPACITY = 0.1; // плашка на старте
       const BODY_LAG = 0.1; // на сколько содержимое плитки запаздывает от плашки (доля сцены)
       const COL_DROP = 240; // насколько ниже стартует каждая следующая колонка, px
@@ -245,7 +245,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
           timeline.fromTo(
             body,
             { opacity: 0, y: BODY_SHIFT },
-            { opacity: 1, y: 0, duration: ALIGN + BODY_LAG - start, ease: 'none' },
+            { opacity: 1, y: 0, duration: Math.min(1, ALIGN + BODY_LAG) - start, ease: 'none' },
             start,
           );
         }

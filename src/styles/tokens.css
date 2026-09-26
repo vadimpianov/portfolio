@@ -12,7 +12,7 @@
 
   /* Плитки второго слайда. */
   /* Пропорция плитки ширина / высота — вытянута вниз (на мобиле сильнее: там одна колонка). */
-  --tile-ratio: 3 / 5;
+  --tile-ratio: 3 / 4.5;
   --tile-gap: 40px;
   --tile-radius: 16px;
   --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
@@ -48,6 +48,6 @@
 @media (min-width: 768px) {
   :root {
     --gutter: 100px;
-    --tile-ratio: 4 / 5;
+    --tile-ratio: 4 / 4.5;
   }
 }
