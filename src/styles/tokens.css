@@ -54,6 +54,7 @@
   --leading-display: 1.02;
   --tracking-display: -0.03em;
   --text-lead: clamp(0.9rem, 0.8rem + 0.44vw, 1.3rem);
+  --hero-text-shadow: 0 4px 16px rgb(20 20 20 / 0.22); /* тень под текстом hero, в пару к тени чипсов */
   --text-chip: clamp(0.8125rem, 0.75rem + 0.25vw, 1rem); /* чипсы в hero */
   --chip-pad-y: 0.5em;
   --chip-pad-x: 1em;

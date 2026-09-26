@@ -298,6 +298,12 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     color: #fff;
   }
 
+  /* Мягкая тень под текстом — как у чипсов: чуть ниже текста, широкое размытие, слабая. */
+  .hero__title,
+  .hero__lead {
+    text-shadow: var(--hero-text-shadow);
+  }
+
   .hero__title {
     font-size: var(--text-display);
     font-weight: var(--weight-heavy);
