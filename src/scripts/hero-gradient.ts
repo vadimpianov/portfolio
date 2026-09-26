@@ -114,11 +114,11 @@ float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.545
 // Сдвиг лент поперёк себя в точке (along, across) — изгиб «гнущегося листа».
 // Параметры порыва и дрейфа общие для всего кадра.
 float bendAt(float along, float across, float th, float t, float gust, vec3 travel) {
-  float b = gust * (0.4 * snoise(vec3(along * 0.5 - travel.x, across * 0.25, t * 0.21))
-                  + 0.18 * snoise(vec3(along * 1.2 + travel.y, across * 0.25 + 4.0, t * 0.27 + 2.0))
-                  + 0.06 * snoise(vec3(along * 2.2 - travel.z, across * 0.25 + 9.0, t * 0.36 + 5.0)));
-  // Бегущие волны: длинные и пологие — не бросаются в глаза, гребни мягкие.
-  b += 0.06 * sin(along * 2.5 - th * 0.175) + 0.03 * sin(along * 4.25 + th * 0.11 + 1.7);
+  // Только крупные размашистые изгибы: мелкие слои и короткие волны убраны.
+  float b = gust * (0.48 * snoise(vec3(along * 0.45 - travel.x, across * 0.25, t * 0.21))
+                  + 0.2 * snoise(vec3(along * 0.8 + travel.y, across * 0.25 + 4.0, t * 0.27 + 2.0)));
+  // Одна длинная пологая бегущая волна.
+  b += 0.07 * sin(along * 1.6 - th * 0.12);
   return b;
 }
 
