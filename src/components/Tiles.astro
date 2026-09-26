@@ -182,6 +182,8 @@ const tiles = TITLE_KEYS.map((key) => ({
     grid-column: 1 / -1;
     margin-inline: calc(-1 * var(--gutter));
     padding-block: 4px;
+    /* Отступ до карточек — половина зазора между ними (сетка даёт полный --tile-gap, забираем половину). */
+    margin-block: calc(var(--tile-gap) / -2);
     overflow: hidden;
     color: var(--color-text);
     /* Края растворяются, логотипы появляются и уходят мягко. */
