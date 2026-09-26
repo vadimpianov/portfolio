@@ -4,11 +4,14 @@ import type { HeroPreset } from '../scripts/hero-gradient';
 interface Props {
   title: string;
   lead?: string;
+  /** Подпись к портрету (имя). Если не задана — портрет не показываем. */
+  portraitAlt?: string;
   /** Характер градиента, см. HERO_PRESETS. */
   preset?: HeroPreset;
 }
 
-const { title, lead, preset = 'soft' } = Astro.props;
+const { title, lead, portraitAlt, preset = 'soft' } = Astro.props;
+const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.webp 860w';
 ---
 
 <section class="hero" data-hero data-bleed data-preset={preset}>
@@ -24,6 +27,36 @@ const { title, lead, preset = 'soft' } = Astro.props;
       <h1 class="hero__title">{title}</h1>
       {lead && <p class="hero__lead">{lead}</p>}
     </div>
+    {portraitAlt && (
+      <div class="hero__portrait">
+        {/* Нижний слой: фото внутри круга (плечи обрезаны краем). */}
+        <div class="hero__portrait-disc">
+          <img
+            class="hero__portrait-img"
+            src="/images/portrait-600.webp"
+            srcset={portraitSrcset}
+            sizes="(min-width: 768px) 30vw, 220px"
+            alt={portraitAlt}
+            width="860"
+            height="1123"
+            fetchpriority="high"
+          />
+        </div>
+        {/* Верхний слой: та же картинка, видна только выше середины круга —
+              голова выходит за верхний край круга. */}
+        <div class="hero__portrait-pop" aria-hidden="true">
+          <img
+            class="hero__portrait-img"
+            src="/images/portrait-600.webp"
+            srcset={portraitSrcset}
+            sizes="(min-width: 768px) 30vw, 220px"
+            alt=""
+            width="860"
+            height="1123"
+          />
+        </div>
+      </div>
+    )}
   </div>
   <slot />
 </section>
@@ -69,6 +102,8 @@ const { title, lead, preset = 'soft' } = Astro.props;
   /* Первый слайд: текст — к левой линии сетки (--gutter), по вертикали — по центру экрана. */
   .hero__intro {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: clamp(2rem, 5vw, 6rem);
     align-items: center;
     justify-items: start;
     height: 100dvh;
@@ -119,6 +154,55 @@ const { title, lead, preset = 'soft' } = Astro.props;
     pointer-events: none;
     opacity: 0.025;
     background: repeating-linear-gradient(45deg, transparent 0 8px, #141414 8px 10px);
+  }
+
+  /* Портрет справа от текста: чёрно-белое фото без фона в розовом круге,
+     голова выходит за верхний край круга. */
+  .hero__portrait {
+    position: relative;
+    width: clamp(220px, 28vw, 440px);
+    aspect-ratio: 1;
+  }
+
+  .hero__portrait-disc,
+  .hero__portrait-pop {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero__portrait-disc {
+    overflow: hidden;
+    border-radius: 50%;
+    background: #ff6fae;
+  }
+
+  /* Всё, что выше середины круга, — поверх круга и без обрезки. */
+  .hero__portrait-pop {
+    clip-path: inset(-60% -20% 50% -20%);
+    pointer-events: none;
+  }
+
+  .hero__portrait-img {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 88%;
+    height: auto;
+    max-width: none;
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 767px) {
+    .hero__intro {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: center;
+      row-gap: 2.5rem;
+    }
+
+    .hero__portrait {
+      order: -1;
+      width: 200px;
+    }
   }
 
   .hero__content {
