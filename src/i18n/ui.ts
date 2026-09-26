@@ -34,6 +34,15 @@ export const ui = {
     'tiles.8.title': 'LEXION development',
     'tiles.9.title': 'Лига Ставок',
     'tiles.10.title': 'Hyperboloid Agency',
+    'about.title': 'Обо мне',
+    'about.p1':
+      'За годы работы я **сотрудничал с ведущими** продуктовыми компаниями, стартапами и агентствами из совершенно разных сфер — **каршеринг, беттинг, строительные компании, банки и криптобанки, недвижимость**.',
+    'about.p2':
+      'В своей практике я придерживаюсь позиции, что дизайнер **должен быть командным игроком** — это очень эффективно. Я много общаюсь с продуктовой командой, всегда стараюсь помочь ей и найти лучшее решение задачи.',
+    'about.p3':
+      'Конечно, всегда приятно получить точное техническое задание со всеми артефактами, но в целом для меня это не критично. **У меня хорошие аналитические навыки**, и я всегда легко нахожу всю нужную информацию.',
+    'about.p4':
+      '**Я использую аналитику и пользовательские тесты**, которые провожу сам, напрямую общаясь с пользователями. А если в компании этих инструментов ещё нет, я изучу лучшие практики рынка, **применю LEAN-методологию и запущу MVP**, чтобы проверить гипотезы. Особенно это актуально для стартапов.',
     'tiles.placeholder.lead':
       'Короткое описание кейса: какая была задача, что я сделал и к какому результату это привело.',
   },
@@ -63,6 +72,15 @@ export const ui = {
     'tiles.8.title': 'LEXION development',
     'tiles.9.title': 'Liga Stavok',
     'tiles.10.title': 'Hyperboloid Agency',
+    'about.title': 'About me',
+    'about.p1':
+      'Over the years **I’ve worked with leading** product companies, startups and agencies in completely different areas — **carsharing, betting, construction, banks and crypto banks, real estate**.',
+    'about.p2':
+      'In my practice I hold that a designer **must be a team player** — it’s very effective. I communicate a lot with the product team, always try to help and find the best solution to the problem.',
+    'about.p3':
+      'Of course, it’s always nice to get a precise brief with all the artefacts, but in general it’s not critical for me. **I have strong analytical skills** and can always find the information I need.',
+    'about.p4':
+      '**I use analytics and user tests**, which I run myself by talking directly to users. And if the company doesn’t have these tools yet, I study the market’s best practices, **apply the LEAN methodology and launch an MVP** to test hypotheses. This is especially relevant for startups.',
     'tiles.placeholder.lead': 'A short case summary: what the problem was, what I did and what it led to.',
   },
 } as const satisfies Record<Locale, Record<string, string>>;

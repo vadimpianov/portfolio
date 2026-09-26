@@ -539,6 +539,10 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
           const all = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
           const rows = [...new Set(all.map((item) => docTop(item)))].sort((a, b) => a - b);
           points = rows.map((top) => Math.round(top - cssPx('--tiles-final-top')));
+          // Отдельные слайды ниже плиток (например, «Обо мне») — тоже точки доводки, как ряды плиток.
+          document.querySelectorAll<HTMLElement>('[data-snap]').forEach((slide) => {
+            points.push(Math.round(docTop(slide) - cssPx('--tiles-final-top')));
+          });
         };
         let snapping = false;
         let timer = 0;

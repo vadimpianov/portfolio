@@ -1,0 +1,60 @@
+---
+import type { Locale } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+/** Слайд «Обо мне»: заголовок и четыре абзаца; ключевые фразы — тёмным маркером. */
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const KEYS = ['about.p1', 'about.p2', 'about.p3', 'about.p4'] as const;
+// В строках ui.ts выделение размечено **так**: чётные куски — обычный текст, нечётные — маркер.
+const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
+---
+
+<section class="about" data-snap aria-labelledby="about-title">
+  <h2 class="about__title" id="about-title">
+    {t('about.title')}
+  </h2>
+  <div class="about__text">
+    {paragraphs.map((parts) => (
+      <p>{parts.map((part, i) => (i % 2 ? <mark>{part}</mark> : part))}</p>
+    ))}
+  </div>
+</section>
+
+<style>
+  /* Отдельный слайд поверх того же серого фона hero; контент — в полях сетки.
+     Как у карточек: доводка ставит верх слайда на --tiles-final-top от верха экрана (под шапкой). */
+  .about {
+    min-height: calc(100dvh - var(--tiles-final-top));
+    padding: 0 var(--gutter) var(--tile-gap);
+    color: var(--color-text);
+  }
+
+  .about__title {
+    font-size: var(--text-display);
+    font-weight: var(--weight-heavy);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .about__text {
+    max-width: 52rem;
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 3rem);
+    font-size: var(--text-about);
+    line-height: 1.55;
+    color: var(--color-text-body);
+  }
+
+  .about__text p + p {
+    margin-top: 1.1em;
+  }
+
+  /* Маркер: тёмная плашка, светлый текст; на переносе строки плашка не рвётся. */
+  .about__text mark {
+    padding: 0.05em 0.25em;
+    background: var(--color-text);
+    color: #fff;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+</style>

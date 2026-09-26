@@ -23,6 +23,7 @@
   --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   --text-tile-title: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem);
   --text-tile-small-title: clamp(1.25rem, 1rem + 0.8vw, 1.875rem); /* заголовок карточек 3 в ряд */
+  --text-about: clamp(1.0625rem, 0.95rem + 0.45vw, 1.375rem); /* текст слайда «Обо мне» */
   --text-tile-lead: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   /* Финальная заливка плашки: цвет плитки, 50% прозрачности. */
   --tile-bg-opacity: 50%;
