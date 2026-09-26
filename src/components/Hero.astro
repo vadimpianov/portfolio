@@ -434,6 +434,26 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
         },
       );
 
+      // Фото живёт само по себе: трогается сразу (без задержки текста), едет быстрее страницы
+      // (PORTRAIT_SPEED × скролл) и уходит дальше текста, растворяясь, пока целиком не скроется под шапкой.
+      const portrait = root.querySelector<HTMLElement>('.hero__portrait');
+      if (portrait) {
+        const PORTRAIT_SPEED = 1.35;
+        // Скролл, за который низ фото (с учётом ускорения) доезжает до шапки.
+        const portraitLength = () =>
+          Math.max(1, (docTop(portrait) + portrait.offsetHeight - cssPx('--header-h')) / PORTRAIT_SPEED);
+        gsap.fromTo(
+          portrait,
+          { y: 0, opacity: 1 },
+          {
+            y: () => -(PORTRAIT_SPEED - 1) * portraitLength(),
+            opacity: 0,
+            ease: 'none',
+            scrollTrigger: scene(portraitLength),
+          },
+        );
+      }
+
       // Очередь по колонкам: номер колонки — по горизонтальной позиции плитки.
       const items = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
       const lefts = [...new Set(items.map((item) => item.offsetLeft))].sort((x, y) => x - y);
