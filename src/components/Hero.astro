@@ -200,10 +200,14 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     aspect-ratio: 1;
     /* Мягкая тень в пару к тени текста и чипсов; drop-shadow — по контуру: круг + голова над ним. */
     filter: var(--hero-portrait-shadow);
+    /* Наведение (подмигивание) ловит только круг с обводкой: остальные слои — «сквозь»,
+       иначе зона — весь прямоугольник слоя с головой, заметно больше круга. */
+    pointer-events: none;
   }
 
   /* Кольцо: конический градиент палитры, круг внутри перекрывает середину. */
   .hero__portrait-ring {
+    pointer-events: auto;
     position: absolute;
     inset: 0;
     border-radius: 50%;
