@@ -24,6 +24,9 @@ uniform float uCount;
 uniform float uHueSpeed; // скорость смены оттенков (1 = пресет soft)
 uniform float uEdge;     // ширина перехода между цветами: 1 = мягко, меньше — резче
 uniform float uAnchor;   // позиция в кольце палитры, которая всегда в центре экрана (жёлтый)
+#define MAX_SOFT 4
+uniform float uSoft[MAX_SOFT]; // позиции в кольце, вокруг которых палитра растушёвывается (крем)
+uniform float uSoftCount;
 
 // Simplex noise 3D — Ashima Arts / Stefan Gustavson (MIT).
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -151,7 +154,28 @@ void main() {
 
   float v = uAnchor + ((across - acrossC) + (bend - bendC)) * density;
 
-  vec3 color = palette(v);
+  // Растушёвка вокруг «мягких» точек палитры (крем): рядом с ними цвет усредняется по
+  // широкому окну, и светлая полоска превращается в плавное свечение. Остальные
+  // границы не трогаем — их жёсткость задаёт uEdge.
+  float soft = 0.0;
+  for (int k = 0; k < MAX_SOFT; k++) {
+    if (float(k) >= uSoftCount) break;
+    float dist = abs(fract(v - uSoft[k] + 0.5) - 0.5);
+    soft = max(soft, 1.0 - smoothstep(0.0, 0.09, dist));
+  }
+  vec3 color;
+  if (soft > 0.001) {
+    // Окно не шире ±4.5% кольца: иначе у голубого оно захватывает и жёлтый, а их
+    // смесь даёт грязно-зелёный.
+    float spread = 0.045 * soft;
+    color = vec3(0.0);
+    for (int k = -4; k <= 4; k++) {
+      color += palette(v + float(k) * spread / 4.0);
+    }
+    color /= 9.0;
+  } else {
+    color = palette(v);
+  }
   // Лёгкий дизеринг против полос на плавных переходах.
   color += (hash(gl_FragCoord.xy) - 0.5) / 128.0;
   gl_FragColor = vec4(color, 1.0);
@@ -256,6 +280,12 @@ export function mountHeroGradient(
   // Позиция в кольце, которая всегда в центре экрана («--hero-anchor: N%»).
   const anchor = parseFloat(styles.getPropertyValue('--hero-anchor')) || 0;
   gl.uniform1f(gl.getUniformLocation(program, 'uAnchor'), anchor / 100);
+  // Точки растушёвки («--hero-soft: N% N%»).
+  const soft = [...styles.getPropertyValue('--hero-soft').matchAll(/([\d.]+)%/g)]
+    .slice(0, 4)
+    .map(([, n]) => Number(n) / 100);
+  gl.uniform1f(gl.getUniformLocation(program, 'uSoftCount'), soft.length);
+  if (soft.length) gl.uniform1fv(gl.getUniformLocation(program, 'uSoft'), soft);
   const { hueSpeed, edge, timeScale, startTime } = HERO_PRESETS[preset];
   gl.uniform1f(gl.getUniformLocation(program, 'uHueSpeed'), hueSpeed);
   gl.uniform1f(gl.getUniformLocation(program, 'uEdge'), edge);
