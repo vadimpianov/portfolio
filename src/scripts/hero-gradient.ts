@@ -417,7 +417,8 @@ export function mountHeroGradient(
   const intersectionObserver = new IntersectionObserver(([entry]) => {
     visible = entry?.isIntersecting ?? true;
   });
-  intersectionObserver.observe(root);
+  // Следим за самим холстом: он переживает смену языка (transition:persist), а root — нет.
+  intersectionObserver.observe(canvas);
 
   const unsubscribe = onFrame((now) => {
     const dt = lastFrame === null ? 0 : Math.min(now - lastFrame, 0.1);
