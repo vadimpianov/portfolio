@@ -345,20 +345,17 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     white-space: nowrap;
   }
 
-  /* Акцентный вариант: плотная заливка градиентом розовый → сиреневый (цвета палитры hero),
-     белый текст, светлый блик по верхнему краю и мягкая цветная тень — чипсы «лежат» над фоном. */
+  /* Акцентный вариант (спокойный): без цвета — акцент контрастом. Почти белая плотная таблетка,
+     тёмный текст, лёгкая тень: чипсы читаются сразу, но не спорят с градиентом и портретом. */
   .hero__chips--accent {
     margin-top: var(--chip-gap);
   }
 
   .hero__chips--accent .hero__chip {
-    border-color: rgb(255 255 255 / 0.35);
-    background: linear-gradient(135deg, #ff6fae 0%, #d77ee0 55%, #b58cff 100%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.45),
-      0 8px 20px -10px rgb(181 60 140 / 0.6);
-    backdrop-filter: none;
-    color: #fff;
+    border-color: rgb(255 255 255 / 0.9);
+    background: rgb(255 255 255 / 0.88);
+    box-shadow: 0 6px 18px -10px rgb(20 20 20 / 0.35);
+    color: var(--color-text);
   }
 </style>
 
