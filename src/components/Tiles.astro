@@ -5,74 +5,36 @@ import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 /** Второй слайд: плитки 2 × 2 — заголовок, подпись и картинка. Пока заглушки. */
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-// Уникальный ботанический принт у каждой плашки: SVG-паттерн, тонкая линия цвета --tile-print.
-const petals = (cx: number, cy: number, count: number, rx: number, ry: number, dist: number) =>
-  Array.from(
-    { length: count },
-    (_, k) =>
-      `<ellipse cx="${cx}" cy="${cy - dist}" rx="${rx}" ry="${ry}" transform="rotate(${(360 / count) * k} ${cx} ${cy})"/>`,
-  ).join('');
-const daisy = (cx: number, cy: number, r: number) =>
-  petals(cx, cy, 12, r * 0.18, r * 0.42, r * 0.55) + `<circle cx="${cx}" cy="${cy}" r="${r * 0.16}"/>`;
-const leaf = (x: number, y: number, angle: number, size = 10) =>
-  `<path d="M0 0 C ${size * 0.45} ${-size * 0.35} ${size * 0.45} ${-size * 0.85} 0 ${-size} C ${-size * 0.45} ${-size * 0.85} ${-size * 0.45} ${-size * 0.35} 0 0 Z M0 0 V ${-size * 0.8}" transform="translate(${x} ${y}) rotate(${angle})"/>`;
-const ginkgo = (x: number, y: number, angle: number) =>
-  `<g transform="translate(${x} ${y}) rotate(${angle})">` +
-  // Двулопастный веер с выемкой сверху, черешок и несколько жилок.
-  '<path d="M0 0 C-5 -7 -19 -15 -21 -27 C-14 -33 -5 -31 0 -24 C5 -31 14 -33 21 -27 C19 -15 5 -7 0 0 Z"/>' +
-  '<path d="M0 0 C-1 5 -3 9 -6 12"/>' +
-  [-12, -6, 6, 12]
-    .map((dx) => `<path d="M0 -2 Q${dx * 0.6} -14 ${dx} -${24 + Math.abs(dx) / 4}"/>`)
-    .join('') +
-  '</g>';
+// Фон каждой плашки — одна крупная абстрактная композиция «по мотивам» растений:
+// широкие формы на всю плашку, уходят за края. Координаты — в поле 400 × 450 (пропорция плитки).
+const petal = (cx: number, cy: number, length: number, width: number, angle: number) =>
+  `<path d="M0 0 C ${width} ${-length * 0.3} ${width * 0.8} ${-length * 0.85} 0 ${-length} C ${-width * 0.8} ${-length * 0.85} ${-width} ${-length * 0.3} 0 0 Z" transform="translate(${cx} ${cy}) rotate(${angle})"/>`;
+
 const PRINTS = [
-  // Розетки: пятилепестковые цветы и мелкие бутоны между ними.
-  {
-    id: 'rosettes',
-    w: 72,
-    h: 72,
-    body:
-      petals(36, 36, 5, 5.5, 11, 11) +
-      '<circle cx="36" cy="36" r="3.5"/>' +
-      [
-        [0, 0],
-        [72, 0],
-        [0, 72],
-        [72, 72],
-      ]
-        .map(([x, y]) => petals(x, y, 4, 2.5, 5, 5))
-        .join(''),
-  },
-  // Лоза: бесшовная волна-стебель с листьями, завитками и бутонами.
-  {
-    id: 'vine',
-    w: 180,
-    h: 90,
-    body:
-      '<path d="M0 45 C45 5 135 85 180 45"/>' +
-      leaf(24, 30, -35, 20) +
-      leaf(44, 34, 140, 17) +
-      leaf(118, 60, 145, 20) +
-      leaf(142, 56, -40, 17) +
-      '<path d="M90 45 c6 -16 24 -18 24 -4 c0 9 -11 10 -12 3"/>' +
-      '<path d="M62 50 c-2 10 -12 14 -18 9"/>' +
-      petals(44, 62, 5, 2.5, 4.5, 4.5) +
-      '<path d="M160 40 c2 -10 12 -14 18 -9"/>',
-  },
-  // Ромашки: россыпь цветов разного размера.
-  {
-    id: 'daisies',
-    w: 150,
-    h: 150,
-    body: daisy(38, 40, 26) + daisy(112, 88, 20) + daisy(52, 122, 14) + daisy(128, 18, 10),
-  },
-  // Гинкго: веерные листья со смещёнными рядами.
-  {
-    id: 'ginkgo',
-    w: 72,
-    h: 88,
-    body: ginkgo(18, 40, -20) + ginkgo(54, 84, 18) + ginkgo(54, -4, 18),
-  },
+  // Гигантский цветок из-за правого нижнего угла.
+  [0, 34, 68, 102, 136, 170, 204, 238, 272, 306]
+    .map((angle) => petal(400, 450, 420, 95, angle - 90))
+    .join('') + '<circle cx="400" cy="450" r="70"/>',
+  // Два огромных листа крест-накрест с центральными прожилками.
+  petal(-30, 470, 560, 170, 28) +
+    petal(430, 500, 520, 150, -34) +
+    '<path d="M-30 470 Q 90 250 230 -20" class="vein"/><path d="M430 500 Q 330 260 150 60" class="vein"/>',
+  // Раскрывающийся бутон: вложенные лепестки снизу по центру.
+  [
+    [200, 520, 520, 210, 0],
+    [200, 520, 440, 160, -38],
+    [200, 520, 440, 160, 38],
+    [200, 520, 340, 110, -70],
+    [200, 520, 340, 110, 70],
+  ]
+    .map(([cx, cy, l, w, a]) => petal(cx!, cy!, l!, w!, a!))
+    .join(''),
+  // Длинные стебли по диагонали и крупный бутон.
+  '<path d="M-40 520 C 80 380 150 260 330 60" class="vein"/>' +
+    '<path d="M60 560 C 150 420 230 320 440 210" class="vein"/>' +
+    petal(330, 60, 230, 90, 40) +
+    petal(250, 170, 190, 70, -40) +
+    petal(150, 330, 170, 60, 50),
 ];
 const tiles = Array.from({ length: 4 }, (_, i) => ({
   title: `${t('tiles.placeholder.title')} ${i + 1}`,
@@ -84,18 +46,12 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
   {tiles.map(({ title, lead }, i) => (
     <article class="tiles__item">
       <div class="tiles__plate" aria-hidden="true">
-        <svg class="tiles__print">
-          <defs>
-            <pattern
-              id={`tile-print-${i}`}
-              width={PRINTS[i % PRINTS.length]!.w}
-              height={PRINTS[i % PRINTS.length]!.h}
-              patternUnits="userSpaceOnUse"
-              set:html={PRINTS[i % PRINTS.length]!.body}
-            />
-          </defs>
-          <rect width="100%" height="100%" fill={`url(#tile-print-${i})`} />
-        </svg>
+        <svg
+          class="tiles__print"
+          viewBox="0 0 400 450"
+          preserveAspectRatio="xMidYMid slice"
+          set:html={PRINTS[i % PRINTS.length]}
+        />
       </div>
       <div class="tiles__body">
         <h2 class="tiles__title">{title}</h2>
@@ -152,15 +108,24 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
     background: var(--tile-bg);
   }
 
-  /* Принт — поверх заливки плашки, проявляется вместе с ней. */
+  /* Принт — крупные формы поверх заливки плашки, проявляются вместе с ней. */
   .tiles__print {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    fill: none;
+    fill: var(--tile-print-fill);
     stroke: var(--tile-print);
-    stroke-width: 1;
+    stroke-width: 1.25;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .tiles__print :global(*) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .tiles__print :global(.vein) {
+    fill: none;
   }
 
   /* Текст сверху, картинка занимает остаток и уходит в нижний край плитки. */

@@ -276,8 +276,8 @@ const { title, lead, preset = 'soft' } = Astro.props;
       // Здесь ждём полной остановки скролла (и после инерции), потом доводим до ближайшего ряда.
       const lenis = getLenis();
       if (lenis) {
-        const SNAP_RANGE = 0.4; // доля высоты экрана, в пределах которой ряд притягивает
-        const SNAP_IDLE = 120; // мс без движения — скролл считается остановившимся
+        const SNAP_RANGE = 0.5; // доля высоты экрана, в пределах которой ряд притягивает
+        const SNAP_IDLE = 90; // мс без движения — скролл считается остановившимся
         let points: number[] = [];
         const updatePoints = () => {
           const rows = [...new Set(items.map((item) => docTop(item)))];
@@ -293,7 +293,12 @@ const { title, lead, preset = 'soft' } = Astro.props;
           const distance = Math.abs(nearest - scroll);
           if (distance < 1 || distance > window.innerHeight * SNAP_RANGE) return;
           snapping = true;
-          lenis.scrollTo(nearest, { duration: 0.7, onComplete: () => (snapping = false) });
+          lenis.scrollTo(nearest, {
+            duration: 0.9,
+            // Мягкое торможение в конце — доводка заметна глазом.
+            easing: (t) => 1 - Math.pow(1 - t, 3),
+            onComplete: () => (snapping = false),
+          });
         };
         const onScroll = () => {
           window.clearTimeout(timer);
