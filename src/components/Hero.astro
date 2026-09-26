@@ -37,15 +37,6 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
           ))}
         </ul>
       )}
-      {chips.length > 0 &&
-        /* Вариант на сравнение (скрыт от скринридеров): accent — белая плотная таблетка с тёмным текстом. */
-        (['accent'] as const).map((variant) => (
-          <ul class={`hero__chips hero__chips--variant hero__chips--${variant}`} aria-hidden="true">
-            {chips.map((chip) => (
-              <li class="hero__chip">{chip}</li>
-            ))}
-          </ul>
-        ))}
     </div>
     {portraitAlt && (
       <div class="hero__portrait">
@@ -344,19 +335,6 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     font-weight: 500;
     line-height: 1.2;
     white-space: nowrap;
-  }
-
-  /* Акцентный вариант (спокойный): без цвета — акцент контрастом. Почти белая плотная таблетка,
-     тёмный текст, лёгкая тень: чипсы читаются сразу, но не спорят с градиентом и портретом. */
-  .hero__chips--variant {
-    margin-top: var(--chip-gap);
-  }
-
-  .hero__chips--accent .hero__chip {
-    border-color: rgb(255 255 255 / 0.9);
-    background: rgb(255 255 255 / 0.88);
-    box-shadow: 0 6px 18px -10px rgb(20 20 20 / 0.35);
-    color: var(--color-text);
   }
 </style>
 
