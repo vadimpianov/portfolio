@@ -16,7 +16,7 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
 
 <section class="hero" data-hero data-bleed data-preset={preset}>
   <!-- Фон прилипает к экрану на всю высоту блока: слайды едут поверх него. -->
-  <div class="hero__bg" data-hero-bg aria-hidden="true">
+  <div class="hero__bg" data-hero-bg aria-hidden="true" transition:persist="hero-bg">
     <canvas class="hero__canvas"></canvas>
     <div class="hero__shade"></div>
     <div class="hero__grain"></div>
@@ -29,6 +29,8 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     </div>
     {portraitAlt && (
       <div class="hero__portrait">
+        {/* Нарядная обводка: кольцо с градиентом всех цветов палитры, медленно вращается. */}
+        <div class="hero__portrait-ring" aria-hidden="true" />
         {/* Нижний слой: фото внутри круга (плечи обрезаны краем). */}
         <div class="hero__portrait-disc">
           <img
@@ -156,24 +158,37 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     background: repeating-linear-gradient(45deg, transparent 0 8px, #141414 8px 10px);
   }
 
-  /* Портрет справа от текста: чёрно-белое фото без фона в розовом круге,
-     голова выходит за верхний край круга. */
+  /* Портрет справа от текста: цветное фото без фона в круге с градиентным фоном
+     и нарядной вращающейся градиентной обводкой; голова выходит за верхний край круга. */
   .hero__portrait {
+    /* Толщина градиентной обводки. */
+    --ring: clamp(5px, 0.6vw, 9px);
+
     position: relative;
     width: clamp(220px, 28vw, 440px);
     aspect-ratio: 1;
   }
 
+  /* Кольцо: конический градиент палитры, круг внутри перекрывает середину. */
+  .hero__portrait-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from var(--ring-angle), #f0bd4f, #ff6fae, #b58cff, #7ccfff, #f6e7c1, #f0bd4f);
+    animation: hero-ring-spin 14s linear infinite;
+  }
+
   .hero__portrait-disc,
   .hero__portrait-pop {
     position: absolute;
-    inset: 0;
+    inset: var(--ring);
   }
 
+  /* Цветной фон круга — градиент из палитры. */
   .hero__portrait-disc {
     overflow: hidden;
     border-radius: 50%;
-    background: #ff6fae;
+    background: radial-gradient(120% 120% at 30% 20%, #ff9ccb 0%, #ff6fae 35%, #b58cff 70%, #7ccfff 100%);
   }
 
   /* Всё, что выше середины круга, — поверх круга и без обрезки. */
@@ -190,6 +205,24 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     height: auto;
     max-width: none;
     transform: translateX(-50%);
+  }
+
+  @property --ring-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  @keyframes hero-ring-spin {
+    to {
+      --ring-angle: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__portrait-ring {
+      animation: none;
+    }
   }
 
   @media (max-width: 767px) {
@@ -231,6 +264,27 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
   import { getLenis, gsap, onPage, ScrollTrigger } from '../scripts/motion';
   import { HERO_PRESETS, mountHeroGradient, type HeroPreset } from '../scripts/hero-gradient';
 
+  let gradient: { canvas: HTMLCanvasElement; destroy: () => void } | null = null;
+
+  // Холст ушёл со страницы (переход на страницу без hero) — гасим градиент.
+  document.addEventListener('astro:after-swap', () => {
+    if (gradient && !document.contains(gradient.canvas)) {
+      gradient.destroy();
+      gradient = null;
+    }
+  });
+
+  // Фон переживает смену языка, а анимации страницы пересоздаются: сохраняем фильтр
+  // фона (монохромность от скролла) до сброса и возвращаем сразу после — без вспышки.
+  let keptBgFilter = '';
+  document.addEventListener('astro:before-preparation', () => {
+    keptBgFilter = document.querySelector<HTMLElement>('[data-hero-bg]')?.style.filter ?? '';
+  });
+  document.addEventListener('astro:before-swap', () => {
+    const bg = document.querySelector<HTMLElement>('[data-hero-bg]');
+    if (bg && keptBgFilter) bg.style.filter = keptBgFilter;
+  });
+
   onPage(({ reducedMotion }) => {
     const root = document.querySelector<HTMLElement>('[data-hero]');
     const canvas = root?.querySelector('canvas');
@@ -246,6 +300,7 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     const tiles = document.querySelector<HTMLElement>('[data-tiles]');
     let destroySnap = () => {};
     const content = root.querySelector<HTMLElement>('.hero__content');
+    const portrait = root.querySelector<HTMLElement>('.hero__portrait');
     if (tiles && content) {
       const cssPx = (name: string) =>
         parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 0;
@@ -290,8 +345,9 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
       );
 
       // Растворяется и исчезает, когда целиком уходит под шапку (с учётом задержки).
+      // Фото растворяется синхронно с текстом.
       gsap.fromTo(
-        content,
+        portrait ? [content, portrait] : content,
         { opacity: 1 },
         {
           opacity: 0,
@@ -404,17 +460,24 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     }
     ScrollTrigger.refresh();
 
-    const destroyGradient = mountHeroGradient(root, canvas, {
-      reducedMotion,
-      preset: preset && preset in HERO_PRESETS ? (preset as HeroPreset) : undefined,
-      onFrame: (callback) => {
-        gsap.ticker.add(callback);
-        return () => gsap.ticker.remove(callback);
-      },
-    });
+    // Градиент живёт, пока жив его холст: при смене языка фон переносится целиком
+    // (transition:persist), и анимация продолжается без перезапуска.
+    if (gradient?.canvas !== canvas) {
+      gradient?.destroy();
+      gradient = {
+        canvas,
+        destroy: mountHeroGradient(root, canvas, {
+          reducedMotion,
+          preset: preset && preset in HERO_PRESETS ? (preset as HeroPreset) : undefined,
+          onFrame: (callback) => {
+            gsap.ticker.add(callback);
+            return () => gsap.ticker.remove(callback);
+          },
+        }),
+      };
+    }
     return () => {
       destroySnap();
-      destroyGradient();
     };
   });
 </script>

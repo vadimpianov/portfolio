@@ -6,6 +6,25 @@ gsap.registerPlugin(ScrollTrigger);
 
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Перезагрузка страницы всегда открывает первый слайд: браузер не восстанавливает прокрутку.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+/**
+ * Смена языка должна менять только текст: позиция прокрутки сохраняется, анимация
+ * перехода пропускается. Переключатель языка вызывает это перед навигацией.
+ */
+let keptScroll: number | null = null;
+export function keepViewOnNextSwap() {
+  keptScroll = window.scrollY;
+}
+
+function restoreKeptScroll() {
+  if (keptScroll === null) return;
+  lenis?.scrollTo(keptScroll, { immediate: true, force: true });
+  window.scrollTo(0, keptScroll);
+}
+
 /**
  * Lenis создаётся один раз и живёт между переходами View Transitions
  * (скрипт-модуль исполняется однократно, `<html>` не пересоздаётся).
@@ -55,9 +74,15 @@ document.addEventListener('astro:page-load', () => {
     setups.forEach((setup) => runSetup(setup, reducedMotion));
   });
   ScrollTrigger.refresh();
+  if (keptScroll !== null) {
+    restoreKeptScroll();
+    ScrollTrigger.update();
+    keptScroll = null;
+  }
 });
 
-document.addEventListener('astro:before-swap', () => {
+document.addEventListener('astro:before-swap', (event) => {
+  if (keptScroll !== null) event.viewTransition.skipTransition();
   cleanups.forEach((cleanup) => cleanup());
   cleanups = [];
   pageContext?.revert();
@@ -65,7 +90,8 @@ document.addEventListener('astro:before-swap', () => {
 });
 
 document.addEventListener('astro:after-swap', () => {
-  lenis?.scrollTo(0, { immediate: true });
+  if (keptScroll !== null) restoreKeptScroll();
+  else lenis?.scrollTo(0, { immediate: true });
 });
 
 export { gsap, ScrollTrigger };
