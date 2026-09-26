@@ -134,7 +134,8 @@ void main() {
                      + 0.18 * snoise(vec3(along * 1.2 + travel2, across * 0.25 + 4.0, t * 0.18 + 2.0))
                      + 0.06 * snoise(vec3(along * 2.2 - travel3, across * 0.25 + 9.0, t * 0.24 + 5.0)));
   // Бегущие волны: рябь бежит вдоль лент.
-  bend += 0.06 * sin(along * 5.0 - th * 0.35) + 0.03 * sin(along * 8.5 + th * 0.22 + 1.7);
+  // Длинные (×2 к прежним) и пологие — не бросаются в глаза, гребни мягкие.
+  bend += 0.06 * sin(along * 2.5 - th * 0.175) + 0.03 * sin(along * 4.25 + th * 0.11 + 1.7);
 
   float v = (across + bend) * density - phase;
 
@@ -175,7 +176,7 @@ function hexToRgb(value: string): [number, number, number] {
 export const HERO_PRESETS = {
   // startTime 102 — стартовый кадр по скриншоту пользователя (розовый сверху, персик,
   // жёлтый в центре, кремовая полоса, голубой внизу); найден сравнением кадров.
-  soft: { hueSpeed: 1, edge: 1, timeScale: 0.84, startTime: 102 },
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.672, startTime: 102 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
