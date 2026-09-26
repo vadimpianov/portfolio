@@ -11,10 +11,11 @@ export const getStaticPaths = getLocaleStaticPaths;
 const lang = Astro.params.lang as Locale;
 const t = useTranslations(lang);
 const cases = await getCases(lang);
+const chips = (['1', '2', '3', '4', '5', '6'] as const).map((n) => t(`home.intro.chip.${n}`));
 ---
 
 <BaseLayout>
-  <Hero title={t('home.intro.title')} lead={t('home.intro.lead')} portraitAlt={t('site.title')}>
+  <Hero title={t('home.intro.title')} lead={t('home.intro.lead')} chips={chips} portraitAlt={t('site.title')}>
     <Tiles />
   </Hero>
 

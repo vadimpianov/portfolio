@@ -4,13 +4,15 @@ import type { HeroPreset } from '../scripts/hero-gradient';
 interface Props {
   title: string;
   lead?: string;
+  /** Чипсы под подписью — ключевые направления работы. */
+  chips?: string[];
   /** Подпись к портрету (имя). Если не задана — портрет не показываем. */
   portraitAlt?: string;
   /** Характер градиента, см. HERO_PRESETS. */
   preset?: HeroPreset;
 }
 
-const { title, lead, portraitAlt, preset = 'soft' } = Astro.props;
+const { title, lead, chips = [], portraitAlt, preset = 'soft' } = Astro.props;
 const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.webp 860w';
 ---
 
@@ -26,6 +28,13 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     <div class="hero__content">
       <h1 class="hero__title">{title}</h1>
       {lead && <p class="hero__lead">{lead}</p>}
+      {chips.length > 0 && (
+        <ul class="hero__chips">
+          {chips.map((chip) => (
+            <li class="hero__chip">{chip}</li>
+          ))}
+        </ul>
+      )}
     </div>
     {portraitAlt && (
       <div class="hero__portrait">
@@ -257,6 +266,29 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     font-size: var(--text-lead);
     line-height: var(--leading-lead);
     text-wrap: pretty;
+  }
+
+  /* Чипсы: светлая полупрозрачная «таблетка» с тонкой обводкой, фон градиента слегка размыт под ней. */
+  .hero__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--chip-gap);
+    max-width: 47.5rem;
+    margin: clamp(1.5rem, 1rem + 1.2vw, 2.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__chip {
+    padding: var(--chip-pad-y) var(--chip-pad-x);
+    border: 1px solid rgb(255 255 255 / 0.55);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.16);
+    backdrop-filter: blur(8px);
+    font-size: var(--text-chip);
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 </style>
 
