@@ -148,9 +148,12 @@ const { title, lead, preset = 'soft' } = Astro.props;
     if (!root || !canvas) return;
     const preset = root.dataset.preset;
 
-    // Плитки появляются внизу первого экрана (--tiles-start) и проявляются при скролле.
-    // К моменту, когда текст hero целиком уходит за шапку, они полностью видны
-    // и стоят на финальном месте: под шапкой с зазором --tile-gap (едут чуть быстрее скролла).
+    // Сцена скролла первого слайда (всё — scrub, привязано к прокрутке):
+    // — плитки стартуют от низа экрана (--tiles-start) и подтягиваются по очереди слева направо:
+    //   каждая колонка ждёт своей очереди на месте, потом едет и проявляется (opacity 0 → 1);
+    //   к концу сцены все стоят под шапкой с зазором --tile-gap;
+    // — градиент к концу сцены становится монохромным;
+    // — текст hero растворяется и исчезает, когда целиком уходит под шапку.
     const tiles = document.querySelector<HTMLElement>('[data-tiles]');
     const content = root.querySelector<HTMLElement>('.hero__content');
     if (tiles && content) {
@@ -162,64 +165,56 @@ const { title, lead, preset = 'soft' } = Astro.props;
           top += node.offsetTop;
         return top;
       };
-      // Скролл, при котором низ текста касается низа шапки.
-      const endScroll = () => docTop(content) + content.offsetHeight - cssPx('--header-h');
-      const finalY = () => cssPx('--header-h') + cssPx('--tile-gap') - (docTop(tiles) - endScroll());
+      // Длина сцены: плитки доезжают со старта до места под шапкой вместе со скроллом.
+      const sceneLength = () => Math.max(1, docTop(tiles) - cssPx('--header-h') - cssPx('--tile-gap'));
+      const scene = (end: () => number) => ({
+        trigger: root,
+        start: 'top top',
+        end: () => `+=${end()}`,
+        scrub: true,
+        invalidateOnRefresh: true,
+      });
 
-      // Градиент плавно становится монохромным к тому же моменту.
       const bg = root.querySelector<HTMLElement>('[data-hero-bg]');
       if (bg) {
         gsap.fromTo(
           bg,
           { filter: 'grayscale(0)' },
-          {
-            filter: 'grayscale(1)',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: root,
-              start: 'top top',
-              end: () => `+=${Math.max(1, endScroll())}`,
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
-          },
+          { filter: 'grayscale(1)', ease: 'none', scrollTrigger: scene(sceneLength) },
         );
       }
 
-      // Текст hero — наоборот: растворяется и исчезает, когда его верх доходит до низа шапки.
       gsap.fromTo(
         content,
         { opacity: 1 },
         {
           opacity: 0,
           ease: 'none',
-          scrollTrigger: {
-            trigger: root,
-            start: 'top top',
-            end: () => `+=${Math.max(1, docTop(content) - cssPx('--header-h'))}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
+          scrollTrigger: scene(() =>
+            Math.max(1, docTop(content) + content.offsetHeight - cssPx('--header-h')),
+          ),
         },
       );
 
-      gsap.fromTo(
-        tiles,
-        { opacity: 0, y: 0 },
-        {
-          opacity: 1,
-          y: finalY,
-          ease: 'none',
-          immediateRender: true,
-          scrollTrigger: {
-            trigger: root,
-            start: 'top top',
-            end: () => `+=${Math.max(1, endScroll())}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        },
-      );
+      // Очередь по колонкам: номер колонки — по горизонтальной позиции плитки.
+      const items = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];
+      const lefts = [...new Set(items.map((item) => item.offsetLeft))].sort((x, y) => x - y);
+      const STAGGER = 0.15; // доля сцены между стартами соседних колонок
+      const timeline = gsap.timeline({ scrollTrigger: scene(sceneLength) });
+      items.forEach((item) => {
+        const delay = lefts.indexOf(item.offsetLeft) * STAGGER;
+        // Пока ждёт очереди — держится на месте экрана (сдвиг компенсирует скролл).
+        if (delay > 0) {
+          timeline.fromTo(
+            item,
+            { y: 0 },
+            { y: () => delay * sceneLength(), duration: delay, ease: 'none' },
+            0,
+          );
+        }
+        timeline.to(item, { y: 0, duration: 1 - delay, ease: 'none' }, delay);
+        timeline.fromTo(item, { opacity: 0 }, { opacity: 1, duration: 1 - delay, ease: 'none' }, delay);
+      });
     }
     ScrollTrigger.refresh();
 

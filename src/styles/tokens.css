@@ -17,7 +17,7 @@
   /* Финальная заливка плиток (60% непрозрачности). */
   --tile-bg: rgb(255 255 255 / 0.6);
   /* Где на первом экране появляется верх плиток. */
-  --tiles-start: 90dvh;
+  --tiles-start: 100dvh;
 
   /* Шрифт */
   --font-sans: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
