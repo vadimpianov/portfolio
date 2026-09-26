@@ -10,31 +10,24 @@ const t = useTranslations(locale);
 const petal = (cx: number, cy: number, length: number, width: number, angle: number) =>
   `<path d="M0 0 C ${width} ${-length * 0.3} ${width * 0.8} ${-length * 0.85} 0 ${-length} C ${-width * 0.8} ${-length * 0.85} ${-width} ${-length * 0.3} 0 0 Z" transform="translate(${cx} ${cy}) rotate(${angle})"/>`;
 
+// Лист с центральной прожилкой: основание в (cx, cy), угол от вертикали вверх.
+const veinedLeaf = (cx: number, cy: number, length: number, width: number, angle: number) =>
+  petal(cx, cy, length, width, angle) +
+  `<path class="vein" d="M0 0 Q ${width * 0.12} ${-length * 0.5} 0 ${-length * 0.94}" transform="translate(${cx} ${cy}) rotate(${angle})"/>`;
+
 const PRINTS = [
-  // Гигантский цветок из-за правого нижнего угла.
-  [0, 34, 68, 102, 136, 170, 204, 238, 272, 306]
-    .map((angle) => petal(400, 450, 420, 95, angle - 90))
-    .join('') + '<circle cx="400" cy="450" r="70"/>',
-  // Два огромных листа крест-накрест с центральными прожилками.
+  // Веер из трёх длинных листьев из левого нижнего угла.
+  veinedLeaf(-20, 480, 620, 150, 14) +
+    veinedLeaf(-20, 480, 540, 135, 44) +
+    veinedLeaf(-20, 480, 450, 115, 74),
+  // Два огромных листа крест-накрест с центральными прожилками (утверждён).
   petal(-30, 470, 560, 170, 28) +
     petal(430, 500, 520, 150, -34) +
     '<path d="M-30 470 Q 90 250 230 -20" class="vein"/><path d="M430 500 Q 330 260 150 60" class="vein"/>',
-  // Раскрывающийся бутон: вложенные лепестки снизу по центру.
-  [
-    [200, 520, 520, 210, 0],
-    [200, 520, 440, 160, -38],
-    [200, 520, 440, 160, 38],
-    [200, 520, 340, 110, -70],
-    [200, 520, 340, 110, 70],
-  ]
-    .map(([cx, cy, l, w, a]) => petal(cx!, cy!, l!, w!, a!))
-    .join(''),
-  // Длинные стебли по диагонали и крупный бутон.
-  '<path d="M-40 520 C 80 380 150 260 330 60" class="vein"/>' +
-    '<path d="M60 560 C 150 420 230 320 440 210" class="vein"/>' +
-    petal(330, 60, 230, 90, 40) +
-    petal(250, 170, 190, 70, -40) +
-    petal(150, 330, 170, 60, 50),
+  // Два листа из верхних углов, скрещиваются внизу.
+  veinedLeaf(430, -30, 580, 165, -148) + veinedLeaf(-30, -40, 520, 145, 150),
+  // Огромный лист по диагонали из правого нижнего угла и второй поперёк слева.
+  veinedLeaf(440, 490, 660, 205, -42) + veinedLeaf(-50, 250, 400, 115, 68),
 ];
 const tiles = Array.from({ length: 4 }, (_, i) => ({
   title: `${t('tiles.placeholder.title')} ${i + 1}`,
