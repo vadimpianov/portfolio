@@ -2,7 +2,7 @@
 import type { Locale } from '../i18n/ui';
 import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 
-/** Второй слайд: плитки 2 × 2 — заголовок, подпись и картинка. Пока заглушки. */
+/** Второй слайд: плитки 2 × 2 — проект, подпись и картинка (подпись и картинка пока заглушки). */
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 // Фон каждой плашки — одна крупная абстрактная композиция «по мотивам» растений:
@@ -29,8 +29,9 @@ const PRINTS = [
   // Огромный лист по диагонали из правого нижнего угла и второй поперёк слева.
   veinedLeaf(440, 490, 660, 205, -42) + veinedLeaf(-50, 250, 400, 115, 68),
 ];
-const tiles = Array.from({ length: 4 }, (_, i) => ({
-  title: `${t('tiles.placeholder.title')} ${i + 1}`,
+const TITLE_KEYS = ['tiles.1.title', 'tiles.2.title', 'tiles.3.title', 'tiles.4.title'] as const;
+const tiles = TITLE_KEYS.map((key) => ({
+  title: t(key),
   lead: t('tiles.placeholder.lead'),
 }));
 ---

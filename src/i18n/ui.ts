@@ -18,7 +18,10 @@ export const ui = {
     'home.intro.lead':
       'Выстраиваю процессы вокруг дизайна, разрабатываю архитектуру продукта и принимаю участие в разработке фич. И всё это — при помощи ИИ.',
     'home.cases': 'Кейсы',
-    'tiles.placeholder.title': 'Проект',
+    'tiles.1.title': 'Альфа Банк',
+    'tiles.2.title': 'Betting',
+    'tiles.3.title': 'Quantori',
+    'tiles.4.title': 'Метр квадратный',
     'tiles.placeholder.lead':
       'Короткое описание кейса: какая была задача, что я сделал и к какому результату это привело.',
   },
@@ -32,7 +35,10 @@ export const ui = {
     'home.intro.lead':
       'I build processes around design, shape the product architecture and take part in feature development. All of it — with the help of AI.',
     'home.cases': 'Cases',
-    'tiles.placeholder.title': 'Project',
+    'tiles.1.title': 'Alfa-Bank',
+    'tiles.2.title': 'Betting',
+    'tiles.3.title': 'Quantori',
+    'tiles.4.title': 'Metr Kvadratny',
     'tiles.placeholder.lead': 'A short case summary: what the problem was, what I did and what it led to.',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
