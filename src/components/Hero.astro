@@ -521,15 +521,24 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
         };
         let snapping = false;
         let timer = 0;
+        let direction = 1; // куда крутили последним: 1 — вниз, -1 — вверх
         const settle = () => {
           const scroll = lenis.scroll;
-          const nearest = points.reduce((best, point) =>
-            Math.abs(point - scroll) < Math.abs(best - scroll) ? point : best,
-          );
-          const distance = Math.abs(nearest - scroll);
-          if (distance < 1 || distance > window.innerHeight * SNAP_RANGE) return;
+          const firstRow = points[0] ?? 0;
+          let target: number;
+          if (scroll > 0 && scroll < firstRow) {
+            // Hero-блок: между первым слайдом и первым рядом плиток не останавливаемся —
+            // доводим туда, куда крутили: вниз — к плиткам, вверх — к началу страницы.
+            target = direction > 0 ? firstRow : 0;
+          } else {
+            target = points.reduce((best, point) =>
+              Math.abs(point - scroll) < Math.abs(best - scroll) ? point : best,
+            );
+            if (Math.abs(target - scroll) > window.innerHeight * SNAP_RANGE) return;
+          }
+          if (Math.abs(target - scroll) < 1) return;
           snapping = true;
-          lenis.scrollTo(nearest, {
+          lenis.scrollTo(target, {
             duration: 0.9,
             // Мягкое торможение в конце — доводка заметна глазом.
             easing: (t) => 1 - Math.pow(1 - t, 3),
@@ -537,6 +546,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
           });
         };
         const onScroll = () => {
+          if (!snapping && lenis.direction) direction = lenis.direction;
           window.clearTimeout(timer);
           if (!snapping) timer = window.setTimeout(settle, SNAP_IDLE);
         };
