@@ -102,7 +102,7 @@ void main() {
   float th = t * uHueSpeed;
   // Направление потока. Ленты цвета лежат поперёк него, поэтому поток почти
   // вертикальный (~70°) → ленты близки к горизонтали (~20°). Покачивается мягко, ±20°.
-  float dirAngle = 1.22 + 0.5 * snoise(vec3(th * 0.03, 3.3, 1.1));
+  float dirAngle = 1.22 + 0.5 * snoise(vec3(th * 0.045, 3.3, 1.1));
   vec2 dir = vec2(cos(dirAngle), sin(dirAngle));
 
   // Сдвиг по кольцу — только вперёд; скорость плавает, но всегда > 0
@@ -123,10 +123,16 @@ void main() {
   vec2 tangent = vec2(-dir.y, dir.x);
   float along = dot(p, tangent);
   float across = dot(p, dir);
-  // Крупные плавные изгибы, медленно меняются и плывут вдоль лент.
-  float bend = 0.4 * snoise(vec3(along * 0.5 - th * 0.03, across * 0.25, t * 0.09))
-             + 0.15 * snoise(vec3(along * 1.2 + th * 0.025, across * 0.25 + 4.0, t * 0.12 + 2.0))
-             + 0.05 * snoise(vec3(along * 2.2 - th * 0.04, across * 0.25 + 9.0, t * 0.16 + 5.0));
+  // Хаос: «порывы» — сила изгибов то нарастает, то стихает (0.3…1.2); изгибы плывут
+  // вдоль лент с непостоянной скоростью (то догоняют, то отстают) и быстрее меняются.
+  // Даже на пике порыва производная поперёк лент ≈ 0.45 < 1 — правило «листа» держится.
+  float gust = 0.75 + 0.45 * snoise(vec3(th * 0.04, 7.7, 2.2));
+  float travel1 = th * 0.03 + 0.8 * snoise(vec3(th * 0.02, 1.1, 0.0));
+  float travel2 = th * 0.025 + 0.6 * snoise(vec3(th * 0.025, 2.3, 0.0));
+  float travel3 = th * 0.04 + 0.5 * snoise(vec3(th * 0.03, 3.7, 0.0));
+  float bend = gust * (0.4 * snoise(vec3(along * 0.5 - travel1, across * 0.25, t * 0.14))
+                     + 0.18 * snoise(vec3(along * 1.2 + travel2, across * 0.25 + 4.0, t * 0.18 + 2.0))
+                     + 0.06 * snoise(vec3(along * 2.2 - travel3, across * 0.25 + 9.0, t * 0.24 + 5.0)));
   // Бегущие волны: рябь бежит вдоль лент.
   bend += 0.06 * sin(along * 5.0 - th * 0.35) + 0.03 * sin(along * 8.5 + th * 0.22 + 1.7);
 
