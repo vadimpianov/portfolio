@@ -190,6 +190,22 @@ const { title, lead, preset = 'soft' } = Astro.props;
         );
       }
 
+      // Текст hero реагирует на скролл не сразу: первые TEXT_HOLD экрана стоит на месте
+      // (сдвиг компенсирует скролл), затем плавно трогается и дальше едет со страницей.
+      // ease power1.out: в начале скорость сдвига = скорости скролла, к концу — ноль, без рывка.
+      const TEXT_HOLD = 0.15; // доля высоты экрана
+      const holdPx = () => window.innerHeight * TEXT_HOLD;
+      gsap.fromTo(
+        content,
+        { y: 0 },
+        {
+          y: holdPx,
+          ease: 'power1.out',
+          scrollTrigger: scene(() => 2 * holdPx()),
+        },
+      );
+
+      // Растворяется и исчезает, когда целиком уходит под шапку (с учётом задержки).
       gsap.fromTo(
         content,
         { opacity: 1 },
@@ -197,7 +213,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
           opacity: 0,
           ease: 'none',
           scrollTrigger: scene(() =>
-            Math.max(1, docTop(content) + content.offsetHeight - cssPx('--header-h')),
+            Math.max(1, docTop(content) + content.offsetHeight + holdPx() - cssPx('--header-h')),
           ),
         },
       );

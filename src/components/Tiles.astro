@@ -5,8 +5,75 @@ import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 /** Второй слайд: плитки 2 × 2 — заголовок, подпись и картинка. Пока заглушки. */
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-// Уникальный фоновый принт у каждой плашки.
-const PRINTS = ['dots', 'stripes', 'grid', 'rings'] as const;
+// Уникальный ботанический принт у каждой плашки: SVG-паттерн, тонкая линия цвета --tile-print.
+const petals = (cx: number, cy: number, count: number, rx: number, ry: number, dist: number) =>
+  Array.from(
+    { length: count },
+    (_, k) =>
+      `<ellipse cx="${cx}" cy="${cy - dist}" rx="${rx}" ry="${ry}" transform="rotate(${(360 / count) * k} ${cx} ${cy})"/>`,
+  ).join('');
+const daisy = (cx: number, cy: number, r: number) =>
+  petals(cx, cy, 12, r * 0.18, r * 0.42, r * 0.55) + `<circle cx="${cx}" cy="${cy}" r="${r * 0.16}"/>`;
+const leaf = (x: number, y: number, angle: number, size = 10) =>
+  `<path d="M0 0 C ${size * 0.45} ${-size * 0.35} ${size * 0.45} ${-size * 0.85} 0 ${-size} C ${-size * 0.45} ${-size * 0.85} ${-size * 0.45} ${-size * 0.35} 0 0 Z M0 0 V ${-size * 0.8}" transform="translate(${x} ${y}) rotate(${angle})"/>`;
+const ginkgo = (x: number, y: number, angle: number) =>
+  `<g transform="translate(${x} ${y}) rotate(${angle})">` +
+  // Двулопастный веер с выемкой сверху, черешок и несколько жилок.
+  '<path d="M0 0 C-5 -7 -19 -15 -21 -27 C-14 -33 -5 -31 0 -24 C5 -31 14 -33 21 -27 C19 -15 5 -7 0 0 Z"/>' +
+  '<path d="M0 0 C-1 5 -3 9 -6 12"/>' +
+  [-12, -6, 6, 12]
+    .map((dx) => `<path d="M0 -2 Q${dx * 0.6} -14 ${dx} -${24 + Math.abs(dx) / 4}"/>`)
+    .join('') +
+  '</g>';
+const PRINTS = [
+  // Розетки: пятилепестковые цветы и мелкие бутоны между ними.
+  {
+    id: 'rosettes',
+    w: 72,
+    h: 72,
+    body:
+      petals(36, 36, 5, 5.5, 11, 11) +
+      '<circle cx="36" cy="36" r="3.5"/>' +
+      [
+        [0, 0],
+        [72, 0],
+        [0, 72],
+        [72, 72],
+      ]
+        .map(([x, y]) => petals(x, y, 4, 2.5, 5, 5))
+        .join(''),
+  },
+  // Лоза: бесшовная волна-стебель с листьями, завитками и бутонами.
+  {
+    id: 'vine',
+    w: 180,
+    h: 90,
+    body:
+      '<path d="M0 45 C45 5 135 85 180 45"/>' +
+      leaf(24, 30, -35, 20) +
+      leaf(44, 34, 140, 17) +
+      leaf(118, 60, 145, 20) +
+      leaf(142, 56, -40, 17) +
+      '<path d="M90 45 c6 -16 24 -18 24 -4 c0 9 -11 10 -12 3"/>' +
+      '<path d="M62 50 c-2 10 -12 14 -18 9"/>' +
+      petals(44, 62, 5, 2.5, 4.5, 4.5) +
+      '<path d="M160 40 c2 -10 12 -14 18 -9"/>',
+  },
+  // Ромашки: россыпь цветов разного размера.
+  {
+    id: 'daisies',
+    w: 150,
+    h: 150,
+    body: daisy(38, 40, 26) + daisy(112, 88, 20) + daisy(52, 122, 14) + daisy(128, 18, 10),
+  },
+  // Гинкго: веерные листья со смещёнными рядами.
+  {
+    id: 'ginkgo',
+    w: 72,
+    h: 88,
+    body: ginkgo(18, 40, -20) + ginkgo(54, 84, 18) + ginkgo(54, -4, 18),
+  },
+];
 const tiles = Array.from({ length: 4 }, (_, i) => ({
   title: `${t('tiles.placeholder.title')} ${i + 1}`,
   lead: t('tiles.placeholder.lead'),
@@ -16,7 +83,20 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
 <section class="tiles" data-tiles>
   {tiles.map(({ title, lead }, i) => (
     <article class="tiles__item">
-      <div class="tiles__plate" data-print={PRINTS[i % PRINTS.length]} aria-hidden="true" />
+      <div class="tiles__plate" aria-hidden="true">
+        <svg class="tiles__print">
+          <defs>
+            <pattern
+              id={`tile-print-${i}`}
+              width={PRINTS[i % PRINTS.length]!.w}
+              height={PRINTS[i % PRINTS.length]!.h}
+              patternUnits="userSpaceOnUse"
+              set:html={PRINTS[i % PRINTS.length]!.body}
+            />
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#tile-print-${i})`} />
+        </svg>
+      </div>
       <div class="tiles__body">
         <h2 class="tiles__title">{title}</h2>
         <p class="tiles__lead">{lead}</p>
@@ -72,29 +152,15 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
     background: var(--tile-bg);
   }
 
-  /* Принты — поверх заливки плашки, проявляются вместе с ней. */
-  .tiles__plate::after {
-    content: '';
+  /* Принт — поверх заливки плашки, проявляется вместе с ней. */
+  .tiles__print {
     position: absolute;
     inset: 0;
-  }
-
-  .tiles__plate[data-print='dots']::after {
-    background: radial-gradient(circle, var(--tile-print) 1.5px, transparent 2px) 0 0 / 16px 16px;
-  }
-
-  .tiles__plate[data-print='stripes']::after {
-    background: repeating-linear-gradient(135deg, var(--tile-print) 0 1px, transparent 1px 14px);
-  }
-
-  .tiles__plate[data-print='grid']::after {
-    background:
-      linear-gradient(var(--tile-print) 1px, transparent 1px) 0 0 / 32px 32px,
-      linear-gradient(90deg, var(--tile-print) 1px, transparent 1px) 0 0 / 32px 32px;
-  }
-
-  .tiles__plate[data-print='rings']::after {
-    background: repeating-radial-gradient(circle at 100% 100%, var(--tile-print) 0 1px, transparent 1px 22px);
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: var(--tile-print);
+    stroke-width: 1;
   }
 
   /* Текст сверху, картинка занимает остаток и уходит в нижний край плитки. */
