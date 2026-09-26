@@ -5,6 +5,8 @@ import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 /** Второй слайд: плитки 2 × 2 — заголовок, подпись и картинка. Пока заглушки. */
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+// Уникальный фоновый принт у каждой плашки.
+const PRINTS = ['dots', 'stripes', 'grid', 'rings'] as const;
 const tiles = Array.from({ length: 4 }, (_, i) => ({
   title: `${t('tiles.placeholder.title')} ${i + 1}`,
   lead: t('tiles.placeholder.lead'),
@@ -12,9 +14,9 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
 ---
 
 <section class="tiles" data-tiles>
-  {tiles.map(({ title, lead }) => (
+  {tiles.map(({ title, lead }, i) => (
     <article class="tiles__item">
-      <div class="tiles__plate" aria-hidden="true" />
+      <div class="tiles__plate" data-print={PRINTS[i % PRINTS.length]} aria-hidden="true" />
       <div class="tiles__body">
         <h2 class="tiles__title">{title}</h2>
         <p class="tiles__lead">{lead}</p>
@@ -64,6 +66,31 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
     inset: 0;
     z-index: -1;
     background: var(--tile-bg);
+  }
+
+  /* Принты — поверх заливки плашки, проявляются вместе с ней. */
+  .tiles__plate::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .tiles__plate[data-print='dots']::after {
+    background: radial-gradient(circle, var(--tile-print) 1.5px, transparent 2px) 0 0 / 16px 16px;
+  }
+
+  .tiles__plate[data-print='stripes']::after {
+    background: repeating-linear-gradient(135deg, var(--tile-print) 0 1px, transparent 1px 14px);
+  }
+
+  .tiles__plate[data-print='grid']::after {
+    background:
+      linear-gradient(var(--tile-print) 1px, transparent 1px) 0 0 / 32px 32px,
+      linear-gradient(90deg, var(--tile-print) 1px, transparent 1px) 0 0 / 32px 32px;
+  }
+
+  .tiles__plate[data-print='rings']::after {
+    background: repeating-radial-gradient(circle at 100% 100%, var(--tile-print) 0 1px, transparent 1px 22px);
   }
 
   /* Текст сверху, картинка занимает остаток и уходит в нижний край плитки. */

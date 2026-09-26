@@ -208,18 +208,24 @@ const { title, lead, preset = 'soft' } = Astro.props;
       const ALIGN = 0.75; // к этой доле сцены все плитки выровнены по верху и полностью видны, дальше едут рядом
       const START_OPACITY = 0.1; // плашка на старте
       const BODY_LAG = 0.1; // на сколько содержимое плитки запаздывает от плашки (доля сцены)
+      const COL_DROP = 240; // насколько ниже стартует каждая следующая колонка, px
       const BODY_SHIFT = 80; // стартовый сдвиг содержимого вниз внутри плитки, px
       const timeline = gsap.timeline({ scrollTrigger: scene(sceneLength) });
       items.forEach((item) => {
-        const delay = lefts.indexOf(item.offsetLeft) * STAGGER;
+        const column = lefts.indexOf(item.offsetLeft);
+        const delay = column * STAGGER;
+        // Колонки правее стартуют ниже (COL_DROP px на колонку).
         // Пока ждёт очереди — держится на месте экрана (сдвиг компенсирует скролл).
+        const drop = column * COL_DROP;
         if (delay > 0) {
           timeline.fromTo(
             item,
-            { y: 0 },
-            { y: () => delay * sceneLength(), duration: delay, ease: 'none' },
+            { y: drop },
+            { y: () => drop + delay * sceneLength(), duration: delay, ease: 'none' },
             0,
           );
+        } else if (drop) {
+          gsap.set(item, { y: drop });
         }
         timeline.to(item, { y: 0, duration: ALIGN - delay, ease: 'none' }, delay);
         // Плашка (фон) проявляется вместе с движением.
