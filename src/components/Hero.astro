@@ -348,7 +348,8 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     font-size: var(--text-chip);
     font-weight: 500;
     line-height: 1.2;
-    white-space: nowrap;
+    /* Обычно в одну строку; переносится внутри, только если чипс шире колонки (узкие экраны). */
+    text-wrap: balance;
   }
 </style>
 
