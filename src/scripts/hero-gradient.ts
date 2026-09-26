@@ -24,6 +24,7 @@ uniform float uCount;
 uniform float uHueSpeed; // скорость смены оттенков (1 = пресет soft)
 uniform float uEdge;     // ширина перехода между цветами: 1 = мягко, меньше — резче
 uniform float uAnchor;   // позиция в кольце палитры, которая всегда в центре экрана (жёлтый)
+uniform vec2 uAnchorArea; // x — доля кольца под жёлтым, y — желаемая доля экрана под ним
 #define MAX_SOFT 4
 uniform float uSoft[MAX_SOFT]; // позиции в кольце, вокруг которых палитра растушёвывается (крем)
 uniform float uSoftCount;
@@ -141,6 +142,16 @@ void main() {
   // виден одним куском, без повторов.
   float extent = aspect * abs(dir.x) + abs(dir.y);
   float density = 0.92 / extent;
+  // Площадь жёлтой ленты почти не зависит от наклона: лента через центр длиной L
+  // (от края до края вдоль лент) и толщиной share/density занимает share·L/(density·S)
+  // экрана. Подбираем density под нужную долю, но на экране остаётся 0.7…0.92 круга (шире — цвета повторяются) —
+  // цвета не повторяются и все видны.
+  if (uAnchorArea.y > 0.0) {
+    vec2 tg = vec2(-dir.y, dir.x);
+    float lineLen = min(aspect / max(abs(tg.x), 0.001), 1.0 / max(abs(tg.y), 0.001));
+    float want = uAnchorArea.x * lineLen / (uAnchorArea.y * aspect);
+    density = clamp(want, 0.7 / extent, 0.92 / extent);
+  }
 
   // Изгибы «гнущегося листа»: ленты сдвигаются поперёк себя (вдоль dir), и сдвиг
   // зависит в основном от координаты ВДОЛЬ лент. Поэтому все края ленты гнутся
@@ -312,6 +323,11 @@ export function mountHeroGradient(
   // Позиция в кольце, которая всегда в центре экрана («--hero-anchor: N%»).
   const anchor = parseFloat(styles.getPropertyValue('--hero-anchor')) || 0;
   gl.uniform1f(gl.getUniformLocation(program, 'uAnchor'), anchor / 100);
+  // «--hero-anchor-area: <доля кольца>% <доля экрана>%» — держит площадь жёлтого.
+  const area = [...styles.getPropertyValue('--hero-anchor-area').matchAll(/([\d.]+)%/g)].map(
+    ([, n]) => Number(n) / 100,
+  );
+  gl.uniform2f(gl.getUniformLocation(program, 'uAnchorArea'), area[0] ?? 0, area[1] ?? 0);
   // Точки растушёвки («--hero-soft: N% N%»).
   const soft = [...styles.getPropertyValue('--hero-soft').matchAll(/([\d.]+)%/g)]
     .slice(0, 4)
