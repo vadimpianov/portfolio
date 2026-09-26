@@ -7,8 +7,15 @@ gsap.registerPlugin(ScrollTrigger);
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Перезагрузка страницы всегда открывает первый слайд: браузер не восстанавливает прокрутку.
+// Раннее отключение восстановления — во встроенном скрипте в <head> (BaseLayout).
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
+// Safari может восстановить позицию позже — после загрузки картинок. Возвращаем наверх
+// и страницу, и Lenis (у него своя позиция).
+window.addEventListener('load', () => {
+  window.scrollTo(0, 0);
+  lenis?.scrollTo(0, { immediate: true, force: true });
+});
 
 /**
  * Смена языка должна менять только текст: позиция прокрутки сохраняется, анимация

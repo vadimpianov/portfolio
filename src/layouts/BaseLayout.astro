@@ -25,6 +25,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
+    {/* Перезагрузка всегда открывает первый слайд. Выполняется до отрисовки, раньше модулей:
+        браузер не восстанавливает прокрутку, а перед уходом со страницы позиция сбрасывается
+        наверх — Safari/Firefox запоминают её в этот момент. */}
+    <script is:inline>
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      addEventListener('beforeunload', () => scrollTo(0, 0));
+      addEventListener('pagehide', () => scrollTo(0, 0));
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
