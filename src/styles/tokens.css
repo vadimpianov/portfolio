@@ -17,6 +17,8 @@
   /* Верх плиток в финале сцены скролла (от верха экрана); к этой точке ряды и «магнитятся». */
   --tiles-final-top: 100px;
   --tile-radius: 16px;
+  --marquee-logo-h: clamp(28px, 1.2rem + 1vw, 44px); /* высота логотипа в бегущей строке */
+  --marquee-gap: clamp(48px, 2rem + 4vw, 120px); /* между логотипами */
   --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   --text-tile-title: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem);
   --text-tile-lead: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
