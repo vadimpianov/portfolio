@@ -33,7 +33,7 @@ export const ui = {
     'tiles.7.title': 'Revo Технологии',
     'tiles.8.title': 'LEXION development',
     'tiles.9.title': 'Лига Ставок',
-    'tiles.10.title': 'Hyperboloid Digital Agency',
+    'tiles.10.title': 'Hyperboloid Agency',
     'tiles.placeholder.lead':
       'Короткое описание кейса: какая была задача, что я сделал и к какому результату это привело.',
   },
@@ -62,7 +62,7 @@ export const ui = {
     'tiles.7.title': 'Revo Technologies',
     'tiles.8.title': 'LEXION development',
     'tiles.9.title': 'Liga Stavok',
-    'tiles.10.title': 'Hyperboloid Digital Agency',
+    'tiles.10.title': 'Hyperboloid Agency',
     'tiles.placeholder.lead': 'A short case summary: what the problem was, what I did and what it led to.',
   },
 } as const satisfies Record<Locale, Record<string, string>>;

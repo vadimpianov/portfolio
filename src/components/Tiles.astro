@@ -60,14 +60,12 @@ const MARQUEE_AFTER = 2;
 // Логотипы повторены, чтобы одной группы хватало на самый широкий экран; групп две — для бесшовного цикла.
 const marqueeGroup = Array.from({ length: 4 }, () => LOGOS).flat();
 // Проекты по убыванию дат (от свежих к старым). Годы одинаковы в обеих локалях.
-// Для Betting годы пока не указаны — заглушка.
-const YEAR_PLACEHOLDER = '20XX';
 const tiles = (
   [
-    ['tiles.1.title', '2023–2026'],
+    ['tiles.1.title', '2024–2026'],
+    ['tiles.2.title', '2023–2024'],
     ['tiles.3.title', '2022–2023'],
     ['tiles.4.title', '2020–2022'],
-    ['tiles.2.title', YEAR_PLACEHOLDER],
   ] as const
 ).map(([key, year]) => ({ year, title: t(key), lead: t('tiles.placeholder.lead') }));
 // Карточки ниже основных плиток: без картинки, 3 в ряд (на планшете 2, на мобиле 1).
