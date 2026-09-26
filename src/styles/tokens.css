@@ -13,7 +13,9 @@
   /* Плитки второго слайда. */
   /* Пропорция плитки ширина / высота — вытянута вниз (на мобиле сильнее: там одна колонка). */
   --tile-ratio: 3 / 4.5;
-  --tile-gap: 40px;
+  --tile-gap: 40px; /* между карточками; на десктопе — 100px */
+  /* Зазор от шапки до плиток в финале сцены скролла. */
+  --tiles-top-gap: 40px;
   --tile-radius: 16px;
   --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   --text-tile-title: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem);
@@ -49,5 +51,6 @@
   :root {
     --gutter: 100px;
     --tile-ratio: 4 / 4.5;
+    --tile-gap: 100px;
   }
 }

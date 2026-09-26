@@ -156,7 +156,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
     // Сцена скролла первого слайда (всё — scrub, привязано к прокрутке):
     // — плитки стартуют от низа экрана (--tiles-start) и подтягиваются по очереди слева направо:
     //   каждая колонка ждёт своей очереди на месте, потом едет и проявляется (opacity 0.1 → 1);
-    //   к ALIGN все выровнены по верху, к концу сцены стоят под шапкой с зазором --tile-gap;
+    //   к ALIGN все выровнены по верху, к концу сцены стоят под шапкой с зазором --tiles-top-gap;
     // — градиент к концу сцены становится монохромным;
     // — текст hero растворяется и исчезает, когда целиком уходит под шапку.
     const tiles = document.querySelector<HTMLElement>('[data-tiles]');
@@ -171,7 +171,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
         return top;
       };
       // Длина сцены: плитки доезжают со старта до места под шапкой вместе со скроллом.
-      const sceneLength = () => Math.max(1, docTop(tiles) - cssPx('--header-h') - cssPx('--tile-gap'));
+      const sceneLength = () => Math.max(1, docTop(tiles) - cssPx('--header-h') - cssPx('--tiles-top-gap'));
       const scene = (end: () => number) => ({
         trigger: root,
         start: 'top top',

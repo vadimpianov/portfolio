@@ -41,7 +41,7 @@ const tiles = Array.from({ length: 4 }, (_, i) => ({
     /* Плитки заезжают на первый слайд: верх первого ряда — на --tiles-start от верха экрана.
        Проявляются при скролле (см. Hero.astro). */
     margin-top: calc(var(--tiles-start) - 100dvh);
-    padding: 0 var(--gutter) var(--tile-gap);
+    padding: 0 var(--gutter) var(--tiles-top-gap);
   }
 
   @media (min-width: 768px) {
