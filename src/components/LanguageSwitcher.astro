@@ -44,6 +44,45 @@ const target = locales.find((locale) => locale !== current) ?? current;
 <script>
   import { keepViewOnNextSwap } from '../scripts/motion';
 
+  // Смена языка — мгновенная:
+  // 1) страница на другом языке заранее лежит в памяти (грузим сразу после открытия страницы),
+  //    при клике берём её оттуда, без запроса к серверу;
+  // 2) без снимка старой страницы для View Transition: анимация перехода при смене языка всё равно
+  //    пропускается, а сам снимок (особенно с WebGL-фоном) и давал заметную паузу.
+  const pages = new Map<string, string>();
+
+  const prefetchOther = () => {
+    const link = document.querySelector<HTMLAnchorElement>('[data-set-lang]');
+    if (!link || pages.has(link.href)) return;
+    fetch(link.href)
+      .then((response) => (response.ok ? response.text() : null))
+      .then((html) => html && pages.set(link.href, html))
+      .catch(() => {});
+  };
+  document.addEventListener('astro:page-load', prefetchOther);
+
+  let instant = false;
+
+  // Одноразовая подмена startViewTransition: DOM обновляется сразу, без снимка.
+  const skipNextSnapshot = () => {
+    const native = document.startViewTransition;
+    if (typeof native !== 'function') return;
+    document.startViewTransition = ((update?: ViewTransitionUpdateCallback | StartViewTransitionOptions) => {
+      document.startViewTransition = native;
+      const callback = typeof update === 'function' ? update : update?.update;
+      const done = Promise.resolve()
+        .then(() => callback?.())
+        .then(() => undefined);
+      return {
+        updateCallbackDone: done,
+        ready: done,
+        finished: done,
+        skipTransition() {},
+        types: new Set<string>(),
+      } as unknown as ViewTransition;
+    }) as typeof document.startViewTransition;
+  };
+
   // Ручной выбор языка запоминается на год и важнее геолокации (см. functions/index.ts).
   // Делегирование на document: работает и после переходов View Transitions.
   document.addEventListener('click', (event) => {
@@ -52,5 +91,18 @@ const target = locales.find((locale) => locale !== current) ?? current;
     document.cookie = `lang=${link.dataset.setLang}; Path=/; Max-Age=31536000; SameSite=Lax`;
     // Меняется только текст: прокрутка и анимации остаются как были.
     keepViewOnNextSwap();
+    instant = true;
+    skipNextSnapshot();
+  });
+
+  // Готовая страница из памяти вместо запроса к серверу.
+  document.addEventListener('astro:before-preparation', (event) => {
+    if (!instant) return;
+    instant = false;
+    const html = pages.get(event.to.href);
+    if (!html) return;
+    event.loader = async () => {
+      event.newDocument = new DOMParser().parseFromString(html, 'text/html');
+    };
   });
 </script>
