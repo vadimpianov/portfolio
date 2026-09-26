@@ -54,13 +54,15 @@
   --leading-display: 1.02;
   --tracking-display: -0.03em;
   --text-lead: clamp(0.9rem, 0.8rem + 0.44vw, 1.3rem);
+  /* Тени hero — одно семейство (интенсивность −30% от первой версии): */
   --hero-portrait-shadow: drop-shadow(
-    0 10px 28px rgb(20 20 20 / 0.22)
-  ); /* тень портрета — по контуру круга и головы */
+    0 10px 28px rgb(20 20 20 / 0.15)
+  ); /* портрет — по контуру круга и головы */
   --header-shadow: drop-shadow(
-    0 1px 3px rgb(20 20 20 / 0.28)
+    0 1px 3px rgb(20 20 20 / 0.2)
   ); /* логотип и планета: тонкие линии — маленькая тень */
-  --hero-text-shadow: 0 4px 16px rgb(20 20 20 / 0.22); /* тень под текстом hero, в пару к тени чипсов */
+  --hero-text-shadow: 0 4px 16px rgb(20 20 20 / 0.15); /* заголовок и подпись */
+  --chip-shadow: 0 6px 18px -10px rgb(20 20 20 / 0.25); /* чипсы */
   --text-chip: clamp(0.8125rem, 0.75rem + 0.25vw, 1rem); /* чипсы в hero */
   --chip-pad-y: 0.5em;
   --chip-pad-x: 1em;
