@@ -300,7 +300,6 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
     const tiles = document.querySelector<HTMLElement>('[data-tiles]');
     let destroySnap = () => {};
     const content = root.querySelector<HTMLElement>('.hero__content');
-    const portrait = root.querySelector<HTMLElement>('.hero__portrait');
     if (tiles && content) {
       const cssPx = (name: string) =>
         parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 0;
@@ -356,22 +355,6 @@ const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.web
           ),
         },
       );
-
-      // Фото не задерживается — едет со страницей; растворяться начинает вместе с текстом,
-      // а исчезает, только когда целиком уходит под шапку (не обрывается посреди экрана).
-      if (portrait) {
-        gsap.fromTo(
-          portrait,
-          { opacity: 1 },
-          {
-            opacity: 0,
-            ease: 'none',
-            scrollTrigger: scene(() =>
-              Math.max(1, docTop(portrait) + portrait.offsetHeight - cssPx('--header-h')),
-            ),
-          },
-        );
-      }
 
       // Очередь по колонкам: номер колонки — по горизонтальной позиции плитки.
       const items = [...tiles.querySelectorAll<HTMLElement>('.tiles__item')];

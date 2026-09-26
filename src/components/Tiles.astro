@@ -40,6 +40,7 @@ const LOGOS: { name: string; src: string; scale: number }[] = [
   { name: 'MAPS.ME', src: '/logos/mapsme.svg', scale: 1.2 },
   { name: t('tiles.4.title'), src: '/logos/m2.svg', scale: 1.1 },
   { name: 'Parity', src: '/logos/parity.svg', scale: 1 },
+  { name: 'LEXION development', src: '/logos/lexion.svg', scale: 1.9 },
 ];
 const MARQUEE_AFTER = 2;
 // Логотипы повторены, чтобы одной группы хватало на самый широкий экран; групп две — для бесшовного цикла.
@@ -190,7 +191,7 @@ const tiles = TITLE_KEYS.map((key) => ({
   .tiles__marquee-track {
     display: flex;
     width: max-content;
-    animation: tiles-marquee 80s linear infinite;
+    animation: tiles-marquee 160s linear infinite;
   }
 
   .tiles__marquee-group {
