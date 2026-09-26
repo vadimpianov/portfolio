@@ -305,9 +305,12 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   }
 
   /* Мягкая тень под текстом — как у чипсов: чуть ниже текста, широкое размытие, слабая. */
-  .hero__title,
-  .hero__lead {
+  .hero__title {
     text-shadow: var(--hero-text-shadow);
+  }
+
+  .hero__lead {
+    text-shadow: var(--hero-lead-shadow);
   }
 
   .hero__title {
@@ -331,19 +334,19 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     display: flex;
     flex-wrap: wrap;
     gap: var(--chip-gap);
-    max-width: 47.5rem;
+    /* 52rem: «Работа с аналитикой…» и «Управление командой…» встают в один ряд (на экранах от ~1680px). */
+    max-width: 52rem;
     margin: clamp(1.5rem, 1rem + 1.2vw, 2.5rem) 0 0;
     padding: 0;
     list-style: none;
   }
 
-  /* Белые чипсы: почти белая плотная таблетка, тёмный текст, лёгкая тень — акцент контрастом, без цвета. */
+  /* Белые чипсы: почти белая плотная таблетка, тёмный текст, без тени — акцент контрастом, без цвета. */
   .hero__chip {
     padding: var(--chip-pad-y) var(--chip-pad-x);
     border: 1px solid rgb(255 255 255 / 0.9);
     border-radius: 999px;
     background: rgb(255 255 255 / 0.88);
-    box-shadow: var(--chip-shadow);
     color: var(--color-text);
     font-size: var(--text-chip);
     font-weight: 500;

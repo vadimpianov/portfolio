@@ -61,8 +61,8 @@
   --header-shadow: drop-shadow(
     0 1px 3px rgb(20 20 20 / 0.16)
   ); /* логотип и планета: тонкие линии — маленькая тень */
-  --hero-text-shadow: 0 4px 16px rgb(20 20 20 / 0.12); /* заголовок и подпись */
-  --chip-shadow: 0 6px 18px -10px rgb(20 20 20 / 0.2); /* чипсы */
+  --hero-text-shadow: 0 4px 16px rgb(20 20 20 / 0.12); /* заголовок */
+  --hero-lead-shadow: 0 4px 16px rgb(20 20 20 / 0.144); /* подпись: на 20% сильнее заголовка */
   --text-chip: clamp(0.8125rem, 0.75rem + 0.25vw, 1rem); /* чипсы в hero */
   --chip-pad-y: 0.5em;
   --chip-pad-x: 1em;
