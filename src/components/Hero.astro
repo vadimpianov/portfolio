@@ -144,7 +144,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
 </style>
 
 <script>
-  import { gsap, onPage, ScrollTrigger } from '../scripts/motion';
+  import { getLenis, gsap, onPage, ScrollTrigger } from '../scripts/motion';
   import { HERO_PRESETS, mountHeroGradient, type HeroPreset } from '../scripts/hero-gradient';
 
   onPage(({ reducedMotion }) => {
@@ -156,10 +156,11 @@ const { title, lead, preset = 'soft' } = Astro.props;
     // Сцена скролла первого слайда (всё — scrub, привязано к прокрутке):
     // — плитки стартуют от низа экрана (--tiles-start) и подтягиваются по очереди слева направо:
     //   каждая колонка ждёт своей очереди на месте, потом едет и проявляется (opacity 0.1 → 1);
-    //   к ALIGN все выровнены по верху, к концу сцены стоят под шапкой с зазором --tiles-top-gap;
+    //   к ALIGN все выровнены по верху, к концу сцены стоят с верхом на --tiles-final-top от верха экрана;
     // — градиент к концу сцены становится монохромным;
     // — текст hero растворяется и исчезает, когда целиком уходит под шапку.
     const tiles = document.querySelector<HTMLElement>('[data-tiles]');
+    let destroySnap = () => {};
     const content = root.querySelector<HTMLElement>('.hero__content');
     if (tiles && content) {
       const cssPx = (name: string) =>
@@ -171,7 +172,7 @@ const { title, lead, preset = 'soft' } = Astro.props;
         return top;
       };
       // Длина сцены: плитки доезжают со старта до места под шапкой вместе со скроллом.
-      const sceneLength = () => Math.max(1, docTop(tiles) - cssPx('--header-h') - cssPx('--tiles-top-gap'));
+      const sceneLength = () => Math.max(1, docTop(tiles) - cssPx('--tiles-final-top'));
       const scene = (end: () => number) => ({
         trigger: root,
         start: 'top top',
@@ -252,10 +253,53 @@ const { title, lead, preset = 'soft' } = Astro.props;
       });
       // Хвост сцены: плитки едут рядом до места под шапкой (таймлайн должен длиться всю сцену).
       timeline.set({}, {}, 1);
+
+      // Прилипание: каждый ряд плиток «магнитится» верхом к --tiles-final-top.
+      // Если скролл остановился недалеко от ряда (после сильного или слабого скролла) — доезжаем до него.
+      // Свой snap вместо lenis/snap: тот решает по ещё не доехавшей позиции и тянет назад.
+      // Здесь ждём полной остановки скролла (и после инерции), потом доводим до ближайшего ряда.
+      const lenis = getLenis();
+      if (lenis) {
+        const SNAP_RANGE = 0.4; // доля высоты экрана, в пределах которой ряд притягивает
+        const SNAP_IDLE = 120; // мс без движения — скролл считается остановившимся
+        let points: number[] = [];
+        const updatePoints = () => {
+          const rows = [...new Set(items.map((item) => docTop(item)))];
+          points = rows.map((top) => Math.round(top - cssPx('--tiles-final-top')));
+        };
+        let snapping = false;
+        let timer = 0;
+        const settle = () => {
+          const scroll = lenis.scroll;
+          const nearest = points.reduce((best, point) =>
+            Math.abs(point - scroll) < Math.abs(best - scroll) ? point : best,
+          );
+          const distance = Math.abs(nearest - scroll);
+          if (distance < 1 || distance > window.innerHeight * SNAP_RANGE) return;
+          snapping = true;
+          lenis.scrollTo(nearest, { duration: 0.7, onComplete: () => (snapping = false) });
+        };
+        const onScroll = () => {
+          window.clearTimeout(timer);
+          if (!snapping) timer = window.setTimeout(settle, SNAP_IDLE);
+        };
+        // Пользователь снова крутит — отдаём ему управление.
+        const onUserInput = () => (snapping = false);
+        updatePoints();
+        lenis.on('scroll', onScroll);
+        lenis.on('virtual-scroll', onUserInput);
+        ScrollTrigger.addEventListener('refresh', updatePoints);
+        destroySnap = () => {
+          window.clearTimeout(timer);
+          lenis.off('scroll', onScroll);
+          lenis.off('virtual-scroll', onUserInput);
+          ScrollTrigger.removeEventListener('refresh', updatePoints);
+        };
+      }
     }
     ScrollTrigger.refresh();
 
-    return mountHeroGradient(root, canvas, {
+    const destroyGradient = mountHeroGradient(root, canvas, {
       reducedMotion,
       preset: preset && preset in HERO_PRESETS ? (preset as HeroPreset) : undefined,
       onFrame: (callback) => {
@@ -263,5 +307,9 @@ const { title, lead, preset = 'soft' } = Astro.props;
         return () => gsap.ticker.remove(callback);
       },
     });
+    return () => {
+      destroySnap();
+      destroyGradient();
+    };
   });
 </script>
