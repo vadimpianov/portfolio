@@ -438,7 +438,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
       // (PORTRAIT_SPEED × скролл) и уходит дальше текста, растворяясь, пока целиком не скроется под шапкой.
       const portrait = root.querySelector<HTMLElement>('.hero__portrait');
       if (portrait) {
-        const PORTRAIT_SPEED = 1.35;
+        const PORTRAIT_SPEED = 1.2;
         // Скролл, за который низ фото (с учётом ускорения) доезжает до шапки.
         const portraitLength = () =>
           Math.max(1, (docTop(portrait) + portrait.offsetHeight - cssPx('--header-h')) / PORTRAIT_SPEED);
