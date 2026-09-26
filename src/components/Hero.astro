@@ -37,6 +37,14 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
           ))}
         </ul>
       )}
+      {chips.length > 0 && (
+        /* Вариант на сравнение: акцентные чипсы — заливка градиентом из палитры hero. */
+        <ul class="hero__chips hero__chips--accent" aria-hidden="true">
+          {chips.map((chip) => (
+            <li class="hero__chip">{chip}</li>
+          ))}
+        </ul>
+      )}
     </div>
     {portraitAlt && (
       <div class="hero__portrait">
@@ -335,6 +343,22 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     font-weight: 500;
     line-height: 1.2;
     white-space: nowrap;
+  }
+
+  /* Акцентный вариант: плотная заливка градиентом розовый → сиреневый (цвета палитры hero),
+     белый текст, светлый блик по верхнему краю и мягкая цветная тень — чипсы «лежат» над фоном. */
+  .hero__chips--accent {
+    margin-top: var(--chip-gap);
+  }
+
+  .hero__chips--accent .hero__chip {
+    border-color: rgb(255 255 255 / 0.35);
+    background: linear-gradient(135deg, #ff6fae 0%, #d77ee0 55%, #b58cff 100%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.45),
+      0 8px 20px -10px rgb(181 60 140 / 0.6);
+    backdrop-filter: none;
+    color: #fff;
   }
 </style>
 
