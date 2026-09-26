@@ -91,6 +91,23 @@ vec3 palette(float x) {
   return c;
 }
 
+// Палитра хранится и смешивается в OKLab: переходы между цветами идут так, как их
+// видит глаз, без выцветания и «пыльной» середины. На выходе — обратно в sRGB.
+vec3 oklabToSrgb(vec3 c) {
+  float l_ = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z;
+  float m_ = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z;
+  float s_ = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z;
+  float l = l_ * l_ * l_, m = m_ * m_ * m_, s = s_ * s_ * s_;
+  vec3 lin = vec3(
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+  lin = clamp(lin, 0.0, 1.0);
+  vec3 lo = lin * 12.92;
+  vec3 hi = 1.055 * pow(lin, vec3(1.0 / 2.4)) - 0.055;
+  return mix(lo, hi, step(vec3(0.0031308), lin));
+}
+
 float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 
 // Сдвиг лент поперёк себя в точке (along, across) — изгиб «гнущегося листа».
@@ -177,6 +194,7 @@ void main() {
     color = palette(v);
   }
   // Лёгкий дизеринг против полос на плавных переходах.
+  color = oklabToSrgb(color);
   color += (hash(gl_FragCoord.xy) - 0.5) / 128.0;
   gl_FragColor = vec4(color, 1.0);
 }
@@ -195,11 +213,25 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
   return shader;
 }
 
-function hexToRgb(value: string): [number, number, number] {
+/** #hex → OKLab (для чистого смешивания цветов в шейдере). */
+function hexToOklab(value: string): [number, number, number] {
   const hex = value.trim().replace('#', '');
   const full = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex;
   const n = parseInt(full, 16);
-  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+  const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => toLinear(c / 255)) as [
+    number,
+    number,
+    number,
+  ];
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [
+    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  ];
 }
 
 /**
@@ -271,7 +303,7 @@ export function mountHeroGradient(
   const stops = [
     ...styles.getPropertyValue('--hero-colors').matchAll(/(#[0-9a-f]{3,6})\s+([\d.]+)%/gi),
   ].slice(0, 24);
-  const colors = stops.flatMap(([, hex]) => hexToRgb(hex!));
+  const colors = stops.flatMap(([, hex]) => hexToOklab(hex!));
   gl.uniform1fv(
     gl.getUniformLocation(program, 'uStops'),
     stops.map(([, , pos]) => Number(pos) / 100),
