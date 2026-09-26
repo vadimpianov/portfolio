@@ -12,8 +12,11 @@
 
   /* Плитки второго слайда. */
   --tile-h: 600px;
-  --tile-gap: 20px;
+  --tile-gap: 40px;
   --tile-radius: 16px;
+  --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  --text-tile-title: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem);
+  --text-tile-lead: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   /* Финальная заливка плиток (60% непрозрачности). */
   --tile-bg: rgb(255 255 255 / 0.6);
   /* Где на первом экране появляется верх плиток. */
