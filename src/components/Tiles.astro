@@ -34,17 +34,28 @@ const TITLE_KEYS = ['tiles.1.title', 'tiles.2.title', 'tiles.3.title', 'tiles.4.
 // Бегущая строка с логотипами компаний — между рядами проектов (после второй плитки).
 // Файлы — public/logos/ (viewBox обрезан по содержимому); scale — оптическая подгонка высоты:
 // у значков с подписью и у узких надписей разная «визуальная масса».
-const LOGOS: { name: string; src: string; scale: number }[] = [
-  { name: t('tiles.1.title'), src: '/logos/alfa-bank.svg', scale: 0.8 },
-  { name: 'Quantori', src: '/logos/quantori.svg', scale: 0.95 },
+// url — сайт компании (открывается в новой вкладке); без url логотип не кликается.
+const LOGOS: { name: string; src: string; scale: number; url?: string }[] = [
+  { name: t('tiles.1.title'), src: '/logos/alfa-bank.svg', scale: 0.8, url: 'https://alfabank.ru/' },
+  { name: 'Quantori', src: '/logos/quantori.svg', scale: 0.95, url: 'https://www.quantori.com/' },
   { name: 'BelkaCar', src: '/logos/belkacar.svg', scale: 0.62 },
   { name: 'MAPS.ME', src: '/logos/mapsme.svg', scale: 1.2 },
-  { name: t('tiles.4.title'), src: '/logos/m2.svg', scale: 1.1 },
-  { name: 'Parity', src: '/logos/parity.svg', scale: 1 },
-  { name: 'LEXION development', src: '/logos/lexion.svg', scale: 1.9 },
-  { name: locale === 'ru' ? '2ГИС' : '2GIS', src: '/logos/2gis.svg', scale: 0.85 },
-  { name: locale === 'ru' ? 'Лига Ставок' : 'Liga Stavok', src: '/logos/ligastavok.svg', scale: 0.9 },
-  { name: 'Brighty', src: '/logos/brighty.svg', scale: 1 },
+  { name: t('tiles.4.title'), src: '/logos/m2.svg', scale: 1.1, url: 'https://m2.ru/' },
+  { name: 'Parity', src: '/logos/parity.svg', scale: 1, url: 'https://parity.com/' },
+  { name: 'LEXION development', src: '/logos/lexion.svg', scale: 1.9, url: 'https://lexion-development.ru/' },
+  {
+    name: locale === 'ru' ? '2ГИС' : '2GIS',
+    src: '/logos/2gis.svg',
+    scale: 0.85,
+    url: 'https://2gis.ru/moscow',
+  },
+  {
+    name: locale === 'ru' ? 'Лига Ставок' : 'Liga Stavok',
+    src: '/logos/ligastavok.svg',
+    scale: 0.9,
+    url: 'https://www.ligastavok.ru/',
+  },
+  { name: 'Brighty', src: '/logos/brighty.svg', scale: 1, url: 'https://brighty.app/en' },
 ];
 const MARQUEE_AFTER = 2;
 // Логотипы повторены, чтобы одной группы хватало на самый широкий экран; групп две — для бесшовного цикла.
@@ -80,11 +91,28 @@ const more = MORE_KEYS.map((key) => ({
           <div class="tiles__marquee-track">
             {[0, 1].map((copy) => (
               <ul class="tiles__marquee-group" aria-hidden={copy === 1 ? 'true' : undefined}>
-                {marqueeGroup.map(({ name, src, scale }) => (
-                  <li class="tiles__logo" style={`--logo-scale: ${scale}`}>
-                    <img src={src} alt={copy === 0 ? name : ''} loading="lazy" />
-                  </li>
-                ))}
+                {marqueeGroup.map(({ name, src, scale, url }, j) => {
+                  // Для клавиатуры и скринридеров — только первый набор логотипов, повторы скрыты.
+                  const primary = copy === 0 && j < LOGOS.length;
+                  const img = <img src={src} alt={primary ? name : ''} loading="lazy" />;
+                  return (
+                    <li class="tiles__logo" style={`--logo-scale: ${scale}`}>
+                      {url ? (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabindex={primary ? undefined : -1}
+                          aria-hidden={primary ? undefined : 'true'}
+                        >
+                          {img}
+                        </a>
+                      ) : (
+                        img
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             ))}
           </div>
@@ -324,6 +352,27 @@ const more = MORE_KEYS.map((key) => ({
   .tiles__logo img {
     height: calc(var(--marquee-logo-h) * var(--logo-scale, 1));
     width: auto;
+  }
+
+  /* Логотипы-ссылки: строка встаёт на паузу под курсором, логотип чуть увеличивается. */
+  .tiles__logo a {
+    display: block;
+    border-radius: 4px;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .tiles__logo a:hover {
+    transform: scale(1.08);
+  }
+
+  .tiles__logo a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 6px;
+  }
+
+  .tiles__marquee:hover .tiles__marquee-track,
+  .tiles__marquee:focus-within .tiles__marquee-track {
+    animation-play-state: paused;
   }
 
   @keyframes tiles-marquee {
