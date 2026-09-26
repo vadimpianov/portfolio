@@ -198,6 +198,8 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     position: relative;
     width: clamp(220px, 28vw, 440px);
     aspect-ratio: 1;
+    /* Мягкая тень в пару к тени текста и чипсов; drop-shadow — по контуру: круг + голова над ним. */
+    filter: var(--hero-portrait-shadow);
   }
 
   /* Кольцо: конический градиент палитры, круг внутри перекрывает середину. */

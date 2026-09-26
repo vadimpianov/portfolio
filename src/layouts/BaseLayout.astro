@@ -75,6 +75,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     color: #fff;
     height: var(--header-h);
     padding-inline: var(--gutter);
+    /* Шапка прозрачная — тень ложится только под линии логотипа и планеты. */
+    filter: var(--header-shadow);
   }
 
   /* Контент — под шапкой и в пределах полей. Блоки с data-bleed (например,
