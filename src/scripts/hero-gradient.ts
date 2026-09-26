@@ -123,16 +123,16 @@ void main() {
   vec2 tangent = vec2(-dir.y, dir.x);
   float along = dot(p, tangent);
   float across = dot(p, dir);
-  // Хаос: «порывы» — сила изгибов то нарастает, то стихает (0.3…1.2); изгибы плывут
-  // вдоль лент с непостоянной скоростью (то догоняют, то отстают) и быстрее меняются.
-  // Даже на пике порыва производная поперёк лент ≈ 0.45 < 1 — правило «листа» держится.
-  float gust = 0.75 + 0.45 * snoise(vec3(th * 0.04, 7.7, 2.2));
-  float travel1 = th * 0.03 + 0.8 * snoise(vec3(th * 0.02, 1.1, 0.0));
-  float travel2 = th * 0.025 + 0.6 * snoise(vec3(th * 0.025, 2.3, 0.0));
-  float travel3 = th * 0.04 + 0.5 * snoise(vec3(th * 0.03, 3.7, 0.0));
-  float bend = gust * (0.4 * snoise(vec3(along * 0.5 - travel1, across * 0.25, t * 0.14))
-                     + 0.18 * snoise(vec3(along * 1.2 + travel2, across * 0.25 + 4.0, t * 0.18 + 2.0))
-                     + 0.06 * snoise(vec3(along * 2.2 - travel3, across * 0.25 + 9.0, t * 0.24 + 5.0)));
+  // Хаос: «порывы» — сила изгибов то нарастает, то стихает (0.2…1.4); изгибы плывут
+  // вдоль лент с непостоянной скоростью (то догоняют, то отстают) и быстро меняются.
+  // Даже на пике порыва производная поперёк лент ≈ 0.55 < 1 — правило «листа» держится.
+  float gust = max(0.2, 0.75 + 0.675 * snoise(vec3(th * 0.04, 7.7, 2.2)));
+  float travel1 = th * 0.03 + 1.2 * snoise(vec3(th * 0.02, 1.1, 0.0));
+  float travel2 = th * 0.025 + 0.9 * snoise(vec3(th * 0.025, 2.3, 0.0));
+  float travel3 = th * 0.04 + 0.75 * snoise(vec3(th * 0.03, 3.7, 0.0));
+  float bend = gust * (0.4 * snoise(vec3(along * 0.5 - travel1, across * 0.25, t * 0.21))
+                     + 0.18 * snoise(vec3(along * 1.2 + travel2, across * 0.25 + 4.0, t * 0.27 + 2.0))
+                     + 0.06 * snoise(vec3(along * 2.2 - travel3, across * 0.25 + 9.0, t * 0.36 + 5.0)));
   // Бегущие волны: рябь бежит вдоль лент.
   // Длинные (×2 к прежним) и пологие — не бросаются в глаза, гребни мягкие.
   bend += 0.06 * sin(along * 2.5 - th * 0.175) + 0.03 * sin(along * 4.25 + th * 0.11 + 1.7);
@@ -176,7 +176,7 @@ function hexToRgb(value: string): [number, number, number] {
 export const HERO_PRESETS = {
   // startTime 102 — стартовый кадр по скриншоту пользователя (розовый сверху, персик,
   // жёлтый в центре, кремовая полоса, голубой внизу); найден сравнением кадров.
-  soft: { hueSpeed: 1, edge: 1, timeScale: 0.5376, startTime: 102 },
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.59, startTime: 102 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
