@@ -176,7 +176,7 @@ function hexToRgb(value: string): [number, number, number] {
 export const HERO_PRESETS = {
   // startTime 102 — стартовый кадр по скриншоту пользователя (розовый сверху, персик,
   // жёлтый в центре, кремовая полоса, голубой внизу); найден сравнением кадров.
-  soft: { hueSpeed: 1, edge: 1, timeScale: 0.672, startTime: 102 },
+  soft: { hueSpeed: 1, edge: 1, timeScale: 0.5376, startTime: 102 },
   vivid: { hueSpeed: 2.5, edge: 0.35, timeScale: 1, startTime: 0 },
 } as const;
 export type HeroPreset = keyof typeof HERO_PRESETS;
