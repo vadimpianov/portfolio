@@ -31,14 +31,14 @@ const PRINTS = [
 ];
 const TITLE_KEYS = ['tiles.1.title', 'tiles.2.title', 'tiles.3.title', 'tiles.4.title'] as const;
 // Бегущая строка с логотипами компаний — между рядами проектов (после второй плитки).
-// src — файл в public/logos/; пока файла нет, показывается название текстом.
-const LOGOS: { name: string; src?: string }[] = [
-  { name: t('tiles.1.title') },
-  { name: 'Quantori' },
-  { name: 'BelkaCar' },
-  { name: 'Parity' },
-  { name: 'MAPS.ME' },
-  { name: 'm2' },
+// Файлы — public/logos/ (viewBox обрезан по содержимому); scale — оптическая подгонка высоты:
+// у значков с подписью и у узких надписей разная «визуальная масса».
+const LOGOS: { name: string; src: string; scale: number }[] = [
+  { name: t('tiles.1.title'), src: '/logos/alfa-bank.svg', scale: 0.8 },
+  { name: 'Quantori', src: '/logos/quantori.svg', scale: 0.95 },
+  { name: 'BelkaCar', src: '/logos/belkacar.svg', scale: 0.62 },
+  { name: 'MAPS.ME', src: '/logos/mapsme.svg', scale: 1.2 },
+  { name: t('tiles.4.title'), src: '/logos/m2.svg', scale: 1.1 },
 ];
 const MARQUEE_AFTER = 2;
 // Логотипы повторены, чтобы одной группы хватало на самый широкий экран; групп две — для бесшовного цикла.
@@ -57,9 +57,9 @@ const tiles = TITLE_KEYS.map((key) => ({
           <div class="tiles__marquee-track">
             {[0, 1].map((copy) => (
               <ul class="tiles__marquee-group" aria-hidden={copy === 1 ? 'true' : undefined}>
-                {marqueeGroup.map(({ name, src }) => (
-                  <li class="tiles__logo">
-                    {src ? <img src={src} alt={copy === 0 ? name : ''} loading="lazy" /> : name}
+                {marqueeGroup.map(({ name, src, scale }) => (
+                  <li class="tiles__logo" style={`--logo-scale: ${scale}`}>
+                    <img src={src} alt={copy === 0 ? name : ''} loading="lazy" />
                   </li>
                 ))}
               </ul>
@@ -205,18 +205,13 @@ const tiles = TITLE_KEYS.map((key) => ({
     flex: none;
     align-items: center;
     height: var(--marquee-logo-h);
-    font-size: calc(var(--marquee-logo-h) * 0.8);
-    font-weight: var(--weight-heavy);
-    letter-spacing: -0.02em;
-    white-space: nowrap;
   }
 
-  /* Логотипы — одним цветом текста, чтобы строка была ровной. */
+  /* Логотипы — в тёмно-сером монохроме (рисунок внутри значков сохраняется), чтобы строка была ровной. */
   .tiles__logo img {
-    height: 100%;
+    height: calc(100% * var(--logo-scale, 1));
     width: auto;
-    filter: brightness(0);
-    opacity: 0.85;
+    filter: grayscale(1) brightness(0.55) contrast(1.6);
   }
 
   @keyframes tiles-marquee {
