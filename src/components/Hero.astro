@@ -147,25 +147,63 @@ const { title, lead, preset = 'soft' } = Astro.props;
     if (!root || !canvas) return;
     const preset = root.dataset.preset;
 
-    // Пока первый слайд уезжает (один экран прокрутки), градиент плавно становится монохромным.
-    const bg = root.querySelector<HTMLElement>('[data-hero-bg]');
-    if (bg) {
+    // Плитки появляются внизу первого экрана (--tiles-start) и проявляются при скролле.
+    // К моменту, когда текст hero целиком уходит за шапку, они полностью видны
+    // и стоят на финальном месте: под шапкой с зазором --tile-gap (едут чуть быстрее скролла).
+    const tiles = document.querySelector<HTMLElement>('[data-tiles]');
+    const content = root.querySelector<HTMLElement>('.hero__content');
+    if (tiles && content) {
+      const cssPx = (name: string) =>
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 0;
+      const docTop = (el: HTMLElement) => {
+        let top = 0;
+        for (let node: HTMLElement | null = el; node; node = node.offsetParent as HTMLElement | null)
+          top += node.offsetTop;
+        return top;
+      };
+      // Скролл, при котором низ текста касается низа шапки.
+      const endScroll = () => docTop(content) + content.offsetHeight - cssPx('--header-h');
+      const finalY = () => cssPx('--header-h') + cssPx('--tile-gap') - (docTop(tiles) - endScroll());
+
+      // Градиент плавно становится монохромным к тому же моменту.
+      const bg = root.querySelector<HTMLElement>('[data-hero-bg]');
+      if (bg) {
+        gsap.fromTo(
+          bg,
+          { filter: 'grayscale(0)' },
+          {
+            filter: 'grayscale(1)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top top',
+              end: () => `+=${Math.max(1, endScroll())}`,
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+      }
+
       gsap.fromTo(
-        bg,
-        { filter: 'grayscale(0)' },
+        tiles,
+        { opacity: 0, y: 0 },
         {
-          filter: 'grayscale(1)',
+          opacity: 1,
+          y: finalY,
           ease: 'none',
+          immediateRender: true,
           scrollTrigger: {
             trigger: root,
             start: 'top top',
-            end: () => `+=${window.innerHeight}`,
+            end: () => `+=${Math.max(1, endScroll())}`,
             scrub: true,
+            invalidateOnRefresh: true,
           },
         },
       );
-      ScrollTrigger.refresh();
     }
+    ScrollTrigger.refresh();
 
     return mountHeroGradient(root, canvas, {
       reducedMotion,

@@ -3,7 +3,7 @@
 const tiles = Array.from({ length: 6 });
 ---
 
-<section class="tiles">
+<section class="tiles" data-tiles>
   {tiles.map(() => (
     <div class="tiles__item" />
   ))}
@@ -15,7 +15,10 @@ const tiles = Array.from({ length: 6 });
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--tile-gap);
-    padding: var(--header-h) var(--gutter) var(--tile-gap);
+    /* Плитки заезжают на первый слайд: верх первого ряда — на --tiles-start от верха экрана.
+       Проявляются при скролле (см. Hero.astro). */
+    margin-top: calc(var(--tiles-start) - 100dvh);
+    padding: 0 var(--gutter) var(--tile-gap);
   }
 
   @media (min-width: 768px) {
@@ -27,6 +30,6 @@ const tiles = Array.from({ length: 6 });
   .tiles__item {
     height: var(--tile-h);
     border-radius: var(--tile-radius);
-    background: rgb(255 255 255 / 0.16);
+    background: var(--tile-bg);
   }
 </style>
