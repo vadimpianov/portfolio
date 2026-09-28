@@ -28,10 +28,9 @@ const { items } = Astro.props;
   .case-chips li {
     margin: 0 !important;
     padding: var(--chip-pad-y) var(--chip-pad-x);
-    border-radius: 999px;
-    background: var(--case-chip-bg);
+    border: 1px solid var(--case-chip-border);
+    border-radius: var(--case-chip-radius);
     font-size: var(--text-chip);
-    font-weight: 500;
     line-height: 1.2;
     color: var(--color-text);
   }

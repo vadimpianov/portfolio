@@ -81,6 +81,13 @@ const close = t('case.close');
   .case-drawer__scroll {
     --gutter: var(--case-panel-gutter);
     --case-pad-top: calc(var(--header-h) + clamp(1.5rem, 1rem + 2vw, 3rem));
+    /* Панель уже экрана — шрифты кейса мельче, чем на отдельной странице. */
+    --text-display: clamp(2rem, 1.2rem + 2.6vw, 3.5rem);
+    --text-tile-title: clamp(1.375rem, 1.1rem + 0.8vw, 2rem);
+    --text-case-body: clamp(0.9375rem, 0.9rem + 0.15vw, 1.0625rem);
+    --case-label-size: clamp(0.8125rem, 0.78rem + 0.12vw, 0.9375rem);
+    --case-metric-size: clamp(1.5rem, 1.1rem + 1vw, 2.25rem);
+    --text-chip: clamp(0.8125rem, 0.78rem + 0.1vw, 0.875rem);
     height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;

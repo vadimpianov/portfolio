@@ -173,8 +173,7 @@ const title = typograph(
 
   /* Уже --case-flow-min-w — схема листается по горизонтали, текст не мельчит. */
   .flow__frame {
-    margin-inline: calc(-1 * var(--gutter));
-    padding: 0 var(--gutter) 0.5rem;
+    padding-bottom: 0.5rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: thin;
@@ -188,6 +187,7 @@ const title = typograph(
     overflow: visible;
     font-family: inherit;
     font-size: 16px;
+    user-select: none;
   }
 
   .flow__svg text {

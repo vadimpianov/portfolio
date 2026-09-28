@@ -1,8 +1,9 @@
 ---
+import { asset } from '../../utils/asset';
 /**
  * Картинка кейса: подпись-метка сверху (как в макете), картинка со скруглением.
  * `scroll` — длинная лента экранов: высота фиксирована, листается по горизонтали.
- * `bleed` — на всю ширину экрана (без полей сетки).
+ * `bleed` — на всю ширину экрана (без полей сетки); только там, где пользователь попросит.
  */
 import { typograph } from '../../i18n/typograph';
 
@@ -22,7 +23,7 @@ const { src, width, height, alt, caption, scroll = false, bleed = false } = Astr
 <figure class:list={['case-figure', { 'case-figure--scroll': scroll, 'case-figure--bleed': bleed }]}>
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll ? 0 : undefined}>
-    <img src={src} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
+    <img src={asset(src)} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
   </div>
 </figure>
 
@@ -46,10 +47,8 @@ const { src, width, height, alt, caption, scroll = false, bleed = false } = Astr
     border-radius: var(--tile-radius);
   }
 
-  /* Лента экранов: листается по горизонтали, высота — как у экрана телефона. */
+  /* Лента экранов: листается по горизонтали в пределах полей, высота — как у экрана телефона. */
   .case-figure--scroll .case-figure__frame {
-    margin-inline: calc(-1 * var(--gutter));
-    padding-inline: var(--gutter);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: thin;
