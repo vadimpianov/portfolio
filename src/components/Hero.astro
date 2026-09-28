@@ -415,13 +415,33 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
         invalidateOnRefresh: true,
       });
 
+      // Цвет фона по скроллу: к плиткам градиент уходит в монохром, а на подходе к слайду
+      // «Обо мне» (он появляется снизу) плавно возвращается в цвет — полностью к моменту,
+      // когда слайд встаёт на место (верх на --tiles-final-top). Одна функция от позиции скролла,
+      // а не два твина на одно свойство — иначе они спорят.
       const bg = root.querySelector<HTMLElement>('[data-hero-bg]');
+      const about = document.querySelector<HTMLElement>('.about');
       if (bg) {
-        gsap.fromTo(
-          bg,
-          { filter: 'grayscale(0)' },
-          { filter: 'grayscale(1)', ease: 'none', scrollTrigger: scene(sceneLength) },
-        );
+        const grayAt = (scroll: number) => {
+          let gray = Math.min(1, Math.max(0, scroll / sceneLength()));
+          if (about) {
+            const from = docTop(about) - window.innerHeight;
+            const to = docTop(about) - cssPx('--tiles-final-top');
+            if (scroll > from) gray = 1 - Math.min(1, (scroll - from) / Math.max(1, to - from));
+          }
+          return gray;
+        };
+        const paint = (scroll: number) => {
+          bg.style.filter = `grayscale(${grayAt(scroll).toFixed(3)})`;
+        };
+        ScrollTrigger.create({
+          trigger: root,
+          start: 'top top',
+          end: 'max',
+          onUpdate: (self) => paint(self.scroll()),
+          onRefresh: (self) => paint(self.scroll()),
+        });
+        paint(window.scrollY);
       }
 
       // Текст hero реагирует на скролл не сразу: первые TEXT_HOLD экрана стоит на месте
