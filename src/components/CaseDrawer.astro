@@ -12,15 +12,20 @@ const close = t('case.close');
 ---
 
 <dialog class="case-drawer" data-case-drawer data-bleed aria-label={close}>
-  <div class="case-drawer__backdrop" data-case-close></div>
-  <div class="case-drawer__cursor" aria-hidden="true">
-    × {close}
+  {/* Подсказка у курсора — внутри затемнения: панель её перекрывает, поверх кейса она не видна. */}
+  <div class="case-drawer__backdrop" data-case-close>
+    <div class="case-drawer__cursor" aria-hidden="true">
+      × {close}
+    </div>
   </div>
   <div class="case-drawer__panel">
-    <button class="case-drawer__close" type="button" data-case-close>
-      {close}
+    <button class="case-drawer__close" type="button" aria-label={close} data-case-close>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
     </button>
-    <div class="case-drawer__scroll" data-lenis-prevent data-case-body></div>
+    {/* Фокус при открытии — на содержимое (стрелки/пробел листают кейс), а не на кнопку. */}
+    <div class="case-drawer__scroll" tabindex="-1" autofocus data-lenis-prevent data-case-body></div>
   </div>
 </dialog>
 
@@ -60,6 +65,7 @@ const close = t('case.close');
     width: var(--case-panel-w);
     transform: translateX(100%);
     transition: transform var(--case-panel-duration) var(--case-panel-ease);
+    will-change: transform;
     box-shadow: -24px 0 64px rgb(0 0 0 / 0.18);
   }
 
@@ -78,28 +84,44 @@ const close = t('case.close');
     height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;
+    outline: none;
   }
 
+  /* Закрыть — крестик в квадрате со скруглением. */
   .case-drawer__close {
     position: absolute;
-    top: calc((var(--header-h) - 2.5rem) / 2);
+    top: calc((var(--header-h) - var(--case-close-size)) / 2);
     right: var(--case-panel-gutter);
     z-index: 1;
-    height: 2.5rem;
-    padding: 0 1rem;
+    display: grid;
+    place-items: center;
+    width: var(--case-close-size);
+    height: var(--case-close-size);
+    padding: 0;
     border: 0;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.9);
-    color: var(--color-text);
-    font: inherit;
-    font-size: var(--text-chip);
-    font-weight: 500;
+    border-radius: var(--case-close-radius);
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
     cursor: pointer;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+    transition: background-color 0.2s ease;
+  }
+
+  .case-drawer__close svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+  }
+
+  .case-drawer__close:hover {
+    background: rgb(255 255 255 / 0.2);
   }
 
   .case-drawer__close:focus-visible {
-    outline: 2px solid var(--case-accent);
+    outline: 2px solid rgb(255 255 255 / 0.6);
     outline-offset: 2px;
   }
 
@@ -200,6 +222,7 @@ const close = t('case.close');
         1000;
 
   let pageTitle = '';
+  let openedByPointer = false;
   let closing = 0;
 
   async function open(url: string, push: boolean) {
@@ -219,15 +242,19 @@ const close = t('case.close');
     clearTimeout(closing);
     body.replaceChildren(document.importNode(article, true));
     body.scrollTop = 0;
-    if (!dialog.open) {
-      pageTitle = document.title;
-      dialog.showModal();
-      dialog.getBoundingClientRect(); // старт анимации с закрытого положения
-    }
-    dialog.classList.add('is-open');
+    if (!dialog.open) pageTitle = document.title;
     document.title = doc.title;
     getLenis()?.stop();
     if (push) history.pushState({ ...history.state, caseDrawer: url }, '', url);
+    if (!dialog.open) {
+      dialog.showModal();
+      // Панель выезжает, только когда кейс уже разложен и обложка готова: иначе первые кадры
+      // анимации теряются на раскладке и панель «прыгает».
+      const cover = body.querySelector<HTMLImageElement>('.case__cover');
+      await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    }
+    dialog.classList.add('is-open');
   }
 
   /** Скрыть панель (адрес уже вернулся на главную). */
@@ -238,6 +265,8 @@ const close = t('case.close');
     document.title = pageTitle;
     const done = () => {
       dialog.close();
+      // Открыли мышью — фокус, который браузер вернул на плитку, без рамки.
+      if (openedByPointer) (document.activeElement as HTMLElement | null)?.blur();
       dialog.querySelector('[data-case-body]')?.replaceChildren();
       getLenis()?.start();
     };
@@ -262,6 +291,7 @@ const close = t('case.close');
         return;
       // Фаза захвата — раньше слушателя ClientRouter: он не переходит, если событие уже отменено.
       event.preventDefault();
+      openedByPointer = event.detail > 0;
       open(link.href, true);
     },
     { capture: true },

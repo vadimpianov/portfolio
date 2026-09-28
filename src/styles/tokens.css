@@ -68,8 +68,11 @@
   --case-panel-w: 100vw;
   --case-panel-gutter: 20px;
   --case-panel-backdrop: rgb(20 20 20 / 0.45);
-  --case-panel-duration: 0.55s;
-  --case-panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --case-panel-duration: 0.7s;
+  /* Мягкое торможение до самого конца, без резкой остановки. */
+  --case-panel-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --case-close-size: 40px;
+  --case-close-radius: 10px;
   --color-bg: #f4f2ee;
   --color-text: #141414;
   --color-text-body: #2b2b2b;
