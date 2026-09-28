@@ -58,6 +58,12 @@
   --case-col-gap: 4rem;
   --case-strip-h: clamp(420px, 45vw, 668px);
   --case-bar-h: clamp(180px, 22vw, 352px);
+  /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */
+  --case-flow-node: #162d3c;
+  --case-flow-line: #214156;
+  --case-flow-success: #04a001;
+  --case-flow-fail: #a03701;
+  --case-flow-min-w: 960px;
   /* Кейс в модалке поверх главной: панель справа, свои поля внутри. */
   --case-panel-w: 100vw;
   --case-panel-gutter: 20px;
