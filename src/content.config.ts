@@ -19,6 +19,8 @@ const cases = defineCollection({
     tags: z.array(z.string()).default([]),
     /** Тёмная тема страницы — под тёмные макеты кейса. */
     theme: z.enum(['light', 'dark']).default('light'),
+    /** Обложка справа от заголовка: имя картинки в `public/images/cases/` (`<имя>-{600,1200}.webp`). */
+    cover: z.string().optional(),
   }),
 });
 

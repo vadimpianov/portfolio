@@ -19,21 +19,33 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, period, tags, theme } = entry.data;
+const { title, period, tags, theme, cover } = entry.data;
 ---
 
 <BaseLayout title={title} description={entry.data.description}>
   {/* Страница кейса: весь фон — в край (под шапкой тоже), контент — в полях сетки. */}
   <article class:list={['case', `case--${theme}`]} data-bleed>
-    <header class="case__hero">
-      {period && <p class="case__period">{period}</p>}
-      <h1 class="case__title">{typograph(title)}</h1>
-      {tags.length > 0 && (
-        <ul class="case__chips">
-          {tags.map((tag) => (
-            <li class="case__chip case__chip--accent">{typograph(tag)}</li>
-          ))}
-        </ul>
+    <header class:list={['case__hero', { 'case__hero--cover': cover }]}>
+      <div class="case__intro">
+        {period && <p class="case__period">{period}</p>}
+        <h1 class="case__title">{typograph(title)}</h1>
+        {tags.length > 0 && (
+          <ul class="case__chips">
+            {tags.map((tag) => (
+              <li class="case__chip case__chip--accent">{typograph(tag)}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      {cover && (
+        <img
+          class="case__cover"
+          src={`/images/cases/${cover}-600.webp`}
+          srcset={`/images/cases/${cover}-600.webp 600w, /images/cases/${cover}-1200.webp 1200w`}
+          sizes="(min-width: 1024px) 40vw, 90vw"
+          alt=""
+          fetchpriority="high"
+        />
       )}
     </header>
     <div class="case__body">
@@ -57,6 +69,27 @@ const { title, period, tags, theme } = entry.data;
     --color-text: var(--case-text);
     --color-text-body: var(--case-muted);
     color: var(--case-text);
+  }
+
+  /* С обложкой: текст слева, картинка справа (на узких — картинка под текстом). */
+  .case__hero--cover {
+    display: grid;
+    gap: var(--case-block-gap);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .case__hero--cover {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    }
+  }
+
+  .case__cover {
+    display: block;
+    width: 100%;
+    max-width: 36rem;
+    height: auto;
+    justify-self: center;
   }
 
   .case__period {
