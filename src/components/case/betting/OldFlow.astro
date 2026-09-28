@@ -21,8 +21,8 @@ const nodes: Node[] = [
   { x: 361, y: 45, w: 269, label: tr('Дата рождения', 'Date of birth') },
   { x: 690, y: 45, w: 269, label: tr('Промокод', 'Promo code') },
   { x: 1019, y: 45, w: 269, label: tr('Телефон', 'Phone') },
-  { x: 32, y: 145, w: 220.5, label: 'Email' },
-  { x: 312.5, y: 145, w: 220.5, label: tr('Пароль', 'Password') },
+  { x: 32, y: 145, w: 220, label: 'Email' },
+  { x: 312, y: 145, w: 220, label: tr('Пароль', 'Password') },
   { x: 593, y: 145, w: 338, label: tr('Подтверждение номера по СМС', 'Phone confirmation via SMS') },
   { x: 64, y: 361, w: 298, label: tr('Через анкету в приложении', 'Via the in-app form') },
   { x: 460, y: 361, w: 192, label: tr('Через Госуслуги', 'Via Gosuslugi') },
@@ -33,7 +33,7 @@ const nodes: Node[] = [
   { x: 1109, y: 809, w: 154, label: tr('Пополнение', 'Deposit'), tone: 'fail' },
 ];
 
-// Рамки групп шагов.
+// Рамки групп шагов. Координаты ,5 — только у 1px-обводок: так линия ложится ровно в пиксель.
 const groups = [
   { x: 0.5, y: 13.5, w: 1319, h: 203 },
   { x: 0.5, y: 297.5, w: 887, h: 471 },
@@ -44,27 +44,27 @@ const groups = [
 // Подписи: `x, y` — точка привязки (центр строки по вертикали), `lines` — строки.
 type Note = { x: number; y: number; anchor?: 'start' | 'middle'; lines: string[] };
 const notes: Note[] = [
-  { x: 33.5, y: 14, anchor: 'start', lines: [tr('Регистрации в приложении', 'Registration in the app')] },
+  { x: 34, y: 14, anchor: 'start', lines: [tr('Регистрации в приложении', 'Registration in the app')] },
   {
-    x: 33.5,
-    y: 297.5,
+    x: 34,
+    y: 298,
     anchor: 'start',
     lines: [tr('Подтверждение личности / Идентификация', 'Identity confirmation / Verification')],
   },
   {
-    x: 64.5,
+    x: 64,
     y: 455,
     anchor: 'start',
     lines: [tr('Упрощённое — лимит ограничен', 'Simplified — with limits')],
   },
-  { x: 461.5, y: 534, anchor: 'start', lines: [tr('Полное — без ограничений', 'Full — no limits')] },
-  { x: 1036.5, y: 169, lines: [tr('>2х минут', '>2 min')] },
-  { x: 798.5, y: 300, lines: [tr('>3х минут', '>3 min')] },
+  { x: 462, y: 534, anchor: 'start', lines: [tr('Полное — без ограничений', 'Full — no limits')] },
+  { x: 1036, y: 169, lines: [tr('>2х минут', '>2 min')] },
+  { x: 798, y: 300, lines: [tr('>3х минут', '>3 min')] },
   { x: 798, y: 383, lines: [tr('>2х минут', '>2 min')] },
-  { x: 932.5, y: 463, lines: [tr('<1ой минуты', '<1 min')] },
-  { x: 932.5, y: 607, lines: [tr('<1ой минуты', '<1 min')] },
+  { x: 932, y: 463, lines: [tr('<1ой минуты', '<1 min')] },
+  { x: 932, y: 607, lines: [tr('<1ой минуты', '<1 min')] },
   {
-    x: 1036.5,
+    x: 1036,
     y: 283,
     lines: en
       ? ['70% of users had already', 'been verified', 'in TsUPIS']
@@ -164,16 +164,16 @@ const title = typograph(
   }
 
   .flow__label {
-    margin-bottom: 1.25rem;
+    margin-bottom: 20px;
     font-size: var(--case-label-size);
-    letter-spacing: 0.02em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--case-muted);
   }
 
   /* Уже --case-flow-min-w — схема листается по горизонтали, текст не мельчит. */
   .flow__frame {
-    padding-bottom: 0.5rem;
+    padding-bottom: 8px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: thin;

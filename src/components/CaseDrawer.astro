@@ -79,14 +79,14 @@ const close = t('case.close');
   /* Внутри панели — свои поля, кейс считает ширину по панели (container query). */
   .case-drawer__scroll {
     --gutter: var(--case-panel-gutter);
-    --case-pad-top: calc(var(--header-h) + clamp(1.5rem, 1rem + 2vw, 3rem));
-    /* Панель уже экрана — шрифты кейса мельче, чем на отдельной странице. */
-    --text-display: clamp(1.75rem, 1.1rem + 1.8vw, 2.75rem);
-    --text-tile-title: clamp(1.375rem, 1.1rem + 0.8vw, 2rem);
-    --text-case-body: clamp(0.9375rem, 0.9rem + 0.15vw, 1.0625rem);
-    --case-label-size: clamp(0.8125rem, 0.78rem + 0.12vw, 0.9375rem);
-    --case-metric-size: clamp(1.5rem, 1.1rem + 1vw, 2.25rem);
-    --text-chip: clamp(0.8125rem, 0.78rem + 0.1vw, 0.875rem);
+    --case-pad-top: round(calc(var(--header-h) + clamp(24px, 16px + 2vw, 48px)), 2px);
+    /* Панель уже экрана — шрифты кейса мельче, чем на отдельной странице (целые px). */
+    --text-display: round(clamp(28px, 18px + 1.8vw, 44px), 1px);
+    --text-tile-title: round(clamp(22px, 18px + 0.8vw, 32px), 1px);
+    --text-case-body: round(clamp(15px, 14px + 0.15vw, 17px), 1px);
+    --case-label-size: round(clamp(13px, 12px + 0.12vw, 15px), 1px);
+    --case-metric-size: round(clamp(24px, 18px + 1vw, 36px), 1px);
+    --text-chip: round(clamp(13px, 12px + 0.1vw, 14px), 1px);
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;

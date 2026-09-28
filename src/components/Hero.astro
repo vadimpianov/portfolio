@@ -136,7 +136,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   .hero__intro {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: clamp(2rem, 5vw, 6rem);
+    column-gap: round(clamp(32px, 5vw, 96px), 2px);
     align-items: center;
     justify-items: start;
     height: 100dvh;
@@ -193,10 +193,10 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
      и нарядной вращающейся градиентной обводкой; голова выходит за верхний край круга. */
   .hero__portrait {
     /* Толщина градиентной обводки. */
-    --ring: clamp(5px, 0.6vw, 9px);
+    --ring: round(clamp(6px, 0.6vw, 10px), 2px);
 
     position: relative;
-    width: clamp(220px, 28vw, 440px);
+    width: round(clamp(220px, 28vw, 440px), 2px);
     aspect-ratio: 1;
     /* Мягкая тень в пару к тени текста и чипсов; drop-shadow — по контуру: круг + голова над ним. */
     filter: var(--hero-portrait-shadow);
@@ -287,10 +287,10 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     .hero__intro {
       grid-template-columns: minmax(0, 1fr);
       align-content: center;
-      row-gap: 2.5rem;
+      row-gap: 40px;
       height: auto;
       min-height: 100dvh;
-      padding-block: calc(var(--header-h) + 3rem) 3rem;
+      padding-block: calc(var(--header-h) + 48px) 48px;
     }
 
     .hero__portrait {
@@ -304,7 +304,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
        Через top, а не transform: transform занят анимацией скролла. */
     position: relative;
     top: -20px;
-    max-width: 72rem;
+    max-width: 1152px;
     color: #fff;
   }
 
@@ -320,16 +320,16 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   .hero__title {
     font-size: var(--text-display);
     font-weight: var(--weight-heavy);
-    line-height: var(--leading-display);
+    --lh: var(--leading-display);
     letter-spacing: var(--tracking-display);
     text-wrap: balance;
   }
 
   .hero__lead {
-    max-width: 47.5rem;
-    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 760px;
+    margin-top: round(clamp(20px, 16px + 1vw, 32px), 2px);
     font-size: var(--text-lead);
-    line-height: var(--leading-lead);
+    --lh: var(--leading-lead);
     text-wrap: pretty;
   }
 
@@ -339,8 +339,8 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     flex-wrap: wrap;
     gap: var(--chip-gap);
     /* 52rem: «Работа с аналитикой…» и «Управление командой…» встают в один ряд (на экранах от ~1680px). */
-    max-width: 52rem;
-    margin: clamp(1.5rem, 1rem + 1.2vw, 2.5rem) 0 0;
+    max-width: 832px;
+    margin: round(clamp(24px, 16px + 1.2vw, 40px), 2px) 0 0;
     padding: 0;
     list-style: none;
   }
@@ -354,7 +354,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     color: var(--color-text);
     font-size: var(--text-chip);
     font-weight: 500;
-    line-height: 1.2;
+    --lh: var(--leading-tight);
     /* Обычно в одну строку; переносится внутри, только если чипс шире колонки (узкие экраны). */
     text-wrap: balance;
   }

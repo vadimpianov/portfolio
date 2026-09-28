@@ -1,6 +1,16 @@
 /*
  * Дизайн-токены. Сетка — правило проекта (см. CLAUDE.md → «Сетка»).
  * Типографика: Onest (вариативный) — заголовки 800, текст 400.
+ *
+ * Правила чисел (дизайн-система, обязательны везде):
+ * - только целые пиксели — никаких ,5 и дробных значений;
+ * - кегль — целое число px: плавные размеры оборачиваем в round(…, 1px);
+ * - межстрочный интервал — чётное число px: задаём множитель --lh, пиксели
+ *   считает и округляет до 2px общее правило в reset.css (line-height напрямую не пишем);
+ * - отступы (margin, padding, gap, inset/top/…) и размеры блоков — кратны 2px:
+ *   плавные и em-значения оборачиваем в round(…, 2px);
+ * - трекинг — целые px: round(…, 1px).
+ * Исключение — толщина линий и обводок (1px).
  */
 :root {
   /* Поля контента слева и справа: контент за них не заходит. */
@@ -18,13 +28,13 @@
   --tiles-final-top: 100px;
   --tile-radius: 16px;
   --tile-small-ratio: 0.75; /* высота / ширина карточек 3 в ряд под основными плитками (не меньше) */
-  --marquee-logo-h: clamp(28px, 1.2rem + 1vw, 44px); /* высота логотипа в бегущей строке */
-  --marquee-gap: clamp(48px, 2rem + 4vw, 120px); /* между логотипами */
-  --tile-padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
-  --text-tile-title: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem);
-  --text-tile-small-title: clamp(1.25rem, 1rem + 0.8vw, 1.875rem); /* заголовок карточек 3 в ряд */
-  --text-about: clamp(1.0625rem, 0.95rem + 0.45vw, 1.375rem); /* текст слайда «Обо мне» */
-  --text-tile-lead: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --marquee-logo-h: round(clamp(28px, 20px + 1vw, 44px), 2px); /* высота логотипа в бегущей строке */
+  --marquee-gap: round(clamp(48px, 32px + 4vw, 120px), 2px); /* между логотипами */
+  --tile-padding: round(clamp(24px, 16px + 1.5vw, 40px), 2px);
+  --text-tile-title: round(clamp(24px, 18px + 1.4vw, 40px), 1px);
+  --text-tile-small-title: round(clamp(20px, 16px + 0.8vw, 30px), 1px); /* заголовок карточек 3 в ряд */
+  --text-about: round(clamp(17px, 15px + 0.45vw, 22px), 1px); /* текст слайда «Обо мне» */
+  --text-tile-lead: round(clamp(16px, 15px + 0.25vw, 18px), 1px);
   /* Финальная заливка плашки: цвет плитки, 50% прозрачности. */
   --tile-bg-opacity: 50%;
   /* Цвета плиток (пастель: крем, мята, пудра, лаванда). */
@@ -55,14 +65,14 @@
   --case-tag-1: #2fa802;
   --case-tag-2: #ad0063;
   --case-tag-radius: 8px;
-  --text-case-body: clamp(1rem, 0.95rem + 0.35vw, 1.25rem);
-  --case-label-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.125rem);
-  --case-metric-size: clamp(1.75rem, 1.2rem + 1.6vw, 3rem);
-  --case-block-gap: clamp(2.5rem, 2rem + 2vw, 4rem);
-  --case-section-gap: clamp(5rem, 4rem + 4vw, 8rem);
-  --case-col-gap: 4rem;
-  --case-strip-h: clamp(420px, 45vw, 668px);
-  --case-bar-h: clamp(180px, 22vw, 352px);
+  --text-case-body: round(clamp(16px, 15px + 0.35vw, 20px), 1px);
+  --case-label-size: round(clamp(14px, 13px + 0.3vw, 18px), 1px);
+  --case-metric-size: round(clamp(28px, 19px + 1.6vw, 48px), 1px);
+  --case-block-gap: round(clamp(40px, 32px + 2vw, 64px), 2px);
+  --case-section-gap: round(clamp(80px, 64px + 4vw, 128px), 2px);
+  --case-col-gap: 64px;
+  --case-strip-h: round(clamp(420px, 45vw, 668px), 2px);
+  --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
   /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */
   --case-flow-node: #162d3c;
   --case-flow-line: #214156;
@@ -85,10 +95,11 @@
   --color-line: #d9d5cd;
 
   /* Типографическая шкала: плавно от мобилы (360px) к десктопу (1400px) */
-  --text-display: clamp(2.2rem, 1.04rem + 5.12vw, 4.4rem);
+  /* Кегли — целые px (round 1px); --leading-* — множители для --lh (px считает reset.css). */
+  --text-display: round(clamp(35px, 17px + 5.12vw, 70px), 1px);
   --leading-display: 1.02;
-  --tracking-display: -0.03em;
-  --text-lead: clamp(0.9rem, 0.8rem + 0.44vw, 1.3rem);
+  --tracking-display: round(-0.03em, 1px);
+  --text-lead: round(clamp(14px, 13px + 0.44vw, 21px), 1px);
   /* Тени hero — одно семейство (интенсивность −30%, затем ещё −20% от первой версии): */
   --hero-portrait-shadow: drop-shadow(
     0 10px 28px rgb(20 20 20 / 0.12)
@@ -98,11 +109,17 @@
   ); /* логотип и планета: тонкие линии — маленькая тень */
   --hero-text-shadow: 0 4px 16px rgb(20 20 20 / 0.144); /* заголовок */
   --hero-lead-shadow: 0 4px 16px rgb(20 20 20 / 0.208); /* подпись: дважды по +20% от заголовка */
-  --text-chip: clamp(0.8125rem, 0.75rem + 0.25vw, 1rem); /* чипсы в hero */
-  --chip-pad-y: 0.5em;
-  --chip-pad-x: 1em;
-  --chip-gap: 0.5rem;
+  --text-chip: round(clamp(13px, 12px + 0.25vw, 16px), 1px); /* чипсы в hero */
+  --chip-pad-y: round(0.5em, 2px);
+  --chip-pad-x: round(1em, 2px);
+  --chip-gap: 8px;
   --leading-lead: 1.5;
+  --leading-body: 1.6; /* текст кейса */
+  --leading-tight: 1.2; /* чипсы, подписи в одну строку */
+  --leading-title: 1.1; /* заголовки плиток и секций */
+  /* Трекинг: заголовки плиток/секций и метки капсом — целые px. */
+  --tracking-title: round(-0.02em, 1px);
+  --tracking-label: round(up, 0.02em, 1px);
 }
 
 @media (min-width: 768px) {
@@ -110,7 +127,7 @@
     --gutter: 100px;
     --tile-ratio: 4 / 4.5;
     --tile-gap: 72px;
-    --case-panel-w: min(100vw, max(80vw, 720px));
+    --case-panel-w: round(min(100vw, max(80vw, 720px)), 2px);
     --case-panel-gutter: 48px;
   }
 }
@@ -120,7 +137,7 @@
   :root {
     --gutter: 160px;
     --tile-gap: 100px;
-    --case-panel-w: min(100vw, max(60vw, 860px));
+    --case-panel-w: round(min(100vw, max(60vw, 860px)), 2px);
     --case-panel-gutter: 80px;
   }
 }

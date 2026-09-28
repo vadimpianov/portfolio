@@ -16,8 +16,20 @@ html {
 
 body {
   min-height: 100dvh;
-  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Межстрочный интервал — всегда целое чётное число пикселей (правило дизайн-системы).
+   Компоненты задают не line-height, а множитель --lh (наследуется); каждый элемент
+   считает интервал от своего кегля и округляет до 2px. */
+:root {
+  --lh: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  line-height: round(calc(var(--lh) * 1em), 2px);
 }
 
 img,

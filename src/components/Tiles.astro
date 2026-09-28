@@ -213,7 +213,8 @@ const more = (
        Проявляются при скролле (см. Hero.astro). */
     margin-top: calc(var(--tiles-start) - 100dvh);
     /* Снизу — место, чтобы последний ряд тоже мог встать верхом на --tiles-final-top (snap). */
-    padding: 0 var(--gutter) max(var(--tile-gap), calc(100dvh - var(--tiles-final-top) - var(--tile-est-h)));
+    padding: 0 var(--gutter)
+      round(max(var(--tile-gap), calc(100dvh - var(--tiles-final-top) - var(--tile-est-h))), 2px);
     /* Оценка высоты плитки: ширина колонки × (высота / ширина). */
     --tile-est-h: calc((100vw - 2 * var(--gutter)) * 1.5);
   }
@@ -304,24 +305,24 @@ const more = (
 
   /* Год — над названием, тем же кеглем, что и подпись. */
   .tiles__year {
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
     font-size: var(--text-tile-lead);
-    line-height: 1.5;
+    --lh: 1.5;
     color: var(--color-text-body);
   }
 
   .tiles__title {
     font-size: var(--text-tile-title);
     font-weight: var(--weight-heavy);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    --lh: var(--leading-title);
+    letter-spacing: var(--tracking-title);
   }
 
   .tiles__lead {
-    max-width: 36rem;
-    margin-top: 0.75rem;
+    max-width: 576px;
+    margin-top: 12px;
     font-size: var(--text-tile-lead);
-    line-height: 1.5;
+    --lh: 1.5;
     color: var(--color-text-body);
   }
 
@@ -352,8 +353,9 @@ const more = (
 
   /* Обрезает принт сама плашка, а не карточка — тогда карточка может вырасти под длинный текст. */
   .tiles__item--small {
-    min-height: calc(
-      (100cqw - (var(--more-cols) - 1) * var(--tile-gap)) / var(--more-cols) * var(--tile-small-ratio)
+    min-height: round(
+      calc((100cqw - (var(--more-cols) - 1) * var(--tile-gap)) / var(--more-cols) * var(--tile-small-ratio)),
+      2px
     );
     aspect-ratio: auto;
     overflow: visible;
@@ -410,7 +412,7 @@ const more = (
 
   /* Логотипы — в своих фирменных цветах. */
   .tiles__logo img {
-    height: calc(var(--marquee-logo-h) * var(--logo-scale, 1));
+    height: round(calc(var(--marquee-logo-h) * var(--logo-scale, 1)), 2px);
     width: auto;
   }
 
@@ -455,7 +457,7 @@ const more = (
     display: grid;
     flex: 1;
     place-items: center;
-    margin-top: 2rem;
+    margin-top: 32px;
     border-radius: calc(var(--tile-radius) - 4px) calc(var(--tile-radius) - 4px) 0 0;
     background: #e2e2e2;
   }
