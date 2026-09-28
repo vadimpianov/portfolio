@@ -283,10 +283,14 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   }
 
   @media (max-width: 767px) {
+    /* Если портрет + текст + чипсы выше экрана — блок растёт вниз, а не заезжает под шапку. */
     .hero__intro {
       grid-template-columns: minmax(0, 1fr);
       align-content: center;
       row-gap: 2.5rem;
+      height: auto;
+      min-height: 100dvh;
+      padding-block: calc(var(--header-h) + 3rem) 3rem;
     }
 
     .hero__portrait {

@@ -14,9 +14,9 @@ export const ui = {
     'nav.home': 'Главная',
     'lang.switch': 'Язык',
     'home.heading': 'Вадим Пьянов',
-    'home.intro.title': 'Архитектура, дизайн, процессы, ИИ',
+    'home.intro.title': 'Продуктовый дизайнер и\u00a0многое другое',
     'home.intro.lead':
-      'Выстраиваю процессы вокруг дизайна, разрабатываю архитектуру продукта и принимаю участие в разработке фич. И всё это — при помощи ИИ.',
+      'Проектирую архитектуру продукта и ежедневно работаю над продуктовыми фичами, выстраиваю дизайн-процессы, принимаю участие в формировании фич и довожу решения до реализации. Использую ИИ как полноценный рабочий инструмент на всём пути — от идеи и исследования до дизайна, прототипирования и кода.',
     'home.intro.chip.1': 'Продуктовый дизайн',
     'home.intro.chip.2': 'Построение процессов вокруг дизайна',
     'home.intro.chip.3': 'Внедрение ИИ',
@@ -52,9 +52,9 @@ export const ui = {
     'nav.home': 'Home',
     'lang.switch': 'Language',
     'home.heading': 'Vadim Pianov',
-    'home.intro.title': 'Architecture, design, processes, AI',
+    'home.intro.title': 'Product designer and much more',
     'home.intro.lead':
-      'I build processes around design, shape the product architecture and take part in feature development. All of it — with the help of AI.',
+      'I design product architecture and work on product features every day, build design processes, help shape features and see solutions through to implementation. I use AI as a full-fledged working tool along the whole way — from idea and research to design, prototyping and code.',
     'home.intro.chip.1': 'Product design',
     'home.intro.chip.2': 'Building processes around design',
     'home.intro.chip.3': 'AI adoption',
