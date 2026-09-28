@@ -26,7 +26,7 @@
 | Фреймворк       | **Astro** + TypeScript (статическая генерация, минимум JS)                                                                                                                                          |
 | Контент         | **MDX-файлы в репозитории** (`src/content/ru/…`, `src/content/en/…`)                                                                                                                                |
 | Анимации        | Их будет **много**. GSAP (+ ScrollTrigger), Lenis для плавного скролла, View Transitions для переходов между страницами. React-острова — только если конкретному компоненту это действительно нужно |
-| Хостинг         | **Cloudflare Pages**, бесплатный план. Всё должно укладываться в бесплатные лимиты                                                                                                                  |
+| Хостинг         | **Cloudflare Pages** + зеркало **Yandex Object Storage** для России, оба бесплатно. Всё должно укладываться в бесплатные лимиты                                                                     |
 | Бэкенд          | Нет. Единственное исключение — крошечная edge-функция Cloudflare Pages для выбора языка (см. ниже)                                                                                                  |
 | Дизайн          | Макета нет. Дизайн-библиотеку и сайт создаём **с нуля вместе, прямо в коде**: токены → компоненты → страницы. **Figma не используем вообще.**                                                       |
 | Домен           | Пока нет, решим позже                                                                                                                                                                               |
@@ -72,7 +72,7 @@
 
 Когда пользователь говорит «задеплой», делаем всё по этой инструкции **без переспрашивания**. Пользователь не должен повторять её заново.
 
-**Деплоим сразу после каждого завершённого шага** (не дожидаясь «задеплой»): коммит → пуш → деплой → проверка → ссылка пользователю.
+**Деплоим сразу после каждого завершённого шага** (не дожидаясь «задеплой»): коммит → пуш → деплой → проверка → ссылка пользователю. **Деплой — всегда в два места**: Cloudflare Pages (шаг 4) **и** зеркало Yandex Object Storage (шаг 4б, для России). Пользователю даём обе ссылки, для РФ главная — https://vadimpianov.website.yandexcloud.net/ru/
 
 - Проект Cloudflare Pages: **`vadimpianov`**, production-ветка **`main`**, адрес **https://vadimpianov.pages.dev**
 - Ключи — в переменных окружения облачного окружения: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
@@ -98,6 +98,13 @@
    ```sh
    npx wrangler pages deploy dist --project-name vadimpianov --branch main
    ```
+
+4б. **Выложить зеркало для России** (Yandex Object Storage, тот же `dist/`):
+
+```sh
+pnpm deploy:yandex
+```
+
 5. **Проверить:**
    ```sh
    curl -sSI https://vadimpianov.pages.dev/ru/   # 200
@@ -105,6 +112,12 @@
    curl -sS -o /dev/null -D - https://vadimpianov.pages.dev/   # 302, Location: /en/ (или /ru/ из РФ)
    ```
    Для `/` — именно GET, не `curl -I`: функция обрабатывает только GET, на HEAD отдаётся статический `index.html` (200).
+   И зеркало:
+   ```sh
+   curl -sSI https://vadimpianov.website.yandexcloud.net/ru/   # 200
+   curl -sSI https://vadimpianov.website.yandexcloud.net/en/   # 200
+   ```
+   (Прокси окружения изредка рвёт соединение — `Connection reset by peer`; повторить с `--retry 3`.)
 6. **Обновить «Состояние проекта»** ниже: дата деплоя, адрес. Закоммитить и запушить.
 
 ### Если не выходит
@@ -124,7 +137,7 @@
 - Корень `/` на Яндексе без функции Cloudflare: `dist/index.html` (`src/pages/index.astro`) уводит на `/ru/` или `/en/` по cookie `lang`, иначе по языку браузера.
 - Проверка: `curl -sSI https://vadimpianov.website.yandexcloud.net/ru/` и `/en/` → 200.
 - Скрипт работает с адресацией через путь (`forcePathStyle`) — поддомен бакета `vadimpianov.storage.yandexcloud.net` в сети окружения не нужен.
-- Выложено (2026-09-28, первый запуск): https://vadimpianov.website.yandexcloud.net — `/ru/`, `/en/`, `/` отдают 200.
+- Выложено (2026-09-28, первый запуск): https://vadimpianov.website.yandexcloud.net — `/ru/`, `/en/`, `/` отдают 200. Проверено: HTML, CSS, JS, фото, логотипы — 200 с правильными типами; HTML `no-cache`; `/ru` → 302 на `/ru/`; содержимое совпадает со сборкой.
 
 ## Состояние проекта
 
