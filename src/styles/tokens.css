@@ -51,6 +51,10 @@
   --case-accent: #fcd537;
   --case-chip-border: rgb(255 255 255 / 0.14);
   --case-chip-radius: 10px;
+  /* Теги под заголовком кейса: цвета по порядку тегов. */
+  --case-tag-1: #2fa802;
+  --case-tag-2: #ad0063;
+  --case-tag-radius: 8px;
   --text-case-body: clamp(1rem, 0.95rem + 0.35vw, 1.25rem);
   --case-label-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.125rem);
   --case-metric-size: clamp(1.75rem, 1.2rem + 1.6vw, 3rem);

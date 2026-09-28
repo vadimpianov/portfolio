@@ -56,6 +56,12 @@ html.lenis body {
   overflow: clip;
 }
 
+/* Модалка кейса: прокрутку страницы держит остановленный Lenis, overflow у <html> не трогаем —
+   иначе пропадает полоса прокрутки, страница перекладывается и панель дёргается при выезде. */
+html.case-open.lenis.lenis-stopped:not(.lenis-autoToggle) {
+  overflow: visible;
+}
+
 .lenis [data-lenis-prevent] {
   overscroll-behavior: contain;
 }

@@ -41,8 +41,10 @@ const coverSize = (() => {
         <h1 class="case__title">{typograph(title)}</h1>
         {tags.length > 0 && (
           <ul class="case__chips">
-            {tags.map((tag) => (
-              <li class="case__chip">{typograph(tag)}</li>
+            {tags.map((tag, i) => (
+              <li class="case__chip" style={`--tag-color: var(--case-tag-${(i % 2) + 1})`}>
+                {typograph(tag)}
+              </li>
             ))}
           </ul>
         )}
@@ -115,7 +117,7 @@ const coverSize = (() => {
     max-width: 18ch;
     margin-top: 0.75rem;
     font-size: min(var(--text-display), 11cqi);
-    font-weight: var(--weight-heavy);
+    font-weight: 600;
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
     text-wrap: balance;
@@ -130,13 +132,14 @@ const coverSize = (() => {
     list-style: none;
   }
 
-  /* Теги — прозрачные, с тонкой обводкой (как чипсы навыков). */
+  /* Теги — цветные плашки (цвета по порядку: --case-tag-1, -2), кегль и начертание — как у текста кейса. */
   .case__chip {
-    padding: var(--chip-pad-y) var(--chip-pad-x);
-    border: 1px solid var(--case-chip-border);
-    border-radius: var(--case-chip-radius);
-    font-size: var(--text-chip);
-    line-height: 1.2;
+    padding: 0.25em 0.75em;
+    border-radius: var(--case-tag-radius);
+    background: var(--tag-color);
+    color: #fff;
+    font-size: var(--text-case-body);
+    line-height: 1.6;
   }
 
   /* Текст кейса: заголовки секций, метки, абзацы, списки. */
