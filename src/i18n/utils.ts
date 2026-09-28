@@ -1,3 +1,4 @@
+import { typograph } from './typograph';
 import { defaultLocale, locales, ui, type Locale, type UIKey } from './ui';
 
 export function isLocale(value: string | undefined): value is Locale {
@@ -10,8 +11,9 @@ export function getLocaleFromUrl(url: URL): Locale {
   return isLocale(first) ? first : defaultLocale;
 }
 
+/** Строки интерфейса — сразу с типографикой: висячих предлогов и тире в начале строки нет. */
 export function useTranslations(locale: Locale) {
-  return (key: UIKey): string => ui[locale][key];
+  return (key: UIKey): string => typograph(ui[locale][key]);
 }
 
 /** Ссылка внутри текущей локали: `localePath('ru', 'cases/foo')` → `/ru/cases/foo/`. */
