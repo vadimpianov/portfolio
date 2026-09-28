@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getCases, parseCaseId } from '../../../i18n/content';
+import { typograph } from '../../../i18n/typograph';
 import { locales } from '../../../i18n/ui';
 
 export async function getStaticPaths() {
@@ -18,11 +19,136 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const { title, period, tags, theme } = entry.data;
 ---
 
-<BaseLayout title={entry.data.title} description={entry.data.description}>
-  <article>
-    <h1>{entry.data.title}</h1>
-    <Content />
+<BaseLayout title={title} description={entry.data.description}>
+  {/* Страница кейса: весь фон — в край (под шапкой тоже), контент — в полях сетки. */}
+  <article class:list={['case', `case--${theme}`]} data-bleed>
+    <header class="case__hero">
+      {period && <p class="case__period">{period}</p>}
+      <h1 class="case__title">{typograph(title)}</h1>
+      {tags.length > 0 && (
+        <ul class="case__chips">
+          {tags.map((tag) => (
+            <li class="case__chip case__chip--accent">{typograph(tag)}</li>
+          ))}
+        </ul>
+      )}
+    </header>
+    <div class="case__body">
+      <Content />
+    </div>
   </article>
 </BaseLayout>
+
+<style>
+  .case {
+    --case-surface: var(--color-bg);
+    min-height: 100dvh;
+    padding: calc(var(--header-h) + clamp(3rem, 2rem + 4vw, 6rem)) var(--gutter) var(--case-section-gap);
+    background: var(--case-surface);
+    color: var(--color-text);
+  }
+
+  /* Тёмная тема: цвета — из макета кейса. */
+  .case--dark {
+    --case-surface: var(--case-bg);
+    --color-text: var(--case-text);
+    --color-text-body: var(--case-muted);
+    color: var(--case-text);
+  }
+
+  .case__period {
+    font-size: var(--case-label-size);
+    color: var(--case-muted);
+  }
+
+  .case__title {
+    max-width: 18ch;
+    margin-top: 0.75rem;
+    font-size: var(--text-display);
+    font-weight: var(--weight-heavy);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .case__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--chip-gap);
+    margin: clamp(1.5rem, 1rem + 1vw, 2rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case__chip {
+    padding: var(--chip-pad-y) var(--chip-pad-x);
+    border-radius: 999px;
+    background: var(--case-chip-bg);
+    font-size: var(--text-chip);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .case__chip--accent {
+    background: var(--case-accent);
+    color: #141414;
+  }
+
+  /* Текст кейса: заголовки секций, метки, абзацы, списки. */
+  .case__body {
+    max-width: 82.5rem;
+    margin-top: var(--case-block-gap);
+    font-size: var(--text-case-body);
+    line-height: 1.6;
+    color: var(--color-text-body);
+  }
+
+  .case__body :global(h2) {
+    max-width: 24ch;
+    margin-top: var(--case-section-gap);
+    font-size: var(--text-tile-title);
+    font-weight: var(--weight-heavy);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .case__body :global(h2 + p) {
+    margin-top: 0.75rem;
+    font-size: var(--case-label-size);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .case__body :global(h3) {
+    margin-top: var(--case-block-gap);
+    font-size: var(--case-label-size);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--case-accent);
+  }
+
+  .case__body :global(p + p),
+  .case__body :global(p + ul),
+  .case__body :global(ul + p) {
+    margin-top: 1em;
+  }
+
+  .case__body :global(ul) {
+    padding-left: 1.25em;
+  }
+
+  .case__body :global(li + li) {
+    margin-top: 0.4em;
+  }
+
+  .case__body :global(strong) {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+</style>

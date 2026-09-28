@@ -1,0 +1,176 @@
+---
+title: Transforming a product through revenue scenarios
+description: Betting — we rebuilt registration and identity verification in a betting company's mobile app, brought the platforms under a single UI and set up design processes.
+date: 2024-12-01
+period: 2023–2024
+tags: [Betting, Mobile & Mobile web]
+theme: dark
+---
+
+import Chips from '../../../components/case/Chips.astro';
+import Columns from '../../../components/case/Columns.astro';
+import Figure from '../../../components/case/Figure.astro';
+import Metrics from '../../../components/case/Metrics.astro';
+
+<Columns>
+<div>
+
+We joined the project in the middle of a large-scale transformation: the business expected systemic change, not cosmetic tweaks. At the same time the company had no design culture — a designer was seen as just a pair of hands. There was no shared visual language either: every platform — web, CRM, mobile web and the mobile apps — had its own UI and its own logic.
+
+Drawing on our experience in betting, we focused on reworking the key revenue scenarios:
+
+- **Registration** — the first point of churn and the start of LTV;
+- **Deposit** — conversion into a paying user;
+- **Bet slip** — the decision point and growth of the average bet.
+
+</div>
+<div>
+
+We had several goals:
+
+- increase conversion in the key revenue scenarios;
+- build design processes that make design the centre of product thinking, not just the visual implementation;
+- rework the user experience on mobile platforms and bring it under a single UI to speed up the development of new features.
+
+</div>
+</Columns>
+
+<Chips items={['Working within existing legacy', 'Requirements gathering', 'CJM', 'Product thinking', 'Brainstorming']} />
+
+## Registration: before and after
+
+### Before
+
+<Columns>
+<div>
+
+The old registration was a long quest: several screens of mandatory fields — citizenship, date of birth, promo code, phone, email, password and SMS confirmation. Many of these fields weren't required by the system and could be moved inside the app: the promo code into the account area, the date of birth into identity verification, and citizenship could go entirely, leaving only residency.
+
+</div>
+<div>
+
+Registration took more than two minutes, and every extra step cut conversion by up to 7% while pushing the drop-off risk up to 40%. It's important that 70% of new users were already verified with TsUPIS (the Russian betting regulator's registry) and could go straight to betting. The other 30% — new, unique users — were not: they were complete newcomers to betting. Keeping this group was a special challenge for us.
+
+</div>
+</Columns>
+
+<Figure src="/images/cases/betting/old-flow.webp" width={1320} height={849} caption="Mind map of the old registration" alt="Diagram of the old registration (in Russian): seven registration steps followed by a separate identity check — over two minutes before the first deposit" />
+
+<Figure src="/images/cases/betting/old-screens.webp" width={1320} height={718} caption="Old registration screens" alt="Old registration screens (in Russian): a long form, SMS confirmation and a choice of identity verification methods" />
+
+### After
+
+<Columns>
+<div>
+
+After studying competitors and adjacent industries, we introduced two new ways to sign up — via bank ID. Bank ID cuts registration down to 1–2 minutes and can lift conversion by 15–25%. The user confirms their details in the bank's app and returns to the product already verified — no manual form filling.
+
+</div>
+<div>
+
+Instead of a login and password, we built sign-in by phone number — the familiar flow from most popular apps. The user enters their number, gets an SMS code and is in within 10–20 seconds. Research shows that up to 15% of support requests are about password recovery; OTP sign-in reduces that flow and speeds up access.
+
+</div>
+</Columns>
+
+<Figure src="/images/cases/betting/new-flow.webp" width={1320} height={475} caption="Mind map of the new registration" alt="Diagram of the new registration (in Russian): sign-in via T-ID, Sber ID or phone number, registration and verification in one step — under a minute to the first deposit" />
+
+<Figure src="/images/cases/betting/new-screens.webp" width={1320} height={668} caption="New registration screens" alt="New registration screens (in Russian): phone number entry, SMS code and a choice of identity verification methods" />
+
+<Columns>
+<div>
+
+It sounds simple, but there was a lot of work behind it: we had to gather information, explore the APIs, account for the regulator's (TsUPIS) constraints and untangle the old registration code. The process, built on design thinking principles, involved the whole product team — designers, analysts and developers.
+
+</div>
+<div>
+
+Together we identified risks, tested hypotheses and negotiated trade-offs between UX, technical constraints and regulatory requirements. Before touching the mockups, we held more than 30 meetings with the business analyst, bank teams and TsUPIS, and went through dozens of pages of technical documentation to ensure correct user identification and full regulatory compliance.
+
+</div>
+</Columns>
+
+## More about the process
+
+<Columns>
+<div>
+
+To get there, we analysed competitors, studied backend and regulatory constraints, layered behavioural analytics onto the mind map and tested hypotheses against historical data. Then we aligned the final vision with the product team and stakeholders.
+
+When developing new features, we run regular product meetings with all key participants — product, analytics, engineering, marketing and business — to keep metrics, risks and priorities in sync.
+
+Every feature goes through aligning hypotheses and success metrics, identifying risks and technical constraints, defining the MVP and priorities, and recording artefacts and areas of responsibility.
+
+This format reduces rework, speeds up decisions, surfaces bottlenecks early and keeps the whole team engaged and focused on the outcome rather than the process.
+
+As a result, we don't just “hand design over to development” — we work as one product team with shared responsibility for metrics and results.
+
+</div>
+<div>
+
+<Figure src="/images/cases/betting/process.webp" width={768} height={757} alt="Part of the user flow diagram (in Russian): sign-in, registration and identity verification" />
+
+</div>
+</Columns>
+
+## Having studied every nuance and built the mind map, we moved on to designing user scenarios
+
+<Figure src="/images/cases/betting/scenarios.webp" width={1600} height={1012} bleed alt="Scenario map (in Russian): access recovery, anti-fraud, users registered and not registered with TsUPIS. Almost a hundred screens were designed for the Search service alone" />
+
+## We designed lots of modal windows
+
+For every occasion, so to speak
+
+<Figure src="/images/cases/betting/modals.webp" width={3743} height={668} scroll alt="Modal windows (in Russian): deposit, visiting a club, changing the phone number, resending the code, limits, free bet, connection errors" />
+
+## We delivered on our goals
+
+Conversion to registration and deposit went up
+
+<Columns>
+<div>
+
+In 3 months we rebuilt registration: studied TsUPIS requirements and constraints, united the team — product managers, analysts, engineering and business — around one goal, higher conversion, and shipped the app to the App Store and Google Play.
+
+We focused on simplification and growth:
+
+- cut the number of mandatory steps and moved secondary data into the signed-in area;
+- removed everything that restricted access to betting;
+- built one-click registration for 70% of new app users and simplified identity verification for the 30% who were new to the industry;
+- reduced registration time from over two minutes to under one.
+
+</div>
+<div>
+
+- Reduced drop-off by 26%;
+- increased conversion to completed registration and first deposit by 26% and 10% respectively;
+- increased conversion to deposit by 8%;
+- reduced the load on support thanks to a clearer, simpler flow.
+
+This wasn't just a registration redesign. It was a shift from a formal compliance process to a product model, where registration stops being a barrier and becomes an entry point.
+
+As always, we produced a full set of design artefacts — CJM, user flows, prototypes, error scenarios and edge cases — which removed uncertainty in development and sped up delivery.
+
+</div>
+</Columns>
+
+<Metrics items={[
+  { value: 100, label: 'Entered a phone number' },
+  { value: 93.45, label: 'Entered the SMS code' },
+  { value: 81.76, label: 'Went on to verification' },
+  { value: 31.11, label: 'Made a deposit' },
+  { value: 27.69, label: 'Placed a bet' },
+]} />
+
+<Columns>
+<div>
+
+According to the stats, registration performed well: only about 20% of users dropped off along the whole path.
+
+</div>
+<div>
+
+Deposits, however, aren't working so well. Next up — redesigning the Deposit flow.
+
+</div>
+</Columns>

@@ -13,6 +13,12 @@ const cases = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     draft: z.boolean().default(false),
+    /** Годы работы над проектом, «2023–2024». */
+    period: z.string().optional(),
+    /** Отрасль и платформы — чипсы под заголовком. */
+    tags: z.array(z.string()).default([]),
+    /** Тёмная тема страницы — под тёмные макеты кейса. */
+    theme: z.enum(['light', 'dark']).default('light'),
   }),
 });
 

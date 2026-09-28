@@ -1,0 +1,38 @@
+---
+/** Чипсы внутри текста кейса (например, чем занимался в проекте). */
+import { typograph } from '../../i18n/typograph';
+
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="case-chips">
+  {items.map((item) => (
+    <li>{typograph(item)}</li>
+  ))}
+</ul>
+
+<style>
+  .case-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--chip-gap);
+    margin: var(--case-block-gap) 0 0;
+    padding: 0 !important;
+    list-style: none;
+  }
+
+  .case-chips li {
+    margin: 0 !important;
+    padding: var(--chip-pad-y) var(--chip-pad-x);
+    border-radius: 999px;
+    background: var(--case-chip-bg);
+    font-size: var(--text-chip);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-text);
+  }
+</style>

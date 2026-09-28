@@ -44,6 +44,20 @@
   --weight-heavy: 800;
 
   /* Цвет */
+  /* Страница кейса (тёмная тема — под тёмные макеты; цвета из макета кейса). */
+  --case-bg: #0f1f2a;
+  --case-text: #f6f6f6;
+  --case-muted: #9fa5aa;
+  --case-accent: #fcd537;
+  --case-chip-bg: rgb(255 255 255 / 0.08);
+  --text-case-body: clamp(1rem, 0.95rem + 0.35vw, 1.25rem);
+  --case-label-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.125rem);
+  --case-metric-size: clamp(1.75rem, 1.2rem + 1.6vw, 3rem);
+  --case-block-gap: clamp(2.5rem, 2rem + 2vw, 4rem);
+  --case-section-gap: clamp(5rem, 4rem + 4vw, 8rem);
+  --case-col-gap: 4rem;
+  --case-strip-h: clamp(420px, 45vw, 668px);
+  --case-bar-h: clamp(180px, 22vw, 352px);
   --color-bg: #f4f2ee;
   --color-text: #141414;
   --color-text-body: #2b2b2b;

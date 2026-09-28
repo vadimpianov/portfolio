@@ -1,0 +1,79 @@
+---
+/**
+ * Воронка результатов: жёлтые столбики, высота — доля от первого шага,
+ * под столбиком — процент и название шага. Светящаяся «линия пола», как в макете.
+ */
+import { typograph } from '../../i18n/typograph';
+import { getLocaleFromUrl } from '../../i18n/utils';
+
+interface Props {
+  items: { value: number; label: string }[];
+}
+
+const { items } = Astro.props;
+const max = Math.max(...items.map((item) => item.value));
+const locale = getLocaleFromUrl(Astro.url) === 'ru' ? 'ru-RU' : 'en-US';
+const format = (value: number) => `${value.toLocaleString(locale, { maximumFractionDigits: 2 })}%`;
+---
+
+<div class="case-metrics">
+  <ol class="case-metrics__chart">
+    {items.map(({ value, label }) => (
+      <li class="case-metrics__col" style={`--share: ${value / max}`}>
+        <div class="case-metrics__track">
+          <div class="case-metrics__bar" />
+        </div>
+        <p class="case-metrics__value">{format(value)}</p>
+        <p class="case-metrics__label">{typograph(label)}</p>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .case-metrics {
+    margin-block: var(--case-block-gap);
+  }
+
+  .case-metrics__chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-metrics__track {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    height: var(--case-bar-h);
+    border-bottom: 4px solid var(--case-accent);
+    box-shadow: 0 14px 14px -12px var(--case-accent);
+  }
+
+  .case-metrics__bar {
+    width: 100%;
+    height: calc(var(--share) * 100%);
+    border-radius: 24px 24px 0 0;
+    background: linear-gradient(
+      180deg,
+      var(--case-accent) 0%,
+      color-mix(in srgb, var(--case-accent) 80%, #f59e0b) 100%
+    );
+  }
+
+  .case-metrics__value {
+    margin-top: 1.5rem;
+    font-size: var(--case-metric-size);
+    font-weight: var(--weight-heavy);
+    line-height: 1.1;
+    color: var(--case-text);
+  }
+
+  .case-metrics__label {
+    margin-top: 0.25rem;
+    color: var(--case-muted);
+  }
+</style>

@@ -3,15 +3,13 @@ import About from '../../components/About.astro';
 import Hero from '../../components/Hero.astro';
 import Tiles from '../../components/Tiles.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCases, parseCaseId } from '../../i18n/content';
 import type { Locale } from '../../i18n/ui';
-import { getLocaleStaticPaths, localePath, useTranslations } from '../../i18n/utils';
+import { getLocaleStaticPaths, useTranslations } from '../../i18n/utils';
 
 export const getStaticPaths = getLocaleStaticPaths;
 
 const lang = Astro.params.lang as Locale;
 const t = useTranslations(lang);
-const cases = await getCases(lang);
 const chips = (['1', '2', '3', '4', '5', '6'] as const).map((n) => t(`home.intro.chip.${n}`));
 ---
 
@@ -20,19 +18,6 @@ const chips = (['1', '2', '3', '4', '5', '6'] as const).map((n) => t(`home.intro
     <Tiles />
     <About />
   </Hero>
-
-  {cases.length > 0 && (
-    <section>
-      <h2>{t('home.cases')}</h2>
-      <ul>
-        {cases.map((entry) => (
-          <li>
-            <a href={localePath(lang, `cases/${parseCaseId(entry.id).slug}`)}>{entry.data.title}</a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
 </BaseLayout>
 
 <script>
