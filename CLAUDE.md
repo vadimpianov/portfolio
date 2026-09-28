@@ -120,10 +120,11 @@
 
 - Скрипт: `pnpm deploy:yandex` (`scripts/deploy-yandex.mjs`, после `pnpm build`): сам создаёт бакет `vadimpianov` (если нет), публичное чтение, хостинг сайта (index.html в папках), заливает `dist/` с типами и кэшем, удаляет лишнее.
 - Ключи — статический ключ сервисного аккаунта Yandex Cloud (роль `storage.admin`) в переменных окружения облачного окружения: `YC_ACCESS_KEY_ID`, `YC_SECRET_ACCESS_KEY` (скрипт сам снимает `<>` и пробелы). Новые переменные видны только **в новой сессии**.
-- Сеть окружения: в Network access должны быть разрешены `storage.yandexcloud.net` и `vadimpianov.website.yandexcloud.net` (или `*.yandexcloud.net`).
+- Сеть окружения: в Network access должны быть разрешены `storage.yandexcloud.net` и `vadimpianov.website.yandexcloud.net` (для проверки).
 - Корень `/` на Яндексе без функции Cloudflare: `dist/index.html` (`src/pages/index.astro`) уводит на `/ru/` или `/en/` по cookie `lang`, иначе по языку браузера.
 - Проверка: `curl -sSI https://vadimpianov.website.yandexcloud.net/ru/` и `/en/` → 200.
-- Статус (2026-09-28): пользователь зарегистрировался в Yandex Cloud и привязал карту; скрипт готов, **ещё не запускался** — ждём ключи и доступ к сети, затем первый запуск и проверка.
+- Скрипт работает с адресацией через путь (`forcePathStyle`) — поддомен бакета `vadimpianov.storage.yandexcloud.net` в сети окружения не нужен.
+- Выложено (2026-09-28, первый запуск): https://vadimpianov.website.yandexcloud.net — `/ru/`, `/en/`, `/` отдают 200.
 
 ## Состояние проекта
 

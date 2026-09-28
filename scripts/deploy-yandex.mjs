@@ -35,6 +35,9 @@ if (!accessKeyId || !secretAccessKey) {
 const s3 = new S3Client({
   region: 'ru-central1',
   endpoint: 'https://storage.yandexcloud.net',
+  // Адрес через путь (storage.yandexcloud.net/<bucket>/…), а не поддомен бакета —
+  // в сети окружения достаточно разрешить storage.yandexcloud.net.
+  forcePathStyle: true,
   credentials: { accessKeyId, secretAccessKey },
 });
 
