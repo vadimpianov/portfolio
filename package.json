@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "check": "astro check && tsc -p functions",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "deploy:yandex": "node scripts/deploy-yandex.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@aws-sdk/client-s3": "^3.1141.0",
     "@cloudflare/workers-types": "^5.20260925.2",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",

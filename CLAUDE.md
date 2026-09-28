@@ -114,6 +114,17 @@
 - **`Invalid format for Authorization header` [6111]**: в `CLOUDFLARE_API_TOKEN` лежит не API-токен (например, значение с `|` или Global API Key). Нужен API Token: dash.cloudflare.com → My Profile → API Tokens → Create Token → шаблон «Edit Cloudflare Workers» (или Custom: Account → Cloudflare Pages → Edit). Попросить пользователя заменить значение в настройках окружения.
 - В CLAUDE.md не писать «задеплоено», пока шаг 5 не прошёл.
 
+## Зеркало для России (Yandex Object Storage)
+
+`*.pages.dev` и сайты на Cloudflare в РФ режутся (DNS-блок `pages.dev` у части провайдеров, с 2025 — обрыв соединений с Cloudflare после 16 КБ). Поэтому сайт дополнительно выкладывается в **Yandex Object Storage** (бесплатный лимит, 0 ₽/мес): адрес **https://vadimpianov.website.yandexcloud.net**. После каждого деплоя в Cloudflare — выкладываем и сюда.
+
+- Скрипт: `pnpm deploy:yandex` (`scripts/deploy-yandex.mjs`, после `pnpm build`): сам создаёт бакет `vadimpianov` (если нет), публичное чтение, хостинг сайта (index.html в папках), заливает `dist/` с типами и кэшем, удаляет лишнее.
+- Ключи — статический ключ сервисного аккаунта Yandex Cloud (роль `storage.admin`) в переменных окружения облачного окружения: `YC_ACCESS_KEY_ID`, `YC_SECRET_ACCESS_KEY` (скрипт сам снимает `<>` и пробелы). Новые переменные видны только **в новой сессии**.
+- Сеть окружения: в Network access должны быть разрешены `storage.yandexcloud.net` и `vadimpianov.website.yandexcloud.net` (или `*.yandexcloud.net`).
+- Корень `/` на Яндексе без функции Cloudflare: `dist/index.html` (`src/pages/index.astro`) уводит на `/ru/` или `/en/` по cookie `lang`, иначе по языку браузера.
+- Проверка: `curl -sSI https://vadimpianov.website.yandexcloud.net/ru/` и `/en/` → 200.
+- Статус (2026-09-28): пользователь зарегистрировался в Yandex Cloud и привязал карту; скрипт готов, **ещё не запускался** — ждём ключи и доступ к сети, затем первый запуск и проверка.
+
 ## Состояние проекта
 
 Скаффолд готов (2026-09-25): Astro 7 + TS (strict) + MDX + i18n `/ru/`, `/en/` + GSAP/ScrollTrigger + Lenis + View Transitions.
