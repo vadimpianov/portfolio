@@ -1,0 +1,322 @@
+---
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+/**
+ * Кейс в модалке поверх главной: панель выезжает справа, главная затемнена и остаётся на месте.
+ * Ссылки с `data-case-link` открывают кейс здесь; содержимое берётся со страницы кейса
+ * (`/<lang>/cases/<slug>/`, она же открывается напрямую и после перезагрузки).
+ * Адрес меняется на адрес кейса — «Назад» закрывает панель.
+ */
+const t = useTranslations(getLocaleFromUrl(Astro.url));
+const close = t('case.close');
+---
+
+<dialog class="case-drawer" data-case-drawer data-bleed aria-label={close}>
+  <div class="case-drawer__backdrop" data-case-close></div>
+  <div class="case-drawer__cursor" aria-hidden="true">
+    × {close}
+  </div>
+  <div class="case-drawer__panel">
+    <button class="case-drawer__close" type="button" data-case-close>
+      {close}
+    </button>
+    <div class="case-drawer__scroll" data-lenis-prevent data-case-body></div>
+  </div>
+</dialog>
+
+<style>
+  .case-drawer {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  .case-drawer::backdrop {
+    background: transparent;
+  }
+
+  .case-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--case-panel-backdrop);
+    opacity: 0;
+    transition: opacity var(--case-panel-duration) ease;
+  }
+
+  .case-drawer__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--case-panel-w);
+    transform: translateX(100%);
+    transition: transform var(--case-panel-duration) var(--case-panel-ease);
+    box-shadow: -24px 0 64px rgb(0 0 0 / 0.18);
+  }
+
+  .case-drawer.is-open .case-drawer__backdrop {
+    opacity: 1;
+  }
+
+  .case-drawer.is-open .case-drawer__panel {
+    transform: none;
+  }
+
+  /* Внутри панели — свои поля, кейс считает ширину по панели (container query). */
+  .case-drawer__scroll {
+    --gutter: var(--case-panel-gutter);
+    --case-pad-top: calc(var(--header-h) + clamp(1.5rem, 1rem + 2vw, 3rem));
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .case-drawer__close {
+    position: absolute;
+    top: calc((var(--header-h) - 2.5rem) / 2);
+    right: var(--case-panel-gutter);
+    z-index: 1;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.9);
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--text-chip);
+    font-weight: 500;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .case-drawer__close:focus-visible {
+    outline: 2px solid var(--case-accent);
+    outline-offset: 2px;
+  }
+
+  /* Подсказка «× Закрыть» у курсора над затемнением (только мышь). */
+  .case-drawer__cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    padding: 0.625rem 1rem;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-text);
+    font-size: var(--text-chip);
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .case-drawer__backdrop {
+      cursor: none;
+    }
+
+    .case-drawer.has-cursor .case-drawer__cursor {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .case-drawer__cursor {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-drawer__backdrop,
+    .case-drawer__panel {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { getLenis } from '../scripts/motion';
+
+  type State = { caseDrawer?: string } | null;
+
+  declare global {
+    interface Window {
+      __casePopstate?: (event: PopStateEvent) => boolean;
+    }
+  }
+
+  const pages = new Map<string, Promise<Document>>();
+  const load = (url: string) => {
+    let page = pages.get(url);
+    if (!page) {
+      page = fetch(url)
+        .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+        .then((html) => new DOMParser().parseFromString(html, 'text/html'));
+      page.catch(() => pages.delete(url));
+      pages.set(url, page);
+    }
+    return page;
+  };
+
+  /** Стили страницы кейса (компоненты кейса) — в текущий документ, если их там ещё нет. */
+  const addStyles = (doc: Document) => {
+    const waits: Promise<unknown>[] = [];
+    doc.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]').forEach((l) => {
+      const href = l.getAttribute('href');
+      if (!href || document.head.querySelector(`link[rel="stylesheet"][href="${CSS.escape(href)}"]`)) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      waits.push(new Promise((done) => (link.onload = link.onerror = done)));
+      document.head.append(link);
+    });
+    const have = new Set([...document.head.querySelectorAll('style')].map((s) => s.textContent));
+    doc.head.querySelectorAll('style').forEach((s) => {
+      if (have.has(s.textContent)) return;
+      const style = document.createElement('style');
+      style.textContent = s.textContent;
+      document.head.append(style);
+    });
+    return Promise.all(waits);
+  };
+
+  const drawer = () => document.querySelector<HTMLDialogElement>('[data-case-drawer]');
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const duration = () =>
+    reducedMotion()
+      ? 0
+      : parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--case-panel-duration')) *
+        1000;
+
+  let pageTitle = '';
+  let closing = 0;
+
+  async function open(url: string, push: boolean) {
+    const dialog = drawer();
+    const body = dialog?.querySelector<HTMLElement>('[data-case-body]');
+    if (!dialog || !body) return (location.href = url);
+    let doc: Document;
+    try {
+      doc = await load(url);
+    } catch {
+      return (location.href = url);
+    }
+    const article = doc.querySelector('article.case');
+    if (!article) return (location.href = url);
+    await addStyles(doc);
+
+    clearTimeout(closing);
+    body.replaceChildren(document.importNode(article, true));
+    body.scrollTop = 0;
+    if (!dialog.open) {
+      pageTitle = document.title;
+      dialog.showModal();
+      dialog.getBoundingClientRect(); // старт анимации с закрытого положения
+    }
+    dialog.classList.add('is-open');
+    document.title = doc.title;
+    getLenis()?.stop();
+    if (push) history.pushState({ ...history.state, caseDrawer: url }, '', url);
+  }
+
+  /** Скрыть панель (адрес уже вернулся на главную). */
+  function hide(immediate = false) {
+    const dialog = drawer();
+    if (!dialog?.open) return;
+    dialog.classList.remove('is-open', 'has-cursor');
+    document.title = pageTitle;
+    const done = () => {
+      dialog.close();
+      dialog.querySelector('[data-case-body]')?.replaceChildren();
+      getLenis()?.start();
+    };
+    clearTimeout(closing);
+    if (immediate) done();
+    else closing = window.setTimeout(done, duration());
+  }
+
+  /** Закрыть по кнопке, клику мимо или Esc: шаг назад по истории, если панель открыта ссылкой. */
+  function close() {
+    if ((history.state as State)?.caseDrawer) history.back();
+    else hide();
+  }
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const target = event.target as Element | null;
+      if (target?.closest('[data-case-close]') && drawer()?.open) return close();
+      const link = target?.closest<HTMLAnchorElement>('a[data-case-link]');
+      if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      // Фаза захвата — раньше слушателя ClientRouter: он не переходит, если событие уже отменено.
+      event.preventDefault();
+      open(link.href, true);
+    },
+    { capture: true },
+  );
+
+  // «Назад»/«Вперёд» между главной и открытым кейсом — только панель, без перехода страницы.
+  // Вызывается из слушателя в <head> (BaseLayout), который стоит раньше слушателя ClientRouter.
+  window.__casePopstate = (event) => {
+    const dialog = drawer();
+    if (!dialog) return false;
+    const url = (event.state as State)?.caseDrawer;
+    if (url) open(url, false);
+    else if (dialog.open) hide();
+    else return false;
+    return true;
+  };
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && drawer()?.open) {
+      event.preventDefault();
+      close();
+    }
+  });
+
+  // Подсказка «× Закрыть» едет за курсором над затемнением.
+  document.addEventListener('pointermove', (event) => {
+    const dialog = drawer();
+    if (!dialog?.open || event.pointerType !== 'mouse') return;
+    const over = (event.target as Element | null)?.classList.contains('case-drawer__backdrop') ?? false;
+    dialog.classList.toggle('has-cursor', over);
+    const hint = dialog.querySelector<HTMLElement>('.case-drawer__cursor');
+    if (hint && over) {
+      hint.style.transform = `translate(${event.clientX}px, ${event.clientY}px) translate(-50%, -50%)`;
+    }
+  });
+
+  // Перед сменой страницы панель закрывается сразу, прокрутка страницы включается.
+  document.addEventListener('astro:before-swap', () => hide(true));
+
+  // Кейсы загружаются заранее — панель открывается без ожидания.
+  document.addEventListener('astro:page-load', () => {
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('a[data-case-link]')];
+    if (!links.length) return;
+    const idle = window.requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 1500));
+    // Стили кейса — только в кэш браузера: в документ они попадут при открытии.
+    const warm = (doc: Document) =>
+      doc.head
+        .querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')
+        .forEach((l) => fetch(l.href).catch(() => {}));
+    idle(() =>
+      links.forEach((l) =>
+        load(l.href)
+          .then(warm)
+          .catch(() => {}),
+      ),
+    );
+  });
+</script>

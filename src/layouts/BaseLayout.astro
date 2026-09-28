@@ -32,6 +32,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
       addEventListener('beforeunload', () => scrollTo(0, 0));
       addEventListener('pagehide', () => scrollTo(0, 0));
+      // «Назад»/«Вперёд» при открытом кейсе в модалке (CaseDrawer): слушатель должен стоять
+      // раньше слушателя ClientRouter, иначе тот перезагрузит страницу.
+      addEventListener('popstate', (e) => {
+        if (window.__casePopstate?.(e)) e.stopImmediatePropagation();
+      });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>

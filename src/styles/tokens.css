@@ -58,6 +58,12 @@
   --case-col-gap: 4rem;
   --case-strip-h: clamp(420px, 45vw, 668px);
   --case-bar-h: clamp(180px, 22vw, 352px);
+  /* Кейс в модалке поверх главной: панель справа, свои поля внутри. */
+  --case-panel-w: 100vw;
+  --case-panel-gutter: 20px;
+  --case-panel-backdrop: rgb(20 20 20 / 0.45);
+  --case-panel-duration: 0.55s;
+  --case-panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --color-bg: #f4f2ee;
   --color-text: #141414;
   --color-text-body: #2b2b2b;
@@ -90,6 +96,8 @@
     --gutter: 100px;
     --tile-ratio: 4 / 4.5;
     --tile-gap: 72px;
+    --case-panel-w: min(100vw, max(80vw, 720px));
+    --case-panel-gutter: 48px;
   }
 }
 
@@ -98,5 +106,7 @@
   :root {
     --gutter: 160px;
     --tile-gap: 100px;
+    --case-panel-w: min(100vw, max(60vw, 860px));
+    --case-panel-gutter: 80px;
   }
 }

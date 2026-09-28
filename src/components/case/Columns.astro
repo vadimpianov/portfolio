@@ -14,7 +14,8 @@
     margin-block: var(--case-block-gap);
   }
 
-  @media (min-width: 1024px) {
+  /* Ширина — по контейнеру кейса (страница или модалка), не по экрану. */
+  @container case (min-width: 800px) {
     .case-columns {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

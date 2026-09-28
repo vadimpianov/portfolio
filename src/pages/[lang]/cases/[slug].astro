@@ -57,8 +57,10 @@ const { title, period, tags, theme, cover } = entry.data;
 <style>
   .case {
     --case-surface: var(--color-bg);
+    container: case / inline-size;
     min-height: 100dvh;
-    padding: calc(var(--header-h) + clamp(3rem, 2rem + 4vw, 6rem)) var(--gutter) var(--case-section-gap);
+    padding: var(--case-pad-top, calc(var(--header-h) + clamp(3rem, 2rem + 4vw, 6rem))) var(--gutter)
+      var(--case-section-gap);
     background: var(--case-surface);
     color: var(--color-text);
   }
@@ -78,7 +80,7 @@ const { title, period, tags, theme, cover } = entry.data;
     align-items: center;
   }
 
-  @media (min-width: 1024px) {
+  @container case (min-width: 800px) {
     .case__hero--cover {
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
     }
