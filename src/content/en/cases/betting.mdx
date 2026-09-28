@@ -11,12 +11,10 @@ cover: metr-kvadratny
 
 import Chips from '../../../components/case/Chips.astro';
 import Columns from '../../../components/case/Columns.astro';
+import TextColumns from '../../../components/case/TextColumns.astro';
 import Figure from '../../../components/case/Figure.astro';
 import OldFlow from '../../../components/case/betting/OldFlow.astro';
 import Metrics from '../../../components/case/Metrics.astro';
-
-<Columns>
-<div>
 
 We joined the project in the middle of a large-scale transformation: the business expected systemic change, not cosmetic tweaks. At the same time the company had no design culture — a designer was seen as just a pair of hands. There was no shared visual language either: every platform — web, CRM, mobile web and the mobile apps — had its own UI and its own logic.
 
@@ -26,8 +24,7 @@ Drawing on our experience in betting, we focused on reworking the key revenue sc
 - **Deposit** — conversion into a paying user;
 - **Bet slip** — the decision point and growth of the average bet.
 
-</div>
-<div>
+<TextColumns>
 
 We had several goals:
 
@@ -35,8 +32,7 @@ We had several goals:
 - build design processes that make design the centre of product thinking, not just the visual implementation;
 - rework the user experience on mobile platforms and bring it under a single UI to speed up the development of new features.
 
-</div>
-</Columns>
+</TextColumns>
 
 <Chips items={['Working within existing legacy', 'Requirements gathering', 'CJM', 'Product thinking', 'Brainstorming']} />
 

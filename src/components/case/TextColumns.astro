@@ -1,0 +1,42 @@
+---
+/**
+ * Текст, который на широком кейсе разводится на 2 колонки (перетекает из одной в другую),
+ * на узком — одна колонка. Начинается ниже обложки кейса (clear), где ей уже ничего не мешает.
+ */
+---
+
+<div class="case-text-columns">
+  <slot />
+</div>
+
+<style>
+  .case-text-columns {
+    clear: both;
+    margin-block: var(--case-block-gap);
+  }
+
+  @container case (min-width: 800px) {
+    .case-text-columns {
+      columns: 2;
+      column-gap: var(--case-col-gap);
+    }
+  }
+
+  .case-text-columns > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  /* Пункт списка не рвётся между колонками, вводная строка не отрывается от списка. */
+  .case-text-columns :global(li) {
+    break-inside: avoid;
+  }
+
+  .case-text-columns :global(p) {
+    break-after: avoid;
+  }
+
+  /* Список должен перетекать из колонки в колонку — без overflow (иначе он не делится). */
+  .case-text-columns :global(ul) {
+    overflow: visible !important;
+  }
+</style>

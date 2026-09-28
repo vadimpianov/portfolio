@@ -11,12 +11,10 @@ cover: metr-kvadratny
 
 import Chips from '../../../components/case/Chips.astro';
 import Columns from '../../../components/case/Columns.astro';
+import TextColumns from '../../../components/case/TextColumns.astro';
 import Figure from '../../../components/case/Figure.astro';
 import OldFlow from '../../../components/case/betting/OldFlow.astro';
 import Metrics from '../../../components/case/Metrics.astro';
-
-<Columns>
-<div>
 
 Мы подключились к проекту в момент масштабной трансформации: бизнес ожидал не косметических доработок, а системных изменений. При этом в компании отсутствовала дизайн-культура — дизайнер воспринимался только как «руки». Также у компании не было общего визуального языка: у всех платформ — веб, ИРМ, мобильный веб и мобильные приложения — был разный UI и разная логика работы.
 
@@ -26,8 +24,7 @@ import Metrics from '../../../components/case/Metrics.astro';
 - **Пополнение счёта** — конверсия в платящего пользователя;
 - **Корзина** — принятие решения и рост среднего чека.
 
-</div>
-<div>
+<TextColumns>
 
 Перед нами стояло несколько задач:
 
@@ -35,8 +32,7 @@ import Metrics from '../../../components/case/Metrics.astro';
 - выстроить дизайн-процессы так, чтобы дизайн стал центром продуктового мышления, а не только визуальной реализацией;
 - переработать пользовательский опыт на мобильных платформах и объединить его под единым UI, чтобы увеличить скорость разработки новых фич.
 
-</div>
-</Columns>
+</TextColumns>
 
 <Chips items={['Работа в рамках имеющегося легаси', 'Снятие требований', 'CJM', 'Продуктовое мышление', 'Брейншторминг']} />
 

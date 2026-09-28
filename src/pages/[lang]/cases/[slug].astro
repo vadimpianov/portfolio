@@ -35,20 +35,10 @@ const coverSize = (() => {
 <BaseLayout title={title} description={entry.data.description}>
   {/* Страница кейса: весь фон — в край (под шапкой тоже), контент — в полях сетки. */}
   <article class:list={['case', `case--${theme}`]} data-bleed>
+    {/* Обложка на широком кейсе — справа, обтекается: верх — по верху заголовка, рядом с ней идут
+        заголовок, теги и первый текст кейса, а под ней текст снова во всю ширину (см. стили). */}
     <header class:list={['case__hero', { 'case__hero--cover': cover }]}>
-      <div class="case__intro">
-        {period && <p class="case__period">{period}</p>}
-        <h1 class="case__title">{typograph(title)}</h1>
-        {tags.length > 0 && (
-          <ul class="case__chips">
-            {tags.map((tag, i) => (
-              <li class="case__chip" style={`--tag-color: var(--case-tag-${(i % 2) + 1})`}>
-                {typograph(tag)}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {period && <p class="case__period">{period}</p>}
       {cover && (
         <img
           class="case__cover"
@@ -60,6 +50,16 @@ const coverSize = (() => {
           alt=""
           fetchpriority="high"
         />
+      )}
+      <h1 class="case__title">{typograph(title)}</h1>
+      {tags.length > 0 && (
+        <ul class="case__chips">
+          {tags.map((tag, i) => (
+            <li class="case__chip" style={`--tag-color: var(--case-tag-${(i % 2) + 1})`}>
+              {typograph(tag)}
+            </li>
+          ))}
+        </ul>
       )}
     </header>
     <div class="case__body">
@@ -87,25 +87,38 @@ const coverSize = (() => {
     color: var(--case-text);
   }
 
-  /* С обложкой: текст слева, картинка справа (на узких — картинка под текстом). */
+  /* Узкий кейс (и модалка): всё в колонку, обложка — под тегами. */
   .case__hero--cover {
-    display: grid;
-    gap: var(--case-block-gap);
-    align-items: center;
-  }
-
-  @container case (min-width: 800px) {
-    .case__hero--cover {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
-    }
+    display: flex;
+    flex-direction: column;
   }
 
   .case__cover {
     display: block;
+    order: 1;
     width: 100%;
     max-width: 576px;
     height: auto;
-    justify-self: center;
+    margin: var(--case-block-gap) auto 0;
+  }
+
+  /* Широкий: обложка справа и обтекается. Верх — вровень с заголовком (тот же отступ от годов);
+     рядом — заголовок, теги и первый текст кейса; ниже обложки текст идёт во всю ширину. */
+  @container case (min-width: 800px) {
+    .case__hero--cover {
+      display: block;
+    }
+
+    .case__cover {
+      float: right;
+      width: 40%;
+      margin: 12px 0 var(--case-block-gap) var(--case-col-gap);
+    }
+
+    /* Маркеры списков рядом с обложкой не залезают под неё. */
+    .case__body :global(ul) {
+      overflow: hidden;
+    }
   }
 
   .case__period {
