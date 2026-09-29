@@ -101,7 +101,9 @@ const close = t('case.close');
     /* Сверху до контента — столько же, сколько слева (поле панели). */
     --case-pad-top: var(--case-panel-gutter);
     /* Панель уже экрана — шрифты кейса мельче, чем на отдельной странице (целые px). */
-    --text-display: round(clamp(28px, 18px + 1.8vw, 44px), 1px);
+    --text-display: round(clamp(28px, 18px + 1.8vw, 46px), 1px);
+    /* Заголовок кейса: 46 / 48 на широком экране (1.05 → чётные px через --lh). */
+    --leading-display: 1.05;
     --text-tile-title: round(clamp(22px, 18px + 0.8vw, 32px), 1px);
     --text-case-body: round(clamp(15px, 14px + 0.15vw, 17px), 1px);
     --case-label-size: round(clamp(13px, 12px + 0.12vw, 15px), 1px);
