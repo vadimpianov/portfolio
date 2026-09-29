@@ -47,7 +47,8 @@ for (const file of files) {
   for (const line of text.split('\n')) {
     const t = line.trim();
     if (!t) continue;
-    for (const m of [...t.matchAll(word), ...t.matchAll(dash)]) {
+    const hits = [...t.matchAll(word)].filter((m) => !/^\p{Lu}{2}$/u.test(m[1])); // UI, ИИ — аббревиатуры
+    for (const m of [...hits, ...t.matchAll(dash)]) {
       problems.push(`${file}: …${t.slice(Math.max(0, m.index - 20), m.index + 20)}…`);
     }
   }

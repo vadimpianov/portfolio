@@ -32,10 +32,15 @@ const SHORT_WORDS = new Set([
   'via',
 ]);
 
+// Аббревиатуры из двух заглавных (UI, ИИ, UX) — не предлоги: их не привязываем, иначе цепочка
+// «UI и разная» становится одним неразрывным куском и уезжает на новую строку раньше времени.
+const isAbbr = (word: string) =>
+  word.length === 2 && word === word.toUpperCase() && word !== word.toLowerCase();
+
 export function typograph(text: string): string {
   return text
     .replace(/ +(?=[—–])/g, NBSP)
     .replace(/(?<=^|[\s («"„*])(\p{L}+) +/gu, (match, word: string) =>
-      word.length <= 2 || SHORT_WORDS.has(word.toLowerCase()) ? word + NBSP : match,
+      (word.length <= 2 && !isAbbr(word)) || SHORT_WORDS.has(word.toLowerCase()) ? word + NBSP : match,
     );
 }
