@@ -28,7 +28,13 @@ function step(slider: HTMLElement, dir: 1 | -1) {
     // С одного края на другой — позади всех (иначе на полпути перекрывает соседа).
     if ((from === 'prev' && pos === 'next') || (from === 'next' && pos === 'prev')) {
       slide.dataset.wrap = '';
-      slide.addEventListener('transitionend', () => delete slide.dataset.wrap, { once: true });
+      const done = (e: TransitionEvent) => {
+        // Только конец движения самого экрана (не z-index и не яркость картинки внутри).
+        if (e.target !== slide || e.propertyName !== 'transform') return;
+        slide.removeEventListener('transitionend', done);
+        delete slide.dataset.wrap;
+      };
+      slide.addEventListener('transitionend', done);
     }
     slide.dataset.pos = pos;
   });
