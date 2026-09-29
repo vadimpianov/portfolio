@@ -7,13 +7,30 @@ import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
  * (`/<lang>/cases/<slug>/`, она же открывается напрямую и после перезагрузки).
  * Адрес меняется на адрес кейса — «Назад» закрывает панель.
  */
-const t = useTranslations(getLocaleFromUrl(Astro.url));
+interface Props {
+  /** Открыта сразу (адрес кейса: прямой заход или перезагрузка); кейс — в слоте. */
+  open?: boolean;
+}
+
+const { open = false } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 const close = t('case.close');
 ---
 
 {/* Фокус при открытии — на сам диалог (не на кнопку и не на панель за краем экрана:
     фокус на ней прокручивал диалог вбок, и панель дёргалась при выезде). */}
-<dialog class="case-drawer" data-case-drawer data-bleed aria-label={close} tabindex="-1" autofocus>
+<dialog
+  class="case-drawer"
+  data-case-drawer
+  data-bleed
+  aria-label={close}
+  tabindex="-1"
+  autofocus
+  data-open-on-load={open ? '' : undefined}
+  data-home-url={`/${locale}/`}
+  data-home-title={t('site.title')}
+>
   <div class="case-drawer__backdrop" data-case-close></div>
   <div class="case-drawer__panel">
     <button class="case-drawer__close" type="button" aria-label={close} data-case-close>
@@ -22,7 +39,9 @@ const close = t('case.close');
       </svg>
     </button>
     {/* После выезда фокус — на содержимое: стрелки и пробел листают кейс. */}
-    <div class="case-drawer__scroll" tabindex="-1" data-lenis-prevent data-case-body></div>
+    <div class="case-drawer__scroll" tabindex="-1" data-lenis-prevent data-case-body>
+      <slot />
+    </div>
   </div>
 </dialog>
 
@@ -133,6 +152,12 @@ const close = t('case.close');
     outline-offset: 2px;
   }
 
+  /* Открыта при загрузке (адрес кейса) — сразу на месте, без выезда. */
+  .case-drawer.is-instant .case-drawer__backdrop,
+  .case-drawer.is-instant .case-drawer__panel {
+    transition: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .case-drawer__backdrop,
     .case-drawer__panel {
@@ -144,7 +169,9 @@ const close = t('case.close');
 <script>
   import { getLenis } from '../scripts/motion';
 
-  type State = { caseDrawer?: string } | null;
+  // caseDrawer — кейс открыт ссылкой с главной (закрыть = «назад»);
+  // caseDirect — открыт сразу по адресу кейса (закрыть = заменить адрес на главную).
+  type State = { caseDrawer?: string; caseDirect?: boolean } | null;
 
   declare global {
     interface Window {
@@ -257,8 +284,35 @@ const close = t('case.close');
 
   /** Закрыть по кнопке, клику мимо или Esc: шаг назад по истории, если панель открыта ссылкой. */
   function close() {
-    if ((history.state as State)?.caseDrawer) history.back();
-    else hide();
+    const state = history.state as State;
+    if (state?.caseDrawer) return history.back();
+    if (state?.caseDirect) {
+      // Открыта по адресу кейса: назад — некуда (или чужой сайт), поэтому адрес меняем на главную.
+      const home = drawer()?.dataset.homeUrl ?? '/';
+      const { caseDirect: _, ...rest } = state;
+      history.replaceState(rest, '', home);
+      // Переключатель языка вёл на тот же кейс на другом языке — теперь на главную.
+      document.querySelectorAll<HTMLAnchorElement>('a[data-set-lang]').forEach((a) => {
+        a.href = `/${a.dataset.setLang}/`;
+      });
+    }
+    hide();
+  }
+
+  /** Адрес кейса: модалка уже открыта при загрузке — без выезда, главная за ней стоит на месте. */
+  function openOnLoad() {
+    const dialog = drawer();
+    const body = dialog?.querySelector<HTMLElement>('[data-case-body]');
+    if (!dialog || !body || dialog.open || !('openOnLoad' in dialog.dataset)) return;
+    delete dialog.dataset.openOnLoad;
+    pageTitle = dialog.dataset.homeTitle ?? document.title;
+    history.replaceState({ ...history.state, caseDirect: true }, '');
+    dialog.classList.add('is-instant', 'is-open');
+    dialog.showModal();
+    document.documentElement.classList.add('case-open');
+    getLenis()?.stop();
+    body.focus({ preventScroll: true });
+    requestAnimationFrame(() => requestAnimationFrame(() => dialog.classList.remove('is-instant')));
   }
 
   document.addEventListener(
@@ -301,6 +355,7 @@ const close = t('case.close');
 
   // Кейсы загружаются заранее — панель открывается без ожидания.
   document.addEventListener('astro:page-load', () => {
+    openOnLoad();
     const links = [...document.querySelectorAll<HTMLAnchorElement>('a[data-case-link]')];
     if (!links.length) return;
     const idle = window.requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 1500));

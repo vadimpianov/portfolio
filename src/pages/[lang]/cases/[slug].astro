@@ -1,10 +1,13 @@
 ---
-import { asset } from '../../../utils/asset';
-import { readFileSync } from 'node:fs';
-import { render } from 'astro:content';
+/**
+ * Адрес кейса (прямой заход, перезагрузка): та же главная, а кейс поверх неё — в модалке,
+ * уже открытой (как после клика по плитке). Закрыть — главная, адрес /<lang>/.
+ */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CaseArticle from '../../../components/CaseArticle.astro';
+import CaseDrawer from '../../../components/CaseDrawer.astro';
+import HomeContent from '../../../components/HomeContent.astro';
 import { getCases, parseCaseId } from '../../../i18n/content';
-import { typograph } from '../../../i18n/typograph';
 import { locales } from '../../../i18n/ui';
 
 export async function getStaticPaths() {
@@ -20,193 +23,11 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
-const { title, period, tags, theme, cover } = entry.data;
-
-// Размеры обложки (WebP с альфой, заголовок VP8X) — чтобы место под картинку было сразу, без скачка.
-const coverSize = (() => {
-  if (!cover) return undefined;
-  const head = readFileSync(`public/images/cases/${cover}-600.webp`).subarray(0, 30);
-  if (head.toString('ascii', 12, 16) !== 'VP8X') return undefined;
-  return { width: head.readUIntLE(24, 3) + 1, height: head.readUIntLE(27, 3) + 1 };
-})();
 ---
 
-<BaseLayout title={title} description={entry.data.description}>
-  {/* Страница кейса: весь фон — в край (под шапкой тоже), контент — в полях сетки. */}
-  <article class:list={['case', `case--${theme}`]} data-bleed>
-    {/* Обложка на широком кейсе — справа, обтекается: верх — по верху заголовка, рядом с ней идут
-        заголовок, теги и первый текст кейса, а под ней текст снова во всю ширину (см. стили). */}
-    <header class:list={['case__hero', { 'case__hero--cover': cover }]}>
-      {period && <p class="case__period">{period}</p>}
-      {cover && (
-        <img
-          class="case__cover"
-          src={asset(`/images/cases/${cover}-600.webp`)}
-          srcset={`${asset(`/images/cases/${cover}-600.webp`)} 600w, ${asset(`/images/cases/${cover}-1200.webp`)} 1200w`}
-          sizes="(min-width: 1024px) 40vw, 90vw"
-          width={coverSize?.width}
-          height={coverSize?.height}
-          alt=""
-          fetchpriority="high"
-        />
-      )}
-      <h1 class="case__title">{typograph(title)}</h1>
-      {tags.length > 0 && (
-        <ul class="case__chips">
-          {tags.map((tag, i) => (
-            <li class="case__chip" style={`--tag-color: var(--case-tag-${(i % 2) + 1})`}>
-              {typograph(tag)}
-            </li>
-          ))}
-        </ul>
-      )}
-    </header>
-    <div class="case__body">
-      <Content />
-    </div>
-  </article>
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <HomeContent />
+  <CaseDrawer open>
+    <CaseArticle entry={entry} />
+  </CaseDrawer>
 </BaseLayout>
-
-<style>
-  .case {
-    --case-surface: var(--color-bg);
-    container: case / inline-size;
-    min-height: 100dvh;
-    padding: var(--case-pad-top, round(calc(var(--header-h) + clamp(48px, 32px + 4vw, 96px)), 2px))
-      var(--gutter) var(--case-section-gap);
-    background: var(--case-surface);
-    color: var(--color-text);
-  }
-
-  /* Тёмная тема: цвета — из макета кейса. */
-  .case--dark {
-    --case-surface: var(--case-bg);
-    --color-text: var(--case-text);
-    --color-text-body: var(--case-muted);
-    color: var(--case-text);
-  }
-
-  /* Узкий кейс (и модалка): всё в колонку, обложка — под тегами. */
-  .case__hero--cover {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .case__cover {
-    display: block;
-    order: 1;
-    width: 100%;
-    max-width: 576px;
-    height: auto;
-    margin: var(--case-block-gap) auto 0;
-  }
-
-  /* Широкий: обложка справа и обтекается. Верх — вровень с заголовком (тот же отступ от годов);
-     рядом — заголовок, теги и первый текст кейса; ниже обложки текст идёт во всю ширину. */
-  @container case (min-width: 800px) {
-    .case__hero--cover {
-      display: block;
-    }
-
-    .case__cover {
-      float: right;
-      width: 40%;
-      margin: 12px 0 var(--case-block-gap) var(--case-col-gap);
-    }
-
-    /* Маркеры списков рядом с обложкой не залезают под неё. */
-    .case__body :global(ul) {
-      overflow: hidden;
-    }
-  }
-
-  .case__period {
-    font-size: var(--case-label-size);
-    color: var(--case-muted);
-  }
-
-  .case__title {
-    max-width: 18ch;
-    margin-top: 12px;
-    font-size: round(min(var(--text-display), 11cqi), 1px);
-    font-weight: 600;
-    --lh: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-    text-wrap: balance;
-  }
-
-  .case__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--chip-gap);
-    margin: round(clamp(24px, 16px + 1vw, 32px), 2px) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  /* Теги — цветные плашки (цвета по порядку: --case-tag-1, -2), кегль и начертание — как у текста кейса. */
-  .case__chip {
-    padding: round(0.25em, 2px) round(0.75em, 2px);
-    border-radius: var(--case-tag-radius);
-    background: var(--tag-color);
-    color: #fff;
-    font-size: var(--text-case-body);
-    --lh: var(--leading-body);
-  }
-
-  /* Текст кейса: заголовки секций, метки, абзацы, списки. */
-  .case__body {
-    max-width: 1320px;
-    margin-top: var(--case-block-gap);
-    font-size: var(--text-case-body);
-    --lh: var(--leading-body);
-    color: var(--color-text-body);
-  }
-
-  .case__body :global(h2) {
-    max-width: 24ch;
-    margin-top: var(--case-section-gap);
-    font-size: var(--text-tile-title);
-    font-weight: var(--weight-heavy);
-    --lh: var(--leading-title);
-    letter-spacing: var(--tracking-title);
-    color: var(--color-text);
-    text-wrap: balance;
-  }
-
-  .case__body :global(h2 + p) {
-    margin-top: 12px;
-    font-size: var(--case-label-size);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-label);
-  }
-
-  .case__body :global(h3) {
-    margin-top: var(--case-block-gap);
-    font-size: var(--case-label-size);
-    font-weight: 500;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--case-accent);
-  }
-
-  .case__body :global(p + p),
-  .case__body :global(p + ul),
-  .case__body :global(ul + p) {
-    margin-top: round(1em, 2px);
-  }
-
-  .case__body :global(ul) {
-    padding-left: round(1.25em, 2px);
-  }
-
-  .case__body :global(li + li) {
-    margin-top: round(0.4em, 2px);
-  }
-
-  .case__body :global(strong) {
-    color: var(--color-text);
-    font-weight: 600;
-  }
-</style>
