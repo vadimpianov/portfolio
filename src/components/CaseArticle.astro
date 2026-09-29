@@ -131,8 +131,8 @@ const coverSize = (() => {
     display: flex;
     flex-wrap: wrap;
     gap: var(--chip-gap);
-    /* Отступ от заголовка до тегов — как от годов до заголовка. */
-    margin: var(--case-hero-gap) 0 0;
+    /* Отступ от заголовка до тегов — вдвое больше, чем от годов до заголовка. */
+    margin: calc(var(--case-hero-gap) * 2) 0 0;
     padding: 0;
     list-style: none;
   }
