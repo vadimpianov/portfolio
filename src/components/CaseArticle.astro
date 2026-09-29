@@ -111,7 +111,15 @@ const coverSize = (() => {
     .case__cover {
       float: right;
       width: calc((100% - var(--case-col-gap)) / 2);
+      /* Кегль текста — чтобы отступ ниже считался как у маркеров списков. */
+      font-size: var(--text-case-body);
       margin: 0 0 var(--case-block-gap) var(--case-col-gap);
+    }
+
+    /* Слайдер — от маркера списков правой колонки (красная строка) до правого края (края крестика). */
+    .case__cover :global(.case-slider) {
+      width: auto;
+      margin-left: var(--case-indent);
     }
 
     /* Маркеры списков рядом с обложкой не залезают под неё. */

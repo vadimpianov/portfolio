@@ -84,7 +84,7 @@
   --case-slider-w: 100%; /* слайдер — во всю ширину обложки (правой колонки) */
   --case-slide-duration: 0.9s;
   --case-slide-ease: cubic-bezier(0.4, 0, 0.2, 1); /* быстрый старт без рывка, мягкое торможение */
-  --case-slide-side-opacity: 0.55;
+  --case-slide-side-bright: 0.55; /* яркость соседних экранов */
   --case-slide-side-scale: 0.82;
   --case-slide-interval: 4s; /* автопрокрутка */
   /* Селектор сценариев кейса (вкладки): выбранная — жёлтая. */

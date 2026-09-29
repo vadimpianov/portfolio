@@ -1,7 +1,7 @@
 ---
 /**
  * Обложка кейса — слайдер экранов: текущий экран впереди, соседние — меньше, за ним и приглушены
- * до 55% (затемнением цветом фона, а не прозрачностью — при смене экраны не просвечивают друг сквозь друга).
+ * (яркость 55%, а не прозрачность — при смене экраны не просвечивают друг сквозь друга).
  * Экраны кликабельны (сосед — к нему, текущий — к следующему), соседи на наведение чуть поворачиваются;
  * автопрокрутка (стоит под курсором и при фокусе с клавиатуры). При переключении новый экран плавно
  * проявляется и увеличивается. Логика — `src/scripts/cover-slider.ts` (подключает CaseDrawer).
@@ -44,13 +44,7 @@ const first = size(slides[0]);
     const src = asset(`/images/cases/${name}-750.webp`);
     const src3x = asset(`/images/cases/${name}-1125.webp`);
     return (
-      <button
-        class="case-slider__slide"
-        type="button"
-        data-pos={pos(i)}
-        aria-label={t('case.slider.show')}
-        style={`--src: url("${src}")`}
-      >
+      <button class="case-slider__slide" type="button" data-pos={pos(i)} aria-label={t('case.slider.show')}>
         <img
           src={src}
           srcset={`${src} 750w, ${src3x} 1125w`}
@@ -89,27 +83,21 @@ const first = size(slides[0]);
     cursor: pointer;
     transform: translateX(var(--x, 0)) scale(var(--s, 1)) rotate(var(--r, 0deg));
     transition: transform var(--case-slide-duration) var(--case-slide-ease);
+    /* Слои держим постоянно — без пересоздания в начале и конце перехода (иначе мигает). */
+    will-change: transform;
+    backface-visibility: hidden;
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Приглушение соседей — яркостью (filter), а не прозрачностью и не слоем поверх: картинки всегда
+     непрозрачные, при переходе ничего не просвечивает и не мигает. */
   .case-slider__slide img {
     display: block;
     width: 100%;
     height: auto;
     user-select: none;
-  }
-
-  /* Приглушение соседей: слой цвета фона по форме экрана (маска — сама картинка). Картинки всегда
-     непрозрачные, поэтому при переходе один экран не просвечивает сквозь другой. */
-  .case-slider__slide::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--case-surface);
-    mask: var(--src) center / 100% 100% no-repeat;
-    opacity: var(--dim, 0);
-    transition: opacity var(--case-slide-duration) var(--case-slide-ease);
-    pointer-events: none;
+    filter: brightness(var(--bright, 1));
+    transition: filter var(--case-slide-duration) var(--case-slide-ease);
   }
 
   .case-slider__slide[data-pos='current'] {
@@ -118,7 +106,7 @@ const first = size(slides[0]);
 
   /* Новый текущий сразу выходит вперёд — поэтому светлеет быстро, в начале движения: вперёд
      выезжает уже яркий экран, а не тёмный поверх светлого. */
-  .case-slider__slide[data-pos='current']::after {
+  .case-slider__slide[data-pos='current'] img {
     transition-duration: calc(var(--case-slide-duration) * 0.4);
     transition-timing-function: ease-out;
   }
@@ -127,7 +115,7 @@ const first = size(slides[0]);
   .case-slider__slide[data-pos='next'] {
     z-index: 2;
     --s: var(--case-slide-side-scale);
-    --dim: calc(1 - var(--case-slide-side-opacity));
+    --bright: var(--case-slide-side-bright);
   }
 
   /* Сдвиг соседа в долях его ширины: внешний край — по краю обложки. */
@@ -147,19 +135,19 @@ const first = size(slides[0]);
   .case-slider__slide[data-pos='hidden'] {
     z-index: 0;
     --s: 0.6;
-    --dim: 1;
+    --bright: 0;
   }
 
   /* Наведение (мышь) — только на соседей: чуть поворачиваются и светлеют. Текущий на наведение не реагирует. */
   @media (hover: hover) {
     .case-slider__slide[data-pos='prev']:hover {
       --r: -1.5deg;
-      --dim: calc((1 - var(--case-slide-side-opacity)) / 2);
+      --bright: calc((1 + var(--case-slide-side-bright)) / 2);
     }
 
     .case-slider__slide[data-pos='next']:hover {
       --r: 1.5deg;
-      --dim: calc((1 - var(--case-slide-side-opacity)) / 2);
+      --bright: calc((1 + var(--case-slide-side-bright)) / 2);
     }
   }
 
@@ -171,7 +159,7 @@ const first = size(slides[0]);
 
   @media (prefers-reduced-motion: reduce) {
     .case-slider__slide,
-    .case-slider__slide::after {
+    .case-slider__slide img {
       transition: none;
     }
   }
