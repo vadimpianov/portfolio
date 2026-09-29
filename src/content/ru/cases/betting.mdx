@@ -8,6 +8,7 @@ theme: dark
 slides: [betting/cover-system, betting/cover-verification, betting/cover-default]
 ---
 
+import CaseTabs from '../../../components/case/CaseTabs.astro';
 import Chips from '../../../components/case/Chips.astro';
 import Columns from '../../../components/case/Columns.astro';
 import TextColumns from '../../../components/case/TextColumns.astro';
@@ -43,7 +44,9 @@ import Metrics from '../../../components/case/Metrics.astro';
 
 </TextColumns>
 
-<Chips items={['Работа в рамках имеющегося легаси', 'Общение со стейкхолдерами', 'CJM', 'Продуктовое мышление', 'Организация продуктовых сессий', 'Изучение аналитики']} />
+<Chips items={['Работа в рамках имеющегося легаси', 'Общение со стейкхолдерами', 'Организация продуктовых сессий', 'Изучение аналитики', 'Наставничество']} />
+
+<CaseTabs items={['Процессы', 'Регистрация', 'Пополнение', 'Корзина']} active={1}>
 
 ## Сценарий регистрации «до и после»
 
@@ -182,3 +185,5 @@ import Metrics from '../../../components/case/Metrics.astro';
 
 </div>
 </Columns>
+
+</CaseTabs>

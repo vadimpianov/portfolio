@@ -89,6 +89,12 @@
   --case-slider-arrow-bg: #162d3c;
   --case-slider-arrow-hover: #1d3a4e;
   --case-slider-arrow-border: rgb(255 255 255 / 0.08);
+  /* Селектор сценариев кейса (вкладки): выбранная — жёлтая. */
+  --case-tabs-h: 48px;
+  --case-tabs-radius: 10px;
+  --case-tabs-border: rgb(255 255 255 / 0.08);
+  --case-tabs-border-strong: rgb(255 255 255 / 0.2);
+  --case-tabs-active-text: #141414;
   --case-strip-h: round(clamp(420px, 45vw, 668px), 2px);
   --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
   /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */

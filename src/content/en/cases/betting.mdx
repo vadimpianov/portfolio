@@ -8,6 +8,7 @@ theme: dark
 slides: [betting/cover-system, betting/cover-verification, betting/cover-default]
 ---
 
+import CaseTabs from '../../../components/case/CaseTabs.astro';
 import Chips from '../../../components/case/Chips.astro';
 import Columns from '../../../components/case/Columns.astro';
 import TextColumns from '../../../components/case/TextColumns.astro';
@@ -43,7 +44,9 @@ I had several goals:
 
 </TextColumns>
 
-<Chips items={['Working within existing legacy', 'Stakeholder communication', 'CJM', 'Product thinking', 'Running product sessions', 'Analytics research']} />
+<Chips items={['Working within existing legacy', 'Stakeholder communication', 'Running product sessions', 'Analytics research', 'Mentoring']} />
+
+<CaseTabs items={['Processes', 'Registration', 'Deposit', 'Cart']} active={1}>
 
 ## Registration: before and after
 
@@ -182,3 +185,5 @@ Deposits, however, aren't working so well. Next up — redesigning the Deposit f
 
 </div>
 </Columns>
+
+</CaseTabs>
