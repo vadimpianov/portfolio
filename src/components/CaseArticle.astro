@@ -120,8 +120,10 @@ const coverSize = (() => {
     }
   }
 
+  /* Годы — тем же кеглем, что и текст кейса. */
   .case__period {
-    font-size: var(--case-label-size);
+    font-size: var(--text-case-body);
+    --lh: var(--leading-body);
     color: var(--case-muted);
   }
 

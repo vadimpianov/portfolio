@@ -69,7 +69,7 @@ const first = size(slides[0]);
      их внешний край — ровно по краю обложки. */
   .case-slider {
     position: relative;
-    /* Композиция — 80% ширины обложки, по центру. */
+    /* Композиция — во всю ширину обложки (правой колонки). */
     width: var(--case-slider-w);
     margin-inline: auto;
     aspect-ratio: calc(var(--slide-ratio) / var(--case-slide-w));
@@ -111,6 +111,13 @@ const first = size(slides[0]);
 
   .case-slider__slide[data-pos='current'] {
     z-index: 3;
+  }
+
+  /* Новый текущий сразу выходит вперёд — поэтому светлеет быстро, в начале движения: вперёд
+     выезжает уже яркий экран, а не тёмный поверх светлого. */
+  .case-slider__slide[data-pos='current']::after {
+    transition-duration: calc(var(--case-slide-duration) * 0.4);
+    transition-timing-function: ease-out;
   }
 
   .case-slider__slide[data-pos='prev'],
