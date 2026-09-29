@@ -81,7 +81,9 @@
   --case-bullet-gap: 20px; /* от маркера списка до текста пункта */
   /* Обложка-слайдер: соседние экраны меньше, полупрозрачные и выглядывают из-за текущего. */
   --case-slide-w: 0.6; /* ширина текущего экрана — доля ширины обложки */
-  --case-slide-duration: 0.8s;
+  --case-slider-w: 80%; /* ширина слайдера в обложке */
+  --case-slide-duration: 1.2s;
+  --case-slide-ease: cubic-bezier(0.45, 0, 0.2, 1); /* плавный разгон и долгое торможение */
   --case-slide-side-opacity: 0.55;
   --case-slide-side-scale: 0.82;
   --case-slide-interval: 4s; /* автопрокрутка */

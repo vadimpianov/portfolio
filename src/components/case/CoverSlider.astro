@@ -2,7 +2,7 @@
 /**
  * Обложка кейса — слайдер экранов: текущий экран впереди, соседние — меньше, за ним и приглушены
  * до 55% (затемнением цветом фона, а не прозрачностью — при смене экраны не просвечивают друг сквозь друга).
- * Экраны кликабельны (сосед — к нему, текущий — к следующему), на наведение чуть поворачиваются;
+ * Экраны кликабельны (сосед — к нему, текущий — к следующему), соседи на наведение чуть поворачиваются;
  * автопрокрутка (стоит под курсором и при фокусе с клавиатуры). При переключении новый экран плавно
  * проявляется и увеличивается. Логика — `src/scripts/cover-slider.ts` (подключает CaseDrawer).
  */
@@ -69,7 +69,9 @@ const first = size(slides[0]);
      их внешний край — ровно по краю обложки. */
   .case-slider {
     position: relative;
-    width: 100%;
+    /* Композиция — 80% ширины обложки, по центру. */
+    width: var(--case-slider-w);
+    margin-inline: auto;
     aspect-ratio: calc(var(--slide-ratio) / var(--case-slide-w));
   }
 
@@ -83,7 +85,7 @@ const first = size(slides[0]);
     background: none;
     cursor: pointer;
     transform: translateX(var(--x, 0)) scale(var(--s, 1)) rotate(var(--r, 0deg));
-    transition: transform var(--case-slide-duration) var(--case-panel-ease);
+    transition: transform var(--case-slide-duration) var(--case-slide-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -103,7 +105,7 @@ const first = size(slides[0]);
     background: var(--case-surface);
     mask: var(--src) center / 100% 100% no-repeat;
     opacity: var(--dim, 0);
-    transition: opacity var(--case-slide-duration) var(--case-panel-ease);
+    transition: opacity var(--case-slide-duration) var(--case-slide-ease);
     pointer-events: none;
   }
 
@@ -138,20 +140,15 @@ const first = size(slides[0]);
     --dim: 1;
   }
 
-  /* Наведение (мышь): экран чуть поворачивается, сосед — ещё и светлеет. */
+  /* Наведение (мышь) — только на соседей: чуть поворачиваются и светлеют. Текущий на наведение не реагирует. */
   @media (hover: hover) {
-    .case-slider__slide[data-pos='current']:hover {
-      --r: -2deg;
-      --s: 1.02;
-    }
-
     .case-slider__slide[data-pos='prev']:hover {
-      --r: -4deg;
+      --r: -1.5deg;
       --dim: calc((1 - var(--case-slide-side-opacity)) / 2);
     }
 
     .case-slider__slide[data-pos='next']:hover {
-      --r: 4deg;
+      --r: 1.5deg;
       --dim: calc((1 - var(--case-slide-side-opacity)) / 2);
     }
   }
