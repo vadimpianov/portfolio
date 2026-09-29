@@ -225,6 +225,41 @@ const close = t('case.close');
       : parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--case-panel-duration')) *
         1000;
 
+  /**
+   * Обложка кейса справа (float) — по вертикали посередине между верхом годов и текстом под ней
+   * («Передо мной стояло…», блок TextColumns). Текст слева обтекает обложку и перестраивается
+   * от её положения, поэтому считаем несколько раз, пока отступ не перестанет меняться.
+   */
+  function centerCover(root: ParentNode) {
+    root.querySelectorAll<HTMLElement>('article.case').forEach((article) => {
+      const cover = article.querySelector<HTMLElement>('.case__cover');
+      const period = article.querySelector<HTMLElement>('.case__period');
+      const below = article.querySelector<HTMLElement>('.case-text-columns');
+      if (!cover || !period || !below) return;
+      cover.style.marginTop = '';
+      cover.style.marginBottom = '';
+      cover.style.shapeOutside = '';
+      if (getComputedStyle(cover).float === 'none') return;
+      const gap = parseFloat(getComputedStyle(below).marginTop);
+      let margin = 0;
+      cover.style.marginBottom = `${gap}px`;
+      for (let i = 0; i < 6; i++) {
+        const top = period.getBoundingClientRect().top;
+        const textEnd = (below.previousElementSibling ?? below).getBoundingClientRect().bottom + gap;
+        const next = Math.max(0, Math.round((textEnd - top - cover.offsetHeight) / 4) * 2); // до чётных px
+        if (next === margin) break;
+        margin = next;
+        cover.style.marginTop = `${margin}px`;
+        // Отступ сверху не отнимает место у текста: обтекание начинается с самой картинки.
+        cover.style.shapeOutside = `inset(${margin}px 0 0 0)`;
+        // Снизу — столько же: блок под обложкой (clear) встаёт ровно на это расстояние.
+        cover.style.marginBottom = `${Math.max(margin, gap)}px`;
+      }
+    });
+  }
+
+  const covers = new ResizeObserver((entries) => entries.forEach((e) => centerCover(e.target)));
+
   let pageTitle = '';
   let openedByPointer = false;
   let closing = 0;
@@ -257,6 +292,8 @@ const close = t('case.close');
       await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
+    centerCover(body);
+    covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
     dialog.classList.add('is-open');
@@ -312,6 +349,9 @@ const close = t('case.close');
     history.replaceState({ ...history.state, caseDirect: true }, '');
     dialog.classList.add('is-instant', 'is-open');
     dialog.showModal();
+    centerCover(body);
+    covers.observe(body);
+    document.fonts?.ready.then(() => centerCover(body));
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
     body.focus({ preventScroll: true });
