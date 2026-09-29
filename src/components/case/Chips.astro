@@ -28,7 +28,8 @@ const { items } = Astro.props;
 
   .case-chips li {
     margin: 0 !important;
-    padding: var(--chip-pad-y) var(--chip-pad-x);
+    /* По бокам — 12px (как у тегов под заголовком). */
+    padding: var(--chip-pad-y) var(--case-chip-pad-x);
     border: 1px solid var(--case-chip-border);
     border-radius: var(--case-chip-radius);
     font-size: var(--text-chip);

@@ -61,6 +61,7 @@
   --case-accent: #fcd537;
   --case-chip-border: rgb(255 255 255 / 0.14);
   --case-chip-radius: 10px;
+  --case-chip-pad-x: 12px; /* поля слева/справа у чипсов навыков кейса */
   /* Теги под заголовком кейса: цвета по порядку тегов. */
   --case-tag-1: #2fa802;
   --case-tag-2: #ad0063;
