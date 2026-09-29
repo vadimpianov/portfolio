@@ -98,13 +98,8 @@ const close = t('case.close');
   /* Внутри панели — свои поля, кейс считает ширину по панели (container query). */
   .case-drawer__scroll {
     --gutter: var(--case-panel-gutter);
-    /* Годы — по центру крестика (центр полосы шапки): отступ сверху = половина шапки минус
-       половина строки годов, до чётных px. Обложка остаётся на прежнем месте — на поле панели. */
-    --case-pad-top: round(
-      calc(var(--header-h) / 2 - round(calc(var(--case-label-size) * 1.5), 2px) / 2),
-      2px
-    );
-    --case-cover-top: calc(var(--case-panel-gutter) - var(--case-pad-top));
+    /* Сверху до контента — столько же, сколько слева (поле панели). */
+    --case-pad-top: var(--case-panel-gutter);
     /* Панель уже экрана — шрифты кейса мельче, чем на отдельной странице (целые px). */
     --text-display: round(clamp(28px, 10px + 2.8vw, 58px), 1px);
     /* Заголовок кейса: 58 / 52 на широком экране (0.9 → чётные px через --lh). */
