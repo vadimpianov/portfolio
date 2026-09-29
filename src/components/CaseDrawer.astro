@@ -235,7 +235,11 @@ const close = t('case.close');
       const cover = block.closest('article')?.querySelector<HTMLElement>('.case__cover');
       block.classList.add('is-beside');
       const floated = !!cover && getComputedStyle(cover).float !== 'none';
-      const beside = floated && block.getBoundingClientRect().top < cover.getBoundingClientRect().bottom;
+      // Учитываем нижний отступ обложки: в его зоне блок тоже зажат сбоку.
+      const coverEnd = floated
+        ? cover.getBoundingClientRect().bottom + parseFloat(getComputedStyle(cover).marginBottom)
+        : 0;
+      const beside = floated && block.getBoundingClientRect().top < coverEnd;
       block.classList.toggle('is-beside', beside);
     });
   }

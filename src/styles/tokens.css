@@ -76,6 +76,7 @@
   --case-lead-gap: 32px; /* от тегов до первого текста кейса */
   /* Красная строка — отступ первой строки абзаца в тексте кейса. */
   --case-indent: round(0.75em, 2px);
+  --case-bullet-gap: 20px; /* от маркера списка до текста пункта */
   --case-strip-h: round(clamp(420px, 45vw, 668px), 2px);
   --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
   /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */
@@ -142,7 +143,7 @@
   :root {
     --gutter: 160px;
     --tile-gap: 100px;
-    --case-panel-w: round(min(100vw, max(60vw, 860px)), 2px);
+    --case-panel-w: round(min(100vw, max(70vw, 860px)), 2px); /* 70% экрана, главная — 30% */
     --case-panel-gutter: 80px;
   }
 }

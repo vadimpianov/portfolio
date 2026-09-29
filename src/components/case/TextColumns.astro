@@ -27,6 +27,11 @@
     margin-top: 0;
   }
 
+  /* Вводная строка — над обеими колонками: пункты в колонках начинаются на одном уровне. */
+  .case-text-columns > :global(p:first-child) {
+    column-span: all;
+  }
+
   /* Пункт списка не рвётся между колонками, вводная строка не отрывается от списка. */
   .case-text-columns :global(li) {
     break-inside: avoid;

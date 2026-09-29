@@ -118,19 +118,18 @@ const coverSize = (() => {
   }
 
   .case__title {
-    max-width: 18ch;
     margin-top: var(--case-hero-gap);
     font-size: round(min(var(--text-display), 11cqi), 1px);
     font-weight: 600;
     --lh: var(--leading-display);
     letter-spacing: var(--tracking-display);
-    text-wrap: balance;
   }
 
   .case__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--chip-gap);
+    /* Между тегами — вдвое больше обычного зазора чипсов. */
+    gap: calc(var(--chip-gap) * 2);
     /* Отступ от заголовка до тегов — вдвое больше, чем от годов до заголовка. */
     margin: calc(var(--case-hero-gap) * 2) 0 0;
     padding: 0;
@@ -158,14 +157,12 @@ const coverSize = (() => {
   }
 
   .case__body :global(h2) {
-    max-width: 24ch;
     margin-top: var(--case-section-gap);
     font-size: var(--text-tile-title);
     font-weight: var(--weight-heavy);
     --lh: var(--leading-title);
     letter-spacing: var(--tracking-title);
     color: var(--color-text);
-    text-wrap: balance;
   }
 
   /* Красная строка: абзацы текста кейса начинаются с отступа первой строки
@@ -193,8 +190,21 @@ const coverSize = (() => {
 
   /* Абзацы и списки подряд — без промежутков: начало абзаца отмечает красная строка. */
 
-  .case__body :global(ul) {
-    padding-left: round(1.25em, 2px);
+  /* Списки: маркер — под первой буквой абзаца (на красной строке), текст пункта — после него. */
+  .case__body :global(ul:not([class])) {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .case__body :global(ul:not([class]) > li) {
+    position: relative;
+    padding-left: calc(var(--case-indent) + var(--case-bullet-gap));
+  }
+
+  .case__body :global(ul:not([class]) > li)::before {
+    content: '•';
+    position: absolute;
+    left: var(--case-indent);
   }
 
   /* Выделение в тексте — как обычный текст: без белого цвета и жирности. */
