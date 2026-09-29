@@ -1,8 +1,7 @@
 ---
 /**
- * Текст, который на широком кейсе разводится на 2 колонки (перетекает из одной в другую),
- * на узком — одна колонка. Пока рядом обложка кейса — обычный текст, обтекающий её
- * (класс is-beside ставит CaseDrawer по раскладке), без лишнего отступа до обложки.
+ * Вводная строка и пункты в 2 колонки: вводная — сверху (с отступом абзаца от текста выше),
+ * колонки задаёт `<Columns>` внутри (слева и справа — свои списки), пункты начинаются на одном уровне.
  */
 ---
 
@@ -12,37 +11,15 @@
 
 <style>
   .case-text-columns {
-    /* Сверху — отступ абзаца от списка выше, снизу — до следующего блока. */
-    margin: round(1em, 2px) 0 var(--case-block-gap);
-  }
-
-  @container case (min-width: 800px) {
-    .case-text-columns:not(.is-beside) {
-      columns: 2;
-      column-gap: var(--case-col-gap);
-    }
+    margin: round(1em, 2px) 0 0;
   }
 
   .case-text-columns > :global(:first-child) {
     margin-top: 0;
   }
 
-  /* Вводная строка — над обеими колонками: пункты в колонках начинаются на одном уровне. */
-  .case-text-columns > :global(p:first-child) {
-    column-span: all;
-  }
-
-  /* Пункт списка не рвётся между колонками, вводная строка не отрывается от списка. */
-  .case-text-columns :global(li) {
-    break-inside: avoid;
-  }
-
-  .case-text-columns :global(p) {
-    break-after: avoid;
-  }
-
-  /* Список должен перетекать из колонки в колонку — без overflow (иначе он не делится). */
-  .case-text-columns :global(ul) {
-    overflow: visible !important;
+  /* Колонки сразу под вводной строкой, без лишних отступов. */
+  .case-text-columns > :global(.case-columns) {
+    margin: 0;
   }
 </style>

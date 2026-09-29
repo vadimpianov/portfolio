@@ -27,10 +27,9 @@ const coverSize = (() => {
 ---
 
 <article class:list={['case', `case--${theme}`]} data-bleed>
-  {/* Обложка на широком кейсе — справа, обтекается: верх — по верху заголовка, рядом с ней идут
-      заголовок, теги и первый текст кейса, а под ней текст снова во всю ширину (см. стили). */}
+  {/* Обложка на широком кейсе — справа, обтекается: верх — по верху годов, рядом с ней идут
+      годы, заголовок, теги и первый текст кейса, а под ней текст снова во всю ширину (см. стили). */}
   <header class:list={['case__hero', { 'case__hero--cover': cover }]}>
-    {period && <p class="case__period">{period}</p>}
     {cover && (
       <img
         class="case__cover"
@@ -43,6 +42,7 @@ const coverSize = (() => {
         fetchpriority="high"
       />
     )}
+    {period && <p class="case__period">{period}</p>}
     <h1 class="case__title">{typograph(title)}</h1>
     {tags.length > 0 && (
       <ul class="case__chips">
@@ -103,7 +103,7 @@ const coverSize = (() => {
     .case__cover {
       float: right;
       width: 40%;
-      margin: var(--case-hero-gap) 0 var(--case-block-gap) var(--case-col-gap);
+      margin: 0 0 var(--case-block-gap) var(--case-col-gap);
     }
 
     /* Маркеры списков рядом с обложкой не залезают под неё. */
@@ -188,7 +188,10 @@ const coverSize = (() => {
     color: var(--case-accent);
   }
 
-  /* Абзацы и списки подряд — без промежутков: начало абзаца отмечает красная строка. */
+  /* Между абзацами — пустая строка (отступ абзаца); списки к абзацам — без промежутков. */
+  .case__body :global(p:not([class]) + p:not([class])) {
+    margin-top: round(1em, 2px);
+  }
 
   /* Списки: маркер — под первой буквой абзаца (на красной строке), текст пункта — после него. */
   .case__body :global(ul:not([class])) {
