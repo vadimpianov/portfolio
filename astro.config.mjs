@@ -2,7 +2,8 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import rehypeTypograph from './src/i18n/rehype-typograph.ts';
+import { satteri } from '@astrojs/markdown-satteri';
+import { typographPlugin } from './src/i18n/rehype-typograph.ts';
 
 // TODO: заменить на реальный домен, когда он появится.
 const SITE = 'https://portfolio.pages.dev';
@@ -12,14 +13,16 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   integrations: [
-    // Типографика (висячие предлоги, тире) и в MDX-кейсах — как в строках интерфейса.
-    mdx({ rehypePlugins: [rehypeTypograph] }),
+    mdx(),
     sitemap({
       // `/` — только редирект, в карту сайта не включаем.
       filter: (page) => new URL(page).pathname !== '/',
       i18n: { defaultLocale: 'en', locales: { ru: 'ru-RU', en: 'en-US' } },
     }),
   ],
+  // Типографика (висячие предлоги, тире) в Markdown/MDX-кейсах — как в строках интерфейса.
+  // MDX берёт обработчик из markdown.
+  markdown: { processor: satteri({ hastPlugins: [typographPlugin] }) },
   i18n: {
     locales: ['ru', 'en'],
     defaultLocale: 'en',

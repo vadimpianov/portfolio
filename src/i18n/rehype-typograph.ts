@@ -1,16 +1,14 @@
 import { typograph } from './typograph';
 
-type Node = { type: string; tagName?: string; value?: string; children?: Node[] };
-
 /**
- * Rehype-плагин для MDX: та же типографика, что у строк интерфейса (`typograph`) —
- * висячих предлогов и тире в начале строки нет и в текстах кейсов. Код не трогаем.
+ * Hast-плагин для Markdown/MDX (обработчик Sätteri в Astro 7): та же типографика, что у строк
+ * интерфейса (`typograph`) — в текстах кейсов нет висячих предлогов, союзов и частиц и тире
+ * в начале строки. (Старые rehype-плагины Sätteri молча пропускает — поэтому свой формат.)
  */
-export default function rehypeTypograph() {
-  const walk = (node: Node) => {
-    if (node.type === 'element' && (node.tagName === 'code' || node.tagName === 'pre')) return;
-    if (node.type === 'text' && node.value) node.value = typograph(node.value);
-    node.children?.forEach(walk);
-  };
-  return (tree: Node) => walk(tree);
-}
+export const typographPlugin = {
+  name: 'typograph',
+  text(node: { type: 'text'; value: string }) {
+    const value = typograph(node.value);
+    if (value !== node.value) return { type: 'text' as const, value };
+  },
+};
