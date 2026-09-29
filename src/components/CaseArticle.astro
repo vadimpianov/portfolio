@@ -191,7 +191,7 @@ const coverSize = (() => {
     color: var(--case-accent);
   }
 
-  .case__body :global(p + p),
+  /* Абзацы подряд — без промежутка: начало абзаца отмечает красная строка. */
   .case__body :global(p + ul),
   .case__body :global(ul + p) {
     margin-top: round(1em, 2px);

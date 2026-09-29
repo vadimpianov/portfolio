@@ -75,7 +75,7 @@
   --case-hero-gap: 12px;
   --case-lead-gap: 32px; /* от тегов до первого текста кейса */
   /* Красная строка — отступ первой строки абзаца в тексте кейса. */
-  --case-indent: round(1.5em, 2px);
+  --case-indent: round(0.75em, 2px);
   --case-strip-h: round(clamp(420px, 45vw, 668px), 2px);
   --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
   /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */
