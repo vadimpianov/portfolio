@@ -11,7 +11,7 @@ import { getLocaleFromUrl, useTranslations } from '../../i18n/utils';
 import { asset } from '../../utils/asset';
 
 interface Props {
-  /** Экраны слева направо: имена в `public/images/cases/` без `.webp`. */
+  /** Экраны слева направо: имена в `public/images/cases/` без `-{750,1125}.webp` (2x и 3x от 375px). */
   slides: string[];
 }
 
@@ -26,7 +26,7 @@ const pos = (i: number) => {
 
 // Размеры экранов (WebP с альфой, заголовок VP8X) — пропорция сцены.
 const size = (name: string) => {
-  const head = readFileSync(`public/images/cases/${name}.webp`).subarray(0, 30);
+  const head = readFileSync(`public/images/cases/${name}-750.webp`).subarray(0, 30);
   return { width: head.readUIntLE(24, 3) + 1, height: head.readUIntLE(27, 3) + 1 };
 };
 const first = size(slides[0]);
@@ -41,7 +41,8 @@ const first = size(slides[0]);
 >
   {slides.map((name, i) => {
     const { width, height } = size(name);
-    const src = asset(`/images/cases/${name}.webp`);
+    const src = asset(`/images/cases/${name}-750.webp`);
+    const src3x = asset(`/images/cases/${name}-1125.webp`);
     return (
       <button
         class="case-slider__slide"
@@ -52,6 +53,8 @@ const first = size(slides[0]);
       >
         <img
           src={src}
+          srcset={`${src} 750w, ${src3x} 1125w`}
+          sizes="(min-width: 1280px) 24vw, 60vw"
           width={width}
           height={height}
           alt=""
