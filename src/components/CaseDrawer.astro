@@ -223,6 +223,24 @@ const close = t('case.close');
       : parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--case-panel-duration')) *
         1000;
 
+  /**
+   * Текст в 2 колонки (TextColumns) начинается сразу под предыдущим текстом. Если рядом ещё
+   * обложка кейса (она справа и обтекается), колонки не разводим — текст обтекает её,
+   * как абзацы выше; ниже обложки — 2 колонки.
+   */
+  function layoutTextColumns(root: ParentNode) {
+    root.querySelectorAll<HTMLElement>('.case-text-columns').forEach((block) => {
+      const cover = block.closest('article')?.querySelector<HTMLElement>('.case__cover');
+      block.classList.add('is-beside');
+      const floated = !!cover && getComputedStyle(cover).float !== 'none';
+      const beside = floated && block.getBoundingClientRect().top < cover.getBoundingClientRect().bottom;
+      block.classList.toggle('is-beside', beside);
+    });
+  }
+
+  // Ширина панели меняется (окно, поворот) — раскладку колонок пересчитываем.
+  const resizes = new ResizeObserver((entries) => entries.forEach((e) => layoutTextColumns(e.target)));
+
   let pageTitle = '';
   let openedByPointer = false;
   let closing = 0;
@@ -255,6 +273,8 @@ const close = t('case.close');
       await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
+    layoutTextColumns(body);
+    resizes.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
     dialog.classList.add('is-open');
@@ -310,6 +330,8 @@ const close = t('case.close');
     history.replaceState({ ...history.state, caseDirect: true }, '');
     dialog.classList.add('is-instant', 'is-open');
     dialog.showModal();
+    layoutTextColumns(body);
+    resizes.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
     body.focus({ preventScroll: true });

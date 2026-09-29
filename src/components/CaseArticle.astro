@@ -90,7 +90,7 @@ const coverSize = (() => {
     width: 100%;
     max-width: 576px;
     height: auto;
-    margin: var(--case-block-gap) auto 0;
+    margin: var(--case-lead-gap) auto 0;
   }
 
   /* Широкий: обложка справа и обтекается. Верх — вровень с заголовком (тот же отступ от годов);
@@ -150,7 +150,8 @@ const coverSize = (() => {
   /* Текст кейса: заголовки секций, метки, абзацы, списки. */
   .case__body {
     max-width: 1320px;
-    margin-top: var(--case-block-gap);
+    /* От тегов до текста. */
+    margin-top: var(--case-lead-gap);
     font-size: var(--text-case-body);
     --lh: var(--leading-body);
     color: var(--color-text-body);
@@ -167,7 +168,14 @@ const coverSize = (() => {
     text-wrap: balance;
   }
 
+  /* Красная строка: абзацы текста кейса начинаются с отступа первой строки
+     (подзаголовки капсом, подписи и числа — без него). */
+  .case__body :global(p:not([class])) {
+    text-indent: var(--case-indent);
+  }
+
   .case__body :global(h2 + p) {
+    text-indent: 0;
     margin-top: 12px;
     font-size: var(--case-label-size);
     text-transform: uppercase;
