@@ -71,6 +71,8 @@
   --case-block-gap: round(clamp(40px, 32px + 2vw, 64px), 2px);
   --case-section-gap: round(clamp(80px, 64px + 4vw, 128px), 2px);
   --case-col-gap: 64px;
+  /* Шапка кейса: годы → заголовок → теги, одинаковый отступ. */
+  --case-hero-gap: 12px;
   --case-strip-h: round(clamp(420px, 45vw, 668px), 2px);
   --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
   /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */
