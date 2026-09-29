@@ -1,8 +1,10 @@
 ---
 /**
- * Обложка кейса — слайдер экранов: текущий экран впереди, соседние — меньше, за ним и полупрозрачные (55%).
- * Стрелки слева и справа, автопрокрутка (стоит под курсором и при фокусе). При переключении новый экран
- * плавно проявляется до 100% и увеличивается. Логика — `src/scripts/cover-slider.ts` (подключает CaseDrawer).
+ * Обложка кейса — слайдер экранов: текущий экран впереди, соседние — меньше, за ним и приглушены
+ * до 55% (затемнением цветом фона, а не прозрачностью — при смене экраны не просвечивают друг сквозь друга).
+ * Экраны кликабельны (сосед — к нему, текущий — к следующему), на наведение чуть поворачиваются;
+ * автопрокрутка (стоит под курсором и при фокусе с клавиатуры). При переключении новый экран плавно
+ * проявляется и увеличивается. Логика — `src/scripts/cover-slider.ts` (подключает CaseDrawer).
  */
 import { readFileSync } from 'node:fs';
 import { getLocaleFromUrl, useTranslations } from '../../i18n/utils';
@@ -35,142 +37,134 @@ const first = size(slides[0]);
   data-slider
   role="group"
   aria-roledescription="carousel"
-  style={`--stage-ratio: ${first.width * 2} / ${first.height}`}
+  style={`--slide-ratio: ${first.width} / ${first.height}`}
 >
-  <div class="case-slider__stage">
-    {slides.map((name, i) => {
-      const { width, height } = size(name);
-      return (
+  {slides.map((name, i) => {
+    const { width, height } = size(name);
+    const src = asset(`/images/cases/${name}.webp`);
+    return (
+      <button
+        class="case-slider__slide"
+        type="button"
+        data-pos={pos(i)}
+        aria-label={t('case.slider.show')}
+        style={`--src: url("${src}")`}
+      >
         <img
-          class="case-slider__slide"
-          data-pos={pos(i)}
-          src={asset(`/images/cases/${name}.webp`)}
+          src={src}
           width={width}
           height={height}
           alt=""
           decoding="async"
+          draggable="false"
           fetchpriority={i === start ? 'high' : undefined}
         />
-      );
-    })}
-  </div>
-  <button
-    class="case-slider__arrow case-slider__arrow--prev"
-    type="button"
-    data-slider-prev
-    aria-label={t('case.slider.prev')}
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M15 5l-7 7 7 7" />
-    </svg>
-  </button>
-  <button
-    class="case-slider__arrow case-slider__arrow--next"
-    type="button"
-    data-slider-next
-    aria-label={t('case.slider.next')}
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M9 5l7 7-7 7" />
-    </svg>
-  </button>
+      </button>
+    );
+  })}
 </div>
 
 <style>
+  /* Текущий экран — по центру (доля ширины --case-slide-w); соседи уменьшены и выглядывают из-за него,
+     их внешний край — ровно по краю обложки. */
   .case-slider {
     position: relative;
-  }
-
-  /* Текущий экран — половина ширины по центру; соседи уменьшены до 82% и выглядывают из-за него. */
-  .case-slider__stage {
-    position: relative;
     width: 100%;
-    aspect-ratio: var(--stage-ratio);
+    aspect-ratio: calc(var(--slide-ratio) / var(--case-slide-w));
   }
 
   .case-slider__slide {
     position: absolute;
     top: 0;
-    left: 25%;
-    width: 50%;
+    left: calc(50% * (1 - var(--case-slide-w)));
+    width: calc(100% * var(--case-slide-w));
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transform: translateX(var(--x, 0)) scale(var(--s, 1)) rotate(var(--r, 0deg));
+    transition: transform var(--case-slide-duration) var(--case-panel-ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .case-slider__slide img {
+    display: block;
+    width: 100%;
     height: auto;
-    opacity: var(--case-slide-side-opacity);
-    transform: translateX(var(--x, 0)) scale(var(--s, 1));
-    transition:
-      transform var(--case-slide-duration) var(--case-panel-ease),
-      opacity var(--case-slide-duration) var(--case-panel-ease);
     user-select: none;
-    -webkit-user-drag: none;
+  }
+
+  /* Приглушение соседей: слой цвета фона по форме экрана (маска — сама картинка). Картинки всегда
+     непрозрачные, поэтому при переходе один экран не просвечивает сквозь другой. */
+  .case-slider__slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--case-surface);
+    mask: var(--src) center / 100% 100% no-repeat;
+    opacity: var(--dim, 0);
+    transition: opacity var(--case-slide-duration) var(--case-panel-ease);
+    pointer-events: none;
   }
 
   .case-slider__slide[data-pos='current'] {
-    z-index: 2;
-    opacity: 1;
+    z-index: 3;
   }
 
   .case-slider__slide[data-pos='prev'],
   .case-slider__slide[data-pos='next'] {
-    z-index: 1;
+    z-index: 2;
     --s: var(--case-slide-side-scale);
+    --dim: calc(1 - var(--case-slide-side-opacity));
   }
 
+  /* Сдвиг соседа в долях его ширины: внешний край — по краю обложки. */
   .case-slider__slide[data-pos='prev'] {
-    --x: calc(var(--case-slide-shift) * -1);
+    --x: calc(-100% * (0.5 / var(--case-slide-w) - var(--case-slide-side-scale) / 2));
   }
 
   .case-slider__slide[data-pos='next'] {
-    --x: var(--case-slide-shift);
+    --x: calc(100% * (0.5 / var(--case-slide-w) - var(--case-slide-side-scale) / 2));
+  }
+
+  /* Экран, который переезжает с одного края на другой, идёт позади всех. */
+  .case-slider__slide[data-wrap] {
+    z-index: 1;
   }
 
   .case-slider__slide[data-pos='hidden'] {
     z-index: 0;
-    opacity: 0;
     --s: 0.6;
+    --dim: 1;
   }
 
-  /* Стрелки — круглые, по краям, посередине по высоте. */
-  .case-slider__arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    display: grid;
-    place-items: center;
-    width: var(--case-slider-arrow);
-    height: var(--case-slider-arrow);
-    padding: 0;
-    border: 1px solid var(--case-slider-arrow-border);
-    border-radius: 50%;
-    background: var(--case-slider-arrow-bg);
-    color: var(--case-accent);
-    cursor: pointer;
-    translate: 0 -50%;
-    transition: background-color 0.2s;
+  /* Наведение (мышь): экран чуть поворачивается, сосед — ещё и светлеет. */
+  @media (hover: hover) {
+    .case-slider__slide[data-pos='current']:hover {
+      --r: -2deg;
+      --s: 1.02;
+    }
+
+    .case-slider__slide[data-pos='prev']:hover {
+      --r: -4deg;
+      --dim: calc((1 - var(--case-slide-side-opacity)) / 2);
+    }
+
+    .case-slider__slide[data-pos='next']:hover {
+      --r: 4deg;
+      --dim: calc((1 - var(--case-slide-side-opacity)) / 2);
+    }
   }
 
-  .case-slider__arrow:hover {
-    background: var(--case-slider-arrow-hover);
-  }
-
-  .case-slider__arrow--prev {
-    left: 0;
-  }
-
-  .case-slider__arrow--next {
-    right: 0;
-  }
-
-  .case-slider__arrow svg {
-    width: 24px;
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  .case-slider__slide:focus-visible {
+    outline: 2px solid var(--case-accent);
+    outline-offset: 4px;
+    border-radius: 24px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .case-slider__slide {
+    .case-slider__slide,
+    .case-slider__slide::after {
       transition: none;
     }
   }

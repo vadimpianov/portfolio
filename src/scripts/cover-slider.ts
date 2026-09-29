@@ -24,6 +24,12 @@ function step(slider: HTMLElement, dir: 1 | -1) {
   slides.forEach((slide, i) => {
     const d = (i - next + n) % n;
     const pos: Pos = d === 0 ? 'current' : d === 1 ? 'next' : d === n - 1 ? 'prev' : 'hidden';
+    const from = slide.dataset.pos;
+    // С одного края на другой — позади всех (иначе на полпути перекрывает соседа).
+    if ((from === 'prev' && pos === 'next') || (from === 'next' && pos === 'prev')) {
+      slide.dataset.wrap = '';
+      slide.addEventListener('transitionend', () => delete slide.dataset.wrap, { once: true });
+    }
     slide.dataset.pos = pos;
   });
   moved.set(slider, performance.now());
@@ -36,12 +42,11 @@ export function initCoverSliders() {
   started = true;
 
   document.addEventListener('click', (event) => {
-    const button = (event.target as Element | null)?.closest<HTMLElement>(
-      '[data-slider-prev], [data-slider-next]',
-    );
-    const slider = button?.closest<HTMLElement>('[data-slider]');
-    if (!button || !slider) return;
-    step(slider, 'sliderPrev' in button.dataset ? -1 : 1);
+    // Клик по экрану: сосед слева — назад, остальные (текущий и сосед справа) — вперёд.
+    const slide = (event.target as Element | null)?.closest<HTMLElement>('.case-slider__slide');
+    const slider = slide?.closest<HTMLElement>('[data-slider]');
+    if (!slide || !slider) return;
+    step(slider, slide.dataset.pos === 'prev' ? -1 : 1);
   });
 
   // Автопрокрутка: не под курсором, не при фокусе внутри, только на видимой вкладке; без движения — не листаем.

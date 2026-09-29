@@ -107,9 +107,10 @@ const coverSize = (() => {
       display: block;
     }
 
+    /* Обложка — шириной с правую колонку текста (<Columns>): текст рядом — шириной с левую. */
     .case__cover {
       float: right;
-      width: 40%;
+      width: calc((100% - var(--case-col-gap)) / 2);
       margin: 0 0 var(--case-block-gap) var(--case-col-gap);
     }
 

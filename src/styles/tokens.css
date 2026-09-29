@@ -80,15 +80,11 @@
   --case-indent: round(0.75em, 2px);
   --case-bullet-gap: 20px; /* от маркера списка до текста пункта */
   /* Обложка-слайдер: соседние экраны меньше, полупрозрачные и выглядывают из-за текущего. */
+  --case-slide-w: 0.6; /* ширина текущего экрана — доля ширины обложки */
   --case-slide-duration: 0.8s;
   --case-slide-side-opacity: 0.55;
   --case-slide-side-scale: 0.82;
-  --case-slide-shift: 38%; /* сдвиг соседа от центра — доля ширины экрана */
   --case-slide-interval: 4s; /* автопрокрутка */
-  --case-slider-arrow: 40px;
-  --case-slider-arrow-bg: #162d3c;
-  --case-slider-arrow-hover: #1d3a4e;
-  --case-slider-arrow-border: rgb(255 255 255 / 0.08);
   /* Селектор сценариев кейса (вкладки): выбранная — жёлтая. */
   --case-tabs-h: 48px;
   --case-tabs-radius: 10px;

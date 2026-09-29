@@ -294,7 +294,7 @@ const close = t('case.close');
       // Панель выезжает, только когда кейс уже разложен и обложка готова: иначе первые кадры
       // анимации теряются на раскладке и панель «прыгает».
       const cover = body.querySelector<HTMLImageElement>(
-        'img.case__cover, .case__cover [data-pos="current"]',
+        'img.case__cover, .case__cover [data-pos="current"] img',
       );
       await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
