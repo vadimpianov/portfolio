@@ -12,7 +12,8 @@
 <style>
   .case-text-columns {
     clear: both;
-    margin-block: var(--case-block-gap);
+    /* Сверху — обычный отступ между абзацами (как у текста выше), снизу — до следующего блока. */
+    margin: round(1em, 2px) 0 var(--case-block-gap);
   }
 
   @container case (min-width: 800px) {
