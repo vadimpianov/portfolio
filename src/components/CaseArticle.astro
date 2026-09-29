@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs';
 import { render } from 'astro:content';
 import { typograph } from '../i18n/typograph';
 import { asset } from '../utils/asset';
+import CoverSlider from './case/CoverSlider.astro';
 
 interface Props {
   entry: CollectionEntry<'cases'>;
@@ -15,7 +16,7 @@ interface Props {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, period, tags, theme, cover } = entry.data;
+const { title, period, tags, theme, cover, slides } = entry.data;
 
 // Размеры обложки (WebP с альфой, заголовок VP8X) — чтобы место под картинку было сразу, без скачка.
 const coverSize = (() => {
@@ -29,18 +30,24 @@ const coverSize = (() => {
 <article class:list={['case', `case--${theme}`]} data-bleed>
   {/* Обложка на широком кейсе — справа, обтекается: верх — по верху годов, рядом с ней идут
       годы, заголовок, теги и первый текст кейса, а под ней текст снова во всю ширину (см. стили). */}
-  <header class:list={['case__hero', { 'case__hero--cover': cover }]}>
-    {cover && (
-      <img
-        class="case__cover"
-        src={asset(`/images/cases/${cover}-600.webp`)}
-        srcset={`${asset(`/images/cases/${cover}-600.webp`)} 600w, ${asset(`/images/cases/${cover}-1200.webp`)} 1200w`}
-        sizes="(min-width: 1024px) 40vw, 90vw"
-        width={coverSize?.width}
-        height={coverSize?.height}
-        alt=""
-        fetchpriority="high"
-      />
+  <header class:list={['case__hero', { 'case__hero--cover': cover || slides }]}>
+    {slides ? (
+      <div class="case__cover">
+        <CoverSlider slides={slides} />
+      </div>
+    ) : (
+      cover && (
+        <img
+          class="case__cover"
+          src={asset(`/images/cases/${cover}-600.webp`)}
+          srcset={`${asset(`/images/cases/${cover}-600.webp`)} 600w, ${asset(`/images/cases/${cover}-1200.webp`)} 1200w`}
+          sizes="(min-width: 1024px) 40vw, 90vw"
+          width={coverSize?.width}
+          height={coverSize?.height}
+          alt=""
+          fetchpriority="high"
+        />
+      )
     )}
     {period && <p class="case__period">{period}</p>}
     <h1 class="case__title">{typograph(title)}</h1>

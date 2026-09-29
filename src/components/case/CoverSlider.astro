@@ -1,0 +1,177 @@
+---
+/**
+ * Обложка кейса — слайдер экранов: текущий экран впереди, соседние — меньше, за ним и полупрозрачные (55%).
+ * Стрелки слева и справа, автопрокрутка (стоит под курсором и при фокусе). При переключении новый экран
+ * плавно проявляется до 100% и увеличивается. Логика — `src/scripts/cover-slider.ts` (подключает CaseDrawer).
+ */
+import { readFileSync } from 'node:fs';
+import { getLocaleFromUrl, useTranslations } from '../../i18n/utils';
+import { asset } from '../../utils/asset';
+
+interface Props {
+  /** Экраны слева направо: имена в `public/images/cases/` без `.webp`. */
+  slides: string[];
+}
+
+const { slides } = Astro.props;
+const t = useTranslations(getLocaleFromUrl(Astro.url));
+// Первым показан средний экран.
+const start = Math.floor(slides.length / 2);
+const pos = (i: number) => {
+  const d = (i - start + slides.length) % slides.length;
+  return d === 0 ? 'current' : d === 1 ? 'next' : d === slides.length - 1 ? 'prev' : 'hidden';
+};
+
+// Размеры экранов (WebP с альфой, заголовок VP8X) — пропорция сцены.
+const size = (name: string) => {
+  const head = readFileSync(`public/images/cases/${name}.webp`).subarray(0, 30);
+  return { width: head.readUIntLE(24, 3) + 1, height: head.readUIntLE(27, 3) + 1 };
+};
+const first = size(slides[0]);
+---
+
+<div
+  class="case-slider"
+  data-slider
+  role="group"
+  aria-roledescription="carousel"
+  style={`--stage-ratio: ${first.width * 2} / ${first.height}`}
+>
+  <div class="case-slider__stage">
+    {slides.map((name, i) => {
+      const { width, height } = size(name);
+      return (
+        <img
+          class="case-slider__slide"
+          data-pos={pos(i)}
+          src={asset(`/images/cases/${name}.webp`)}
+          width={width}
+          height={height}
+          alt=""
+          decoding="async"
+          fetchpriority={i === start ? 'high' : undefined}
+        />
+      );
+    })}
+  </div>
+  <button
+    class="case-slider__arrow case-slider__arrow--prev"
+    type="button"
+    data-slider-prev
+    aria-label={t('case.slider.prev')}
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 5l-7 7 7 7" />
+    </svg>
+  </button>
+  <button
+    class="case-slider__arrow case-slider__arrow--next"
+    type="button"
+    data-slider-next
+    aria-label={t('case.slider.next')}
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</div>
+
+<style>
+  .case-slider {
+    position: relative;
+  }
+
+  /* Текущий экран — половина ширины по центру; соседи уменьшены до 82% и выглядывают из-за него. */
+  .case-slider__stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--stage-ratio);
+  }
+
+  .case-slider__slide {
+    position: absolute;
+    top: 0;
+    left: 25%;
+    width: 50%;
+    height: auto;
+    opacity: var(--case-slide-side-opacity);
+    transform: translateX(var(--x, 0)) scale(var(--s, 1));
+    transition:
+      transform var(--case-slide-duration) var(--case-panel-ease),
+      opacity var(--case-slide-duration) var(--case-panel-ease);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .case-slider__slide[data-pos='current'] {
+    z-index: 2;
+    opacity: 1;
+  }
+
+  .case-slider__slide[data-pos='prev'],
+  .case-slider__slide[data-pos='next'] {
+    z-index: 1;
+    --s: var(--case-slide-side-scale);
+  }
+
+  .case-slider__slide[data-pos='prev'] {
+    --x: calc(var(--case-slide-shift) * -1);
+  }
+
+  .case-slider__slide[data-pos='next'] {
+    --x: var(--case-slide-shift);
+  }
+
+  .case-slider__slide[data-pos='hidden'] {
+    z-index: 0;
+    opacity: 0;
+    --s: 0.6;
+  }
+
+  /* Стрелки — круглые, по краям, посередине по высоте. */
+  .case-slider__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: var(--case-slider-arrow);
+    height: var(--case-slider-arrow);
+    padding: 0;
+    border: 1px solid var(--case-slider-arrow-border);
+    border-radius: 50%;
+    background: var(--case-slider-arrow-bg);
+    color: var(--case-accent);
+    cursor: pointer;
+    translate: 0 -50%;
+    transition: background-color 0.2s;
+  }
+
+  .case-slider__arrow:hover {
+    background: var(--case-slider-arrow-hover);
+  }
+
+  .case-slider__arrow--prev {
+    left: 0;
+  }
+
+  .case-slider__arrow--next {
+    right: 0;
+  }
+
+  .case-slider__arrow svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-slider__slide {
+      transition: none;
+    }
+  }
+</style>

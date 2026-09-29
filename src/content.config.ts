@@ -21,6 +21,8 @@ const cases = defineCollection({
     theme: z.enum(['light', 'dark']).default('light'),
     /** Обложка справа от заголовка: имя картинки в `public/images/cases/` (`<имя>-{600,1200}.webp`). */
     cover: z.string().optional(),
+    /** Обложка-слайдер вместо картинки: экраны слева направо (`public/images/cases/<имя>.webp`), первым показан средний. */
+    slides: z.array(z.string()).optional(),
   }),
 });
 

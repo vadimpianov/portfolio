@@ -100,6 +100,8 @@ const close = t('case.close');
     --gutter: var(--case-panel-gutter);
     /* Сверху до контента — столько же, сколько слева (поле панели). */
     --case-pad-top: var(--case-panel-gutter);
+    /* Между колонками (и от текста до обложки) — 20px. */
+    --case-col-gap: 20px;
     /* Панель уже экрана — шрифты кейса мельче, чем на отдельной странице (целые px). */
     --text-display: round(clamp(28px, 10px + 2.8vw, 58px), 1px);
     /* Заголовок кейса: 58 / 52 на широком экране (0.9 → чётные px через --lh). */
@@ -171,6 +173,9 @@ const close = t('case.close');
 
 <script>
   import { getLenis } from '../scripts/motion';
+  import { initCoverSliders } from '../scripts/cover-slider';
+
+  initCoverSliders();
 
   // caseDrawer — кейс открыт ссылкой с главной (закрыть = «назад»);
   // caseDirect — открыт сразу по адресу кейса (закрыть = заменить адрес на главную).
@@ -288,7 +293,9 @@ const close = t('case.close');
       dialog.showModal();
       // Панель выезжает, только когда кейс уже разложен и обложка готова: иначе первые кадры
       // анимации теряются на раскладке и панель «прыгает».
-      const cover = body.querySelector<HTMLImageElement>('.case__cover');
+      const cover = body.querySelector<HTMLImageElement>(
+        'img.case__cover, .case__cover [data-pos="current"]',
+      );
       await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
