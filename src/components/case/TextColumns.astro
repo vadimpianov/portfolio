@@ -12,8 +12,8 @@
 
 <style>
   .case-text-columns {
-    /* Сверху — без промежутка (как абзацы и списки выше), снизу — до следующего блока. */
-    margin: 0 0 var(--case-block-gap);
+    /* Сверху — отступ абзаца от списка выше, снизу — до следующего блока. */
+    margin: round(1em, 2px) 0 var(--case-block-gap);
   }
 
   @container case (min-width: 800px) {
