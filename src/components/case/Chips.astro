@@ -19,7 +19,8 @@ const { items } = Astro.props;
   .case-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--chip-gap);
+    /* Между чипсами — как между тегами под заголовком (вдвое больше обычного зазора). */
+    gap: calc(var(--chip-gap) * 2);
     /* От текста выше — 24px. */
     margin: var(--case-chips-gap) 0 0;
     padding: 0 !important;
