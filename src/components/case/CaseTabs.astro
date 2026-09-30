@@ -150,6 +150,11 @@ const name = 'case-tabs';
     font-weight: 600;
   }
 
+  /* Абзацы сценария идут подряд, без пустой строки — начало абзаца отмечает красная строка. */
+  .case-tabs .case-tabs__panel--main :global(p:not([class]) + p:not([class])) {
+    margin-top: 0;
+  }
+
   /* Селектор → заголовок сценария. */
   .case-tabs .case-tabs__panel--main > :global(h2:first-child) {
     margin-top: var(--case-tabs-gap);
