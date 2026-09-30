@@ -151,22 +151,22 @@ const name = 'case-tabs';
     text-align: center;
   }
 
-  /* Заголовок → «до» (и выше «после»). */
+  /* Метки «До» / «После»: сверху — 24px от блока выше (у обеих одинаково). */
   .case-tabs .case-tabs__panel--main > :global(h3) {
-    margin-top: var(--case-tabs-gap);
+    margin-top: var(--case-tabs-title-gap);
     color: var(--case-text);
     font-size: var(--text-case-body);
     text-align: center;
-    text-transform: lowercase;
+    text-transform: none;
     letter-spacing: 0;
   }
 
-  /* Заголовок сценария → «до» — ближе, чем остальные отступы. */
-  .case-tabs .case-tabs__panel--main > :global(h2:first-child + h3) {
-    margin-top: var(--case-tabs-title-gap);
+  /* Нижний отступ блока над меткой не должен «перебивать» её 24px (отступы схлопываются в больший). */
+  .case-tabs .case-tabs__panel--main > :global(:has(+ h3)) {
+    margin-bottom: 0;
   }
 
-  /* «до» / «после» → текст в две колонки. */
+  /* «До» / «После» → текст в две колонки. */
   .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns) {
     margin-top: var(--case-tabs-label-gap);
   }
