@@ -55,8 +55,9 @@ const name = 'case-tabs';
 </div>
 
 <style>
+  /* Чипсы → селектор. */
   .case-tabs {
-    margin-top: var(--case-block-gap);
+    margin-top: var(--case-tabs-gap);
   }
 
   .case-tabs__list {
@@ -138,18 +139,26 @@ const name = 'case-tabs';
   }
 
   /* Заголовок сценария и метки «до / после» — по центру. */
+  /* Селектор → заголовок сценария. */
   .case-tabs .case-tabs__panel--main > :global(h2:first-child) {
-    margin-top: var(--case-block-gap);
+    margin-top: var(--case-tabs-gap);
     font-weight: 600;
     text-align: center;
   }
 
+  /* Заголовок → «до» (и выше «после»). */
   .case-tabs .case-tabs__panel--main > :global(h3) {
+    margin-top: var(--case-tabs-gap);
     color: var(--case-text);
     font-size: var(--text-case-body);
     text-align: center;
     text-transform: lowercase;
     letter-spacing: 0;
+  }
+
+  /* «до» / «после» → текст в две колонки. */
+  .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns) {
+    margin-top: var(--case-tabs-label-gap);
   }
 
   .case-tabs__panel--soon {

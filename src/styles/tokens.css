@@ -89,6 +89,8 @@
   --case-slide-interval: 4s; /* автопрокрутка */
   /* Селектор сценариев кейса (вкладки): выбранная — жёлтая. */
   --case-tabs-h: 48px;
+  --case-tabs-gap: 48px; /* чипсы → селектор → заголовок сценария → «до» */
+  --case-tabs-label-gap: 32px; /* «до» / «после» → текст в две колонки */
   --case-tabs-radius: 10px;
   --case-tabs-border: rgb(255 255 255 / 0.08);
   --case-tabs-border-strong: rgb(255 255 255 / 0.2);
