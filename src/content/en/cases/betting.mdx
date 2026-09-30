@@ -12,6 +12,7 @@ import CaseTabs from '../../../components/case/CaseTabs.astro';
 import Chips from '../../../components/case/Chips.astro';
 import Columns from '../../../components/case/Columns.astro';
 import TextColumns from '../../../components/case/TextColumns.astro';
+import Flow from '../../../components/case/Flow.astro';
 import Screens from '../../../components/case/Screens.astro';
 import Figure from '../../../components/case/Figure.astro';
 import OldFlow from '../../../components/case/betting/OldFlow.astro';
@@ -97,18 +98,15 @@ Instead of a login and password, we built sign-in by phone number — the famili
   { src: 'betting/new-identification', alt: 'Identity verification (in Russian): Gosuslugi, T-Bank, Sber ID or an online form' },
 ]} />
 
-<Columns>
-<div>
+<Flow>
 
-It sounds simple, but there was a lot of work behind it: we had to gather information, explore the APIs, account for the regulator's (TsUPIS) constraints and untangle the old registration code. The process, built on design thinking principles, involved the whole product team — designers, analysts and developers.
+It sounds simple, but there was a lot of work behind it: we had to gather information, explore the APIs, account for the regulator's (TsUPIS) constraints and untangle the old registration code.
 
-</div>
-<div>
+The process, built on design thinking principles, involved the whole product team — designers, analysts and developers. Together we identified risks, tested hypotheses and negotiated trade-offs between UX, technical constraints and regulatory requirements. Before touching the mockups, we held more than 30 meetings with the business analyst, bank teams and TsUPIS.
 
-Together we identified risks, tested hypotheses and negotiated trade-offs between UX, technical constraints and regulatory requirements. Before touching the mockups, we held more than 30 meetings with the business analyst, bank teams and TsUPIS, and went through dozens of pages of technical documentation to ensure correct user identification and full regulatory compliance.
+We went through dozens of pages of technical documentation to ensure correct user identification and full regulatory compliance.
 
-</div>
-</Columns>
+</Flow>
 
 ## More about the process
 

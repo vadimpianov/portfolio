@@ -1,0 +1,27 @@
+---
+/**
+ * Текст, перетекающий из левой колонки в правую (как в газете): абзацы идут подряд, колонки
+ * выравниваются по высоте, абзац может переноситься в следующую колонку. Одна колонка — на узком контейнере.
+ */
+---
+
+<div class="case-flow">
+  <slot />
+</div>
+
+<style>
+  .case-flow {
+    margin-block: var(--case-block-gap);
+  }
+
+  .case-flow > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  @container case (min-width: 800px) {
+    .case-flow {
+      columns: 2;
+      column-gap: var(--case-col-gap);
+    }
+  }
+</style>
