@@ -154,12 +154,13 @@ const name = 'case-tabs';
   .case-tabs .case-tabs__panel--main > :global(h3) {
     margin-top: var(--case-tabs-title-gap);
     color: var(--case-text);
-    font-size: var(--text-case-body);
-    /* Начертание — как было у заголовка сценария (600). */
+    /* Кегль и начертание — как раньше у заголовка сценария: размер заголовка раздела, вес 600. */
+    font-size: var(--text-tile-title);
     font-weight: 600;
+    --lh: var(--leading-title);
     text-align: center;
     text-transform: none;
-    letter-spacing: 0;
+    letter-spacing: var(--tracking-title);
   }
 
   /* Нижний отступ блока над меткой не должен «перебивать» её 24px (отступы схлопываются в больший). */
