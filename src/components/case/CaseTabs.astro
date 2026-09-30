@@ -172,7 +172,8 @@ const name = 'case-tabs';
   }
 
   /* «До» / «После» → текст в две колонки. */
-  .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns) {
+  .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns),
+  .case-tabs .case-tabs__panel--main > :global(h3 + .case-flow) {
     margin-top: var(--case-tabs-label-gap);
   }
 

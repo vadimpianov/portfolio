@@ -54,18 +54,13 @@ I had several goals:
 
 ### Before
 
-<Columns>
-<div>
+<Flow>
 
 The “old” registration was a long quest: several screens of mandatory fields — citizenship, date of birth, promo code, phone, email, password and SMS confirmation. Many of them weren't needed at sign-up: the promo code could be entered in the account area, the date of birth during identity verification, and citizenship replaced with residency.
 
-</div>
-<div>
-
 Registration took more than two minutes, and up to five together with identity verification. According to industry data, every extra step cuts conversion by 7%, and the drop-off rate can reach 40%. Meanwhile, 70% of new users were already verified with TsUPIS (the Russian betting regulator's registry) — all they needed was a fast sign-up. The other 30% were new to betting and had to go through identity verification from scratch — for them, the key was to make that path clear and not lose them along the way.
 
-</div>
-</Columns>
+</Flow>
 
 <OldFlow caption="Mind map of the old registration" />
 
@@ -77,18 +72,13 @@ Registration took more than two minutes, and up to five together with identity v
 
 ### After
 
-<Columns>
-<div>
+<Flow>
 
 After studying competitors and adjacent industries, I initiated the development of sign-up via bank ID. The user confirms their details in the bank's app and returns to the product already verified — no manual form filling. On the prototype, registration and identity verification time dropped from 5 minutes to 1–2, and according to the providers, this kind of sign-in lifts conversion by 15–25%.
 
-</div>
-<div>
-
 Instead of a login and password, we built sign-in by phone number — the familiar flow from most popular apps. The user enters their number, gets an SMS code and is in within 10–20 seconds. Research shows that up to 15% of support requests are about password recovery; OTP sign-in reduces that flow and speeds up access.
 
-</div>
-</Columns>
+</Flow>
 
 <Figure src="/images/cases/betting/new-flow.webp" width={1320} height={475} caption="Mind map of the new registration" alt="Diagram of the new registration (in Russian): sign-in via T-ID, Sber ID or phone number, registration and verification in one step — under a minute to the first deposit" />
 
@@ -145,8 +135,7 @@ For every occasion, so to speak
 
 Conversion to registration and deposit went up
 
-<Columns>
-<div>
+<Flow>
 
 In 3 months we rebuilt registration: studied TsUPIS requirements and constraints, united the team — product managers, analysts, engineering and business — around one goal, higher conversion, and shipped the app to the App Store and Google Play.
 
@@ -157,8 +146,7 @@ We focused on simplification and growth:
 - Built one-click registration for 70% of new app users and simplified identity verification for the 30% who were new to the industry
 - Reduced registration time from over two minutes to under one
 
-</div>
-<div>
+{/* */}
 
 - Reduced drop-off by 26%
 - Increased conversion to completed registration and first deposit by 26% and 10% respectively
@@ -169,8 +157,7 @@ This wasn't just a registration redesign. It was a shift from a formal complianc
 
 As always, we produced a full set of design artefacts — CJM, user flows, prototypes, error scenarios and edge cases — which removed uncertainty in development and sped up delivery.
 
-</div>
-</Columns>
+</Flow>
 
 <Metrics items={[
   { value: 100, label: 'Entered a phone number' },
@@ -180,17 +167,12 @@ As always, we produced a full set of design artefacts — CJM, user flows, proto
   { value: 27.69, label: 'Placed a bet' },
 ]} />
 
-<Columns>
-<div>
+<Flow>
 
 According to the stats, registration performed well: only about 20% of users dropped off along the whole path.
 
-</div>
-<div>
-
 Deposits, however, aren't working so well. Next up — redesigning the Deposit flow.
 
-</div>
-</Columns>
+</Flow>
 
 </CaseTabs>

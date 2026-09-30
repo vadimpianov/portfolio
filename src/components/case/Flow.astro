@@ -23,6 +23,14 @@
     .case-flow {
       columns: 2;
       column-gap: var(--case-col-gap);
+      /* Колонку можно закончить и начать любой строкой — иначе висячие строки ломают равенство колонок. */
+      orphans: 1;
+      widows: 1;
+    }
+
+    /* Списки внутри тоже переносятся в следующую колонку (overflow у списков рядом с обложкой здесь не нужен). */
+    .case-flow :global(ul) {
+      overflow: visible !important;
     }
   }
 </style>
