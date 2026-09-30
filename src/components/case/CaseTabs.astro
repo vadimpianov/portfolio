@@ -144,6 +144,12 @@ const name = 'case-tabs';
   }
 
   /* Заголовок сценария и метки «до / после» — по центру. */
+  /* Заголовки разделов сценария — как заголовок сценария: вес 600, сверху 48px (как селектор → заголовок). */
+  .case-tabs .case-tabs__panel--main > :global(h2) {
+    margin-top: var(--case-tabs-gap);
+    font-weight: 600;
+  }
+
   /* Селектор → заголовок сценария. */
   .case-tabs .case-tabs__panel--main > :global(h2:first-child) {
     margin-top: var(--case-tabs-gap);
