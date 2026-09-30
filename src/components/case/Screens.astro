@@ -1,0 +1,87 @@
+---
+/**
+ * Экраны приложения в ряд (макеты): каждый — по центру своей трети, подпись-метка сверху, как у Figure.
+ * Картинки — `public/images/cases/<имя>-{616,924}.webp` (2x и 3x от 308px). На узком — лента с прокруткой.
+ */
+import { readFileSync } from 'node:fs';
+import { typograph } from '../../i18n/typograph';
+import { asset } from '../../utils/asset';
+
+interface Props {
+  items: { src: string; alt: string }[];
+  caption?: string;
+}
+
+const { items, caption } = Astro.props;
+// Размеры — из заголовка WebP (VP8X), чтобы место под картинку было сразу.
+const size = (name: string) => {
+  const head = readFileSync(`public/images/cases/${name}-616.webp`).subarray(0, 30);
+  return { width: head.readUIntLE(24, 3) + 1, height: head.readUIntLE(27, 3) + 1 };
+};
+---
+
+<figure class="case-screens">
+  {caption && <figcaption class="case-screens__label">{typograph(caption)}</figcaption>}
+  <div class="case-screens__row" tabindex="0">
+    {items.map(({ src, alt }) => {
+      const x2 = asset(`/images/cases/${src}-616.webp`);
+      const x3 = asset(`/images/cases/${src}-924.webp`);
+      return (
+        <img
+          src={x2}
+          srcset={`${x2} 616w, ${x3} 924w`}
+          sizes="(min-width: 1280px) 20vw, 240px"
+          {...size(src)}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+        />
+      );
+    })}
+  </div>
+</figure>
+
+<style>
+  .case-screens {
+    margin-block: var(--case-block-gap);
+  }
+
+  .case-screens__label {
+    margin-bottom: 20px;
+    font-size: var(--text-case-body);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--case-accent);
+  }
+
+  /* Узкий: лента, экраны по 240px, листается по горизонтали. */
+  .case-screens__row {
+    display: flex;
+    gap: var(--case-col-gap);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    outline: none;
+  }
+
+  .case-screens__row img {
+    flex: none;
+    display: block;
+    width: 240px;
+    height: auto;
+  }
+
+  /* Широкий: три трети, экран — по центру своей трети. */
+  @container case (min-width: 800px) {
+    .case-screens__row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      justify-items: center;
+      overflow: visible;
+    }
+
+    .case-screens__row img {
+      width: var(--case-screen-w);
+    }
+  }
+</style>

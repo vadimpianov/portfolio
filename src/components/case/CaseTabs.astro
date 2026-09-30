@@ -156,6 +156,11 @@ const name = 'case-tabs';
     letter-spacing: 0;
   }
 
+  /* Заголовок сценария → «до» — ближе, чем остальные отступы. */
+  .case-tabs .case-tabs__panel--main > :global(h2:first-child + h3) {
+    margin-top: var(--case-tabs-label-gap);
+  }
+
   /* «до» / «после» → текст в две колонки. */
   .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns) {
     margin-top: var(--case-tabs-label-gap);

@@ -165,10 +165,11 @@ const title = typograph(
 
   .flow__label {
     margin-bottom: 20px;
-    font-size: var(--case-label-size);
+    /* Подпись — кеглем текста кейса, акцентным жёлтым (как «Передо мной стояло…»). */
+    font-size: var(--text-case-body);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    color: var(--case-muted);
+    color: var(--case-accent);
   }
 
   /* Уже --case-flow-min-w — схема листается по горизонтали, текст не мельчит. */

@@ -12,6 +12,7 @@ import CaseTabs from '../../../components/case/CaseTabs.astro';
 import Chips from '../../../components/case/Chips.astro';
 import Columns from '../../../components/case/Columns.astro';
 import TextColumns from '../../../components/case/TextColumns.astro';
+import Screens from '../../../components/case/Screens.astro';
 import Figure from '../../../components/case/Figure.astro';
 import OldFlow from '../../../components/case/betting/OldFlow.astro';
 import Metrics from '../../../components/case/Metrics.astro';
@@ -55,19 +56,23 @@ I had several goals:
 <Columns>
 <div>
 
-The old registration was a long quest: several screens of mandatory fields — citizenship, date of birth, promo code, phone, email, password and SMS confirmation. Many of these fields weren't required by the system and could be moved inside the app: the promo code into the account area, the date of birth into identity verification, and citizenship could go entirely, leaving only residency.
+The “old” registration was a long quest: several screens of mandatory fields — citizenship, date of birth, promo code, phone, email, password and SMS confirmation. Many of these fields weren't required by the system and could be moved inside the app: the promo code into the account area, the date of birth into identity verification, and citizenship could go entirely, leaving only residency.
 
 </div>
 <div>
 
-Registration took more than two minutes, and every extra step cut conversion by up to 7% while pushing the drop-off risk up to 40%. It's important that 70% of new users were already verified with TsUPIS (the Russian betting regulator's registry) and could go straight to betting. The other 30% — new, unique users — were not: they were complete newcomers to betting. Keeping this group was a special challenge for us.
+Registration took more than two minutes, and every extra step cut conversion by up to 7% while pushing the drop-off risk up to 40%. It's important that 70% of new users were already verified with TsUPIS (the Russian betting regulator's registry) and could go straight to betting. The other 30% — new, unique users — were not: they were complete newcomers to betting. Keeping this cohort was a special challenge for us.
 
 </div>
 </Columns>
 
 <OldFlow caption="Mind map of the old registration" />
 
-<Figure src="/images/cases/betting/old-screens.webp" width={1320} height={718} caption="Old registration screens" alt="Old registration screens (in Russian): a long form, SMS confirmation and a choice of identity verification methods" />
+<Screens caption="Old registration screens" items={[
+  { src: 'betting/old-registration', alt: 'Registration (in Russian): citizenship, phone, date of birth, email, password, promo code and consents' },
+  { src: 'betting/old-confirm', alt: 'Phone confirmation (in Russian): SMS code' },
+  { src: 'betting/old-identification', alt: 'Identity verification (in Russian): via Gosuslugi, T-Bank, Sber ID or at a betting shop' },
+]} />
 
 ### After
 
