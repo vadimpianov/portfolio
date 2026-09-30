@@ -14,8 +14,9 @@
     margin-block: var(--case-block-gap);
   }
 
-  .case-flow > :global(:first-child) {
-    margin-top: 0;
+  /* Абзацы — без пустой строки между ними (начало абзаца отмечает только красная строка). */
+  .case-flow > :global(*) {
+    margin-top: 0 !important;
   }
 
   @container case (min-width: 800px) {
