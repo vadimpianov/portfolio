@@ -91,7 +91,11 @@ import Metrics from '../../../components/case/Metrics.astro';
 
 <Figure src="/images/cases/betting/new-flow.webp" width={1320} height={475} caption="Mind map новой регистрации" alt="Схема новой регистрации: вход через T-ID, Сбер ID или по номеру телефона, регистрация и идентификация в один шаг — меньше минуты до пополнения" />
 
-<Figure src="/images/cases/betting/new-screens.webp" width={1320} height={668} caption="Макеты новой регистрации" alt="Экраны новой регистрации: ввод номера телефона, код из СМС и выбор способа подтверждения личности" />
+<Screens caption="Макеты новой регистрации" items={[
+  { src: 'betting/new-phone', alt: 'Вход или регистрация: номер телефона, T-ID или Сбер ID' },
+  { src: 'betting/new-code', alt: 'Код из СМС' },
+  { src: 'betting/new-identification', alt: 'Подтверждение личности: Госуслуги, Т-Банк, Сбер ID или онлайн-анкета' },
+]} />
 
 <Columns>
 <div>
