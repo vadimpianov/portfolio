@@ -166,6 +166,11 @@ const name = 'case-tabs';
     margin-bottom: 0;
   }
 
+  /* Картинки/экраны → «После» — 32px (как «После» → текст); заголовок → «До» остаётся 24px. */
+  .case-tabs .case-tabs__panel--main > :global(:not(h2) + h3) {
+    margin-top: var(--case-tabs-label-gap);
+  }
+
   /* «До» / «После» → текст в две колонки. */
   .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns) {
     margin-top: var(--case-tabs-label-gap);
