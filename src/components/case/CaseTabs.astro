@@ -138,6 +138,11 @@ const name = 'case-tabs';
     display: none;
   }
 
+  /* Между блоками сценария (колонки текста, схемы, картинки) — свой отступ, меньше общего. */
+  .case-tabs__panel--main {
+    --case-block-gap: var(--case-tabs-block-gap);
+  }
+
   /* Заголовок сценария и метки «до / после» — по центру. */
   /* Селектор → заголовок сценария. */
   .case-tabs .case-tabs__panel--main > :global(h2:first-child) {
@@ -158,7 +163,7 @@ const name = 'case-tabs';
 
   /* Заголовок сценария → «до» — ближе, чем остальные отступы. */
   .case-tabs .case-tabs__panel--main > :global(h2:first-child + h3) {
-    margin-top: var(--case-tabs-label-gap);
+    margin-top: var(--case-tabs-title-gap);
   }
 
   /* «до» / «после» → текст в две колонки. */
