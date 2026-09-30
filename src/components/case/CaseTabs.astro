@@ -147,6 +147,7 @@ const name = 'case-tabs';
   /* Селектор → заголовок сценария. */
   .case-tabs .case-tabs__panel--main > :global(h2:first-child) {
     margin-top: var(--case-tabs-gap);
+    font-weight: 600;
     text-align: center;
   }
 
@@ -154,13 +155,10 @@ const name = 'case-tabs';
   .case-tabs .case-tabs__panel--main > :global(h3) {
     margin-top: var(--case-tabs-title-gap);
     color: var(--case-text);
-    /* Кегль и начертание — как раньше у заголовка сценария: размер заголовка раздела, вес 600. */
-    font-size: var(--text-tile-title);
-    font-weight: 600;
-    --lh: var(--leading-title);
+    font-size: var(--text-case-body);
     text-align: center;
     text-transform: none;
-    letter-spacing: var(--tracking-title);
+    letter-spacing: 0;
   }
 
   /* Нижний отступ блока над меткой не должен «перебивать» её 24px (отступы схлопываются в больший). */
