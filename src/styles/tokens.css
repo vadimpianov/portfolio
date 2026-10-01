@@ -104,7 +104,7 @@
   --case-figure-box-h: 400px; /* листаемая рамка картинки (Figure box) — карта сценариев */
   --case-side-figure-overhang: 4px; /* картинка рядом с текстом (Figure side): на сколько уходит за правый край панели */
   --case-screen-w: 84%; /* экран в ряду макетов (Screens) — доля своей трети */
-  --case-strip-h: round(clamp(316px, 33.75vw, 502px), 2px); /* лента экранов (Figure scroll) */
+  --case-strip-h: round(clamp(252px, 27vw, 402px), 2px); /* лента экранов (Figure scroll) */
   --case-strip-intro-w: 420px; /* ширина заголовка в начале ленты */
   --case-strip-intro-gap: 48px; /* заголовок → первый экран ленты */
   --case-strip-intro-lead-gap: 12px; /* заголовок → подзаголовок в ленте */

@@ -1,9 +1,10 @@
-"""Правки карты сценариев перед экспортом в WebP (координаты — в итоговом размере 9876 × 4878).
+"""Правки карты сценариев перед экспортом в WebP (координаты заданы для размера 9876 × 4878 и
+масштабируются под размер входной картинки — ширина / 9876).
 
 1. Убраны два экрана «Превышен лимит входа» внизу слева (по просьбе пользователя).
 2. Размыты логотипы и название ZENIT: заставка, промо-экран, шапки главной, экраны службы поддержки.
 
-Запуск: python scenarios-edit.py <вход.png 9876×4878> <выход.png>
+Запуск: python scenarios-edit.py <вход.png> <выход.png>
 """
 import sys
 
@@ -28,8 +29,10 @@ BLUR = [
     (9178, 1770, 9259, 1786),  # VK: пост
 ]
 
-for box in ERASE:
+k = im.width / 9876
+scale = lambda box: tuple(round(v * k) for v in box)
+for box in map(scale, ERASE):
     im.paste((0, 0, 0, 0), box)
-for box in BLUR:
-    im.paste(im.crop(box).filter(ImageFilter.GaussianBlur(5)), box[:2])
+for box in map(scale, BLUR):
+    im.paste(im.crop(box).filter(ImageFilter.GaussianBlur(5 * k)), box[:2])
 im.save(sys.argv[2])

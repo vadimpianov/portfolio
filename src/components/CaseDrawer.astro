@@ -21,7 +21,8 @@ const close = t('case.close');
 {/* Фокус при открытии — на сам диалог (не на кнопку и не на панель за краем экрана:
     фокус на ней прокручивал диалог вбок, и панель дёргалась при выезде). */}
 <dialog
-  class="case-drawer"
+  class:list={['case-drawer', { 'is-open is-instant': open }]}
+  open={open || undefined}
   data-case-drawer
   data-bleed
   aria-label={close}
@@ -61,6 +62,17 @@ const close = t('case.close');
     border: 0;
     background: transparent;
     color: inherit;
+  }
+
+  /* Адрес кейса: модалка открыта уже в HTML (атрибут open), с первого кадра поверх главной — без «сначала
+     главная, потом кейс». Скрипт потом переоткрывает её модально (showModal) в том же кадре. */
+  .case-drawer[open]:not(:modal) {
+    z-index: 2147483000;
+  }
+
+  /* Обложку ставит по высоте скрипт (centerCover) — до него не показываем, чтобы не прыгала. */
+  .case-drawer[open]:not(:modal) :global(.case__cover) {
+    visibility: hidden;
   }
 
   .case-drawer::backdrop {
@@ -388,8 +400,10 @@ const close = t('case.close');
   function openOnLoad() {
     const dialog = drawer();
     const body = dialog?.querySelector<HTMLElement>('[data-case-body]');
-    if (!dialog || !body || dialog.open || !('openOnLoad' in dialog.dataset)) return;
+    if (!dialog || !body || !('openOnLoad' in dialog.dataset)) return;
     delete dialog.dataset.openOnLoad;
+    // В HTML она открыта обычным диалогом (виден с первого кадра); теперь — модально, в том же кадре.
+    if (dialog.open) dialog.close();
     pageTitle = dialog.dataset.homeTitle ?? document.title;
     history.replaceState({ ...history.state, caseDirect: true }, '');
     dialog.classList.add('is-instant', 'is-open');
