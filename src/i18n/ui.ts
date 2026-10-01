@@ -31,7 +31,7 @@ export const ui = {
     'tiles.1.title': 'Альфа Банк',
     'tiles.2.title': 'Betting app',
     'tiles.2.lead':
-      'Выстроил дизайн-процесс и пересобрал ключевые revenue-сценарии — повысил конверсию в завершённую регистрацию и первое пополнение на 26 и 10 п. п. соответственно',
+      'Выстроил дизайн-процесс и пересобрал ключевые revenue-сценарии — повысил конверсию в завершённую регистрацию и первое пополнение на 48% и 44% соответственно',
     'tiles.3.title': 'Quantori',
     'tiles.4.title': 'Метр квадратный',
     'tiles.5.title': 'BelkaCar',
@@ -75,7 +75,7 @@ export const ui = {
     'tiles.1.title': 'Alfa-Bank',
     'tiles.2.title': 'Betting app',
     'tiles.2.lead':
-      'Built the design process and reworked the key revenue flows — lifting conversion to completed registration and first deposit by 26 and 10 percentage points respectively',
+      'Built the design process and reworked the key revenue flows — lifting conversion to completed registration and first deposit by 48% and 44% respectively',
     'tiles.3.title': 'Quantori',
     'tiles.4.title': 'Metr Kvadratny',
     'tiles.5.title': 'BelkaCar',
