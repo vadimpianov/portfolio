@@ -22,6 +22,9 @@ interface Props {
   /** Для `scroll`: заголовок и/или подзаголовок слева в начале ленты, по середине её высоты (листаются вместе с картинкой). */
   title?: string;
   lead?: string;
+  /** Для `scroll`: карусель — лента в край панели (за поля слева и справа), по умолчанию по центру,
+      листается по кругу (картинка повторена 3 раза, прокрутку держит в средней копии CaseDrawer). */
+  loop?: boolean;
   /** Для `box`: высота картинки = ширина текста × (высота / ширина из `box`) × zoom; что не влезло — листается вбок и вниз. */
   zoom?: number;
 }
@@ -39,6 +42,7 @@ const {
   zoom = 1,
   title,
   lead,
+  loop = false,
 } = Astro.props;
 ---
 
@@ -51,6 +55,7 @@ const {
       'case-figure--side': side,
       'case-figure--box': box,
       'case-figure--intro': title || lead,
+      'case-figure--loop': scroll && loop,
     },
   ]}
   style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
@@ -65,7 +70,24 @@ const {
         </div>
       )
     }
-    <img src={asset(src)} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
+    {
+      scroll && loop ? (
+        [0, 1, 2].map((i) => (
+          <img
+            src={asset(src)}
+            width={width}
+            height={height}
+            alt={i === 1 ? alt : ''}
+            aria-hidden={i === 1 ? undefined : 'true'}
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          />
+        ))
+      ) : (
+        <img src={asset(src)} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
+      )
+    }
   </div>
 </figure>
 
@@ -159,6 +181,30 @@ const {
     text-transform: none;
     letter-spacing: normal;
     color: var(--case-muted);
+  }
+
+  /* Карусель: в край панели слева и справа, копии ленты — через тот же зазор, что между экранами.
+     Полосы прокрутки нет (при переходе между копиями она прыгала бы); мышью — перетаскиванием. */
+  .case-figure--loop .case-figure__frame {
+    display: flex;
+    gap: var(--case-strip-loop-gap);
+    margin-inline: calc(-1 * var(--gutter));
+    scrollbar-width: none;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .case-figure--loop .case-figure__frame::-webkit-scrollbar {
+    display: none;
+  }
+
+  .case-figure--loop .case-figure__frame.is-dragging {
+    cursor: grabbing;
+  }
+
+  .case-figure--loop .case-figure__frame img {
+    flex: none;
+    border-radius: 0;
   }
 
   .case-figure--bleed .case-figure__frame {

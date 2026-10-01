@@ -307,6 +307,55 @@ const close = t('case.close');
     });
   }
 
+  /**
+   * Карусель (`Figure scroll loop`): лента повторена 3 раза. При открытии — середина средней копии по центру
+   * рамки; при прокрутке, как только уходим за половину копии, прокрутка незаметно сдвигается на копию назад
+   * (копии одинаковые), поэтому лента листается по кругу в обе стороны.
+   */
+  function initLoops(root: ParentNode) {
+    root.querySelectorAll<HTMLElement>('.case-figure--loop .case-figure__frame').forEach((frame) => {
+      const imgs = frame.querySelectorAll('img');
+      if (imgs.length < 3) return;
+      // Положение копии внутри ленты (с учётом прокрутки).
+      const pos = (img: Element) =>
+        img.getBoundingClientRect().left - frame.getBoundingClientRect().left + frame.scrollLeft;
+      frame.scrollLeft = pos(imgs[1]) + (imgs[1].getBoundingClientRect().width - frame.clientWidth) / 2;
+      if (frame.dataset.loop) return;
+      frame.dataset.loop = '';
+      frame.addEventListener(
+        'scroll',
+        () => {
+          const w = pos(imgs[1]) - pos(imgs[0]);
+          const x = frame.scrollLeft - pos(imgs[0]);
+          if (x < w * 0.5) frame.scrollLeft += w;
+          else if (x > w * 1.5) frame.scrollLeft -= w;
+        },
+        { passive: true },
+      );
+    });
+  }
+
+  // Карусель мышью — перетаскиванием (на тачпаде и на телефоне листается и так).
+  document.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    const frame = (event.target as Element | null)?.closest<HTMLElement>('.case-figure--loop .case-figure__frame');
+    if (!frame) return;
+    let lastX = event.clientX;
+    frame.classList.add('is-dragging');
+    // Сдвиг — от прошлого положения курсора: при переходе между копиями прокрутка перескакивает.
+    const move = (e: PointerEvent) => {
+      frame.scrollLeft -= e.clientX - lastX;
+      lastX = e.clientX;
+    };
+    const up = () => {
+      frame.classList.remove('is-dragging');
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  });
+
   function layout(root: ParentNode) {
     centerCover(root);
     fitSideFigures(root);
@@ -350,6 +399,7 @@ const close = t('case.close');
     }
     layout(body);
     centerBoxes(body);
+    initLoops(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
@@ -410,6 +460,7 @@ const close = t('case.close');
     dialog.showModal();
     layout(body);
     centerBoxes(body);
+    initLoops(body);
     covers.observe(body);
     document.fonts?.ready.then(() => layout(body));
     document.documentElement.classList.add('case-open');
