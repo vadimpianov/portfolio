@@ -15,12 +15,14 @@ interface Props {
   caption?: string;
   scroll?: boolean;
   bleed?: boolean;
+  /** Рядом с текстом в `<Columns>`: высотой с колонку текста, крупнее и уходит за правый край панели. */
+  side?: boolean;
 }
 
-const { src, width, height, alt, caption, scroll = false, bleed = false } = Astro.props;
+const { src, width, height, alt, caption, scroll = false, bleed = false, side = false } = Astro.props;
 ---
 
-<figure class:list={['case-figure', { 'case-figure--scroll': scroll, 'case-figure--bleed': bleed }]}>
+<figure class:list={['case-figure', { 'case-figure--scroll': scroll, 'case-figure--bleed': bleed, 'case-figure--side': side }]}>
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll ? 0 : undefined}>
     <img src={asset(src)} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
@@ -66,5 +68,35 @@ const { src, width, height, alt, caption, scroll = false, bleed = false } = Astr
 
   .case-figure--bleed .case-figure__frame img {
     border-radius: 0;
+  }
+
+  /* Картинка рядом с текстом: высота — как у колонки текста (сама на высоту ряда не влияет),
+     ширина — по пропорции, лишнее справа уходит за край панели. */
+  @container case (min-width: 800px) {
+    .case-figure--side {
+      position: absolute;
+      inset: 0 calc(-1 * var(--gutter)) 0 0;
+      margin: 0;
+      overflow: clip;
+    }
+
+    .case-figure--side .case-figure__frame {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    /* Крупнее колонки: по высоте — с запасом (обрезается поровну сверху и снизу), справа — за край панели. */
+    .case-figure--side .case-figure__frame img {
+      flex: none;
+      width: auto;
+      max-width: none;
+      height: calc(100% * var(--case-side-figure-scale));
+      border-radius: 0;
+    }
+
+    :global(:has(> .case-figure--side)) {
+      position: relative;
+    }
   }
 </style>

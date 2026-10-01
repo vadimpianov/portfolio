@@ -90,7 +90,7 @@
   /* Селектор сценариев кейса (вкладки): выбранная — жёлтая. */
   --case-tabs-h: 48px;
   --case-tabs-gap: 48px; /* селектор → заголовок сценария */
-  --case-tabs-section-gap: 60px; /* чипсы → селектор; блок → заголовок раздела сценария */
+  --case-tabs-section-gap: 80px; /* чипсы → селектор; блок → заголовок раздела сценария */
   --case-tabs-label-gap: 32px; /* «до» / «после» → текст в две колонки */
   --case-tabs-title-gap: 24px; /* заголовок сценария → «до» */
   --case-tabs-block-gap: 32px; /* между блоками сценария: колонки, схемы, картинки */
@@ -99,6 +99,7 @@
   --case-tabs-border-strong: rgb(255 255 255 / 0.2);
   --case-tabs-active-text: #141414;
   --case-caption-gap: 24px; /* подпись → картинка, схема, экраны */
+  --case-side-figure-scale: 1; /* картинка рядом с текстом (Figure side): во сколько раз выше колонки текста */
   --case-screen-w: 84%; /* экран в ряду макетов (Screens) — доля своей трети */
   --case-strip-h: round(clamp(420px, 45vw, 668px), 2px);
   --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
