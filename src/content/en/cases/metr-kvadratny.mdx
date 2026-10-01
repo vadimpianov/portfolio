@@ -14,6 +14,8 @@ import Columns from '../../../components/case/Columns.astro';
 import TextColumns from '../../../components/case/TextColumns.astro';
 import Flow from '../../../components/case/Flow.astro';
 import UserPath from '../../../components/case/metr/UserPath.astro';
+import StatusChain from '../../../components/case/metr/StatusChain.astro';
+import Figure from '../../../components/case/Figure.astro';
 
 When the project started, the company had mature, scalable web products with steady traffic and well-established business processes. There was no mobile app, even though research showed that 57.8% of users searched for property on mobile devices.
 
@@ -59,6 +61,79 @@ We found that mobile users spend 5 to 25 minutes per session with the product on
 Search looks simple at first glance, but huge result lists slow down the choice, and overloaded filters get in the way. We rebuilt the filter, keeping only parameters that cut more than 60% of irrelevant listings — more of an axe than a scalpel.
 
 Already in the MVP we shipped Saved search and Quick match, which capture the user’s intent and let them come back to it without setting everything up again. All of this sped up repeat sessions and made it easier to find the right property.
+
+</Flow>
+
+## Building the communication model
+
+<Columns center>
+<div>
+
+Once the main scenarios and product specifics were clear, we started working on a communication model built on banners and push notifications. At every stage of the user journey the app had to answer two key questions: “What’s next?” and “What’s the current status?”
+
+</div>
+<div>
+
+<Figure src="/images/cases/metr-kvadratny/communication.webp" width={648} height={668} alt="Profile: status banners for the mortgage, deal and renovation, a feedback request" />
+
+</div>
+</Columns>
+
+<StatusChain />
+
+## With a shared product vision in place
+
+We moved on to designing user scenarios
+
+### For Search alone we designed almost a hundred screens
+
+<Flow>
+
+We design scenarios so that the product team never has to ask: “What happens if…?”, “How does this work?”, “How are errors handled?” The most complete and thorough design possible!
+
+</Flow>
+
+<Figure box="2274 / 1334" zoom={2.16} tiles={4096} src="/images/cases/metr-kvadratny/search-map" width={2274} height={1334} alt="Search scenario map: map search, sorting, consultation, call me back, apartments from developers, filter search" />
+
+## We designed lots of modals
+
+… For every occasion, so to speak
+
+<Figure src="/images/cases/metr-kvadratny/modals.webp" width={2968} height={440} scroll loop alt="Modals: service not available in your region, no connection, jailbroken iPhone, turn on notifications, save search without email confirmation, delete search, biometrics changed, something went wrong" />
+
+## Then we moved on to the Mortgage service
+
+P.S. It was the main service, since we worked under a bank
+
+<Flow>
+
+Then negotiations began with the mortgage provider. Our goal was obvious: simplify the application form as much as possible to raise conversion. According to UX research, every extra field in a form lowers conversion by 5–10%, and long forms on mobile devices are a key reason people abandon them.
+
+Resistance from the provider was expected: compliance requirements and internal scoring models left almost no room to manoeuvre. A battle for every field began. We argued for a shorter form using competitors’ experience, the impact of form length on the funnel and user scenarios. We found a compromise by splitting the data: the critical fields on the first step, the rest after pre-approval.
+
+</Flow>
+
+<Figure src="/images/cases/metr-kvadratny/mortgage.webp" width={3141} height={620} scroll alt="Mortgage application flow: loan parameters, client details, employment, income, choice of banks" />
+
+## We delivered on our goals
+
+But that was only the beginning: we were then trusted to keep growing the product
+
+<Flow>
+
+In 4 months we launched a mobile product that brought five disparate business units together into a single real-estate ecosystem. We focused on metrics rather than the amount of functionality:
+
+- Ran 20+ product sessions with stakeholders and the development team
+- Cut the MVP scope by 35%, speeding up time-to-market
+- Shortened the mortgage form by 40%, which raised the completion rate by 18%
+- Optimised search — the filter began cutting out more than 60% of irrelevant listings, reducing time-to-action by 22%
+- Introduced Saved search, increasing retention by 27%
+- Produced a full set of design artefacts: user flows, a UI kit, interactive prototypes
+- Reduced uncertainty during development and sped up delivery thanks to thoroughly designed scenarios
+- Held several design reviews, keeping design and development in sync
+- Successfully published the app on the App Store and Google Play
+
+It wasn’t just an app launch. It was a shift from a set of services to an ecosystem model able to grow user LTV through cross-unit scenarios: from search to mortgage, from the deal to renovation and moving.
 
 </Flow>
 

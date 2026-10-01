@@ -1,0 +1,179 @@
+---
+/**
+ * Кейс «Метр квадратный»: модель коммуникации — баннеры «Что делать дальше?» (верхний ряд) и статусы
+ * «Какой текущий статус?» (нижний ряд) по шагам сделки, кодом (тексты по локали). Шаги идут слева направо,
+ * линия со стрелкой переходит между рядами. Шире контейнера — листается вбок (мышью — перетаскиванием).
+ */
+import { typograph } from '../../../i18n/typograph';
+import { getLocaleFromUrl } from '../../../i18n/utils';
+
+const en = getLocaleFromUrl(Astro.url) === 'en';
+const tr = (ru: string, eng: string) => (en ? eng : ru);
+
+const place = tr('Сделка в ЖК «Событие 4»', 'Deal at Sobytie 4');
+const more = tr('Подробнее', 'Details');
+// row: 0 — «что делать дальше?» (действие), 1 — «какой текущий статус?».
+const cards = [
+  { row: 0, title: tr('Оплатите выпуск электронной подписи', 'Pay for your electronic signature'), button: tr('Оплатить', 'Pay') },
+  { row: 1, title: tr('Ожидаем подтверждения оплаты', 'Waiting for payment confirmation'), button: more },
+  { row: 1, title: tr('Оплата принята. Ожидайте, создаём ДКП', 'Payment received. Please wait, we’re drafting the sale agreement'), button: more },
+  { row: 0, title: tr('Выберите дату для посещения офиса', 'Choose a date to visit the office'), button: tr('Выбрать', 'Choose') },
+  { row: 1, title: tr('20.04 в 16:20 ждём вас в офисе: Москва, ул. Вешних Вод, д. 45', 'We’ll see you at the office on 20.04 at 16:20: 45 Veshnikh Vod St, Moscow'), button: more },
+  { row: 1, title: tr('Документы подписаны. Ожидайте, регистрируем в Росреестре', 'Documents signed. Please wait, we’re registering with Rosreestr'), button: more },
+  { row: 0, title: tr('Документы готовы и находятся в профиле', 'Your documents are ready in your profile'), button: tr('В профиль', 'Go to profile') },
+];
+const rows = [tr('Что делать дальше?', 'What’s next?'), tr('Какой текущий статус?', 'What’s the current status?')];
+
+// Геометрия (px): карточки W × CH, шаг STEP; ряды — сверху метка, под ней карточки.
+const W = 300;
+const STEP = 348;
+const CH = 148;
+const LABEL = 40; // метка ряда + отступ до карточек
+const ROW_GAP = 72;
+const top = (row: number) => LABEL + row * (LABEL + CH + ROW_GAP);
+const width = (cards.length - 1) * STEP + W;
+const height = top(1) + CH;
+const R = 16;
+const links = cards.slice(1).map((c, k) => {
+  const a = cards[k];
+  const x1 = k * STEP + W;
+  const x2 = (k + 1) * STEP;
+  const y1 = top(a.row) + CH / 2;
+  const y2 = top(c.row) + CH / 2;
+  const mx = (x1 + x2) / 2;
+  const s = Math.sign(y2 - y1);
+  const d =
+    y1 === y2
+      ? `M${x1} ${y1} H${x2 - 2}`
+      : `M${x1} ${y1} H${mx - R} Q${mx} ${y1} ${mx} ${y1 + s * R} V${y2 - s * R} Q${mx} ${y2} ${mx + R} ${y2} H${x2 - 2}`;
+  return { d, from: [x1, y1], to: [x2 - 2, y2] };
+});
+---
+
+<div class="status-chain" data-drag>
+  <div class="status-chain__canvas" style={`width: ${width}px; height: ${height}px`}>
+    {
+      rows.map((label, row) => (
+        <p class="status-chain__row" style={`top: ${top(row) - LABEL}px`}>
+          {typograph(label)}
+        </p>
+      ))
+    }
+    <svg class="status-chain__links" width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+      {
+        links.map((l) => (
+          <>
+            <path d={l.d} />
+            <path d={`M${l.to[0] - 8} ${l.to[1] - 7} L${l.to[0]} ${l.to[1]} L${l.to[0] - 8} ${l.to[1] + 7}`} />
+            <circle cx={l.from[0]} cy={l.from[1]} r="4" />
+          </>
+        ))
+      }
+    </svg>
+    {
+      cards.map((c, i) => (
+        <div class:list={['status-chain__card', { 'status-chain__card--action': c.row === 0 }]} style={`left: ${i * STEP}px; top: ${top(c.row)}px`}>
+          <p class="status-chain__place">{typograph(place)}</p>
+          <p class="status-chain__title">{typograph(c.title)}</p>
+          <span class="status-chain__button">{typograph(c.button)}</span>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .status-chain {
+    margin-block: var(--case-block-gap);
+    padding-bottom: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    user-select: none;
+  }
+
+  @media (pointer: fine) {
+    .status-chain {
+      cursor: grab;
+    }
+
+    .status-chain:global(.is-dragging) {
+      cursor: grabbing;
+    }
+  }
+
+  .status-chain__canvas {
+    position: relative;
+  }
+
+  .status-chain__row {
+    position: absolute;
+    left: 0;
+    color: var(--case-text);
+    font-size: var(--case-label-size);
+    --lh: var(--leading-tight);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .status-chain__links {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+
+  .status-chain__links path {
+    fill: none;
+    stroke: var(--case-flow-line);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .status-chain__links circle {
+    fill: var(--case-flow-line);
+  }
+
+  .status-chain__card {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 148px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--case-flow-node);
+  }
+
+  .status-chain__place {
+    color: var(--case-muted);
+    font-size: 14px;
+    --lh: var(--leading-tight);
+  }
+
+  .status-chain__title {
+    margin-top: 4px;
+    color: var(--case-text);
+    font-size: 15px;
+    font-weight: 600;
+    --lh: var(--leading-tight);
+  }
+
+  .status-chain__button {
+    display: grid;
+    place-items: center;
+    height: 36px;
+    margin-top: auto;
+    border-radius: 8px;
+    background: var(--case-bg);
+    color: var(--case-muted);
+    font-size: 14px;
+    --lh: var(--leading-tight);
+  }
+
+  /* Действие — кнопка заметнее статуса. */
+  .status-chain__card--action .status-chain__button {
+    color: var(--case-text);
+  }
+</style>

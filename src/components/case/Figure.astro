@@ -151,6 +151,18 @@ const tileList = tiles
     scrollbar-width: thin;
   }
 
+  /* Мышью ленту таскают (рука → зажатая рука, `pointerdown` в CaseDrawer). */
+  @media (pointer: fine) {
+    .case-figure--scroll .case-figure__frame {
+      cursor: grab;
+      user-select: none;
+    }
+
+    .case-figure--scroll .case-figure__frame.is-dragging {
+      cursor: grabbing;
+    }
+  }
+
   .case-figure--scroll .case-figure__frame img {
     width: auto;
     max-width: none;

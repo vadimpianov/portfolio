@@ -402,12 +402,13 @@ const close = t('case.close');
     });
   }
 
-  // Мышью — перетаскиванием (рука → зажатая рука): карусель — вбок, карта сценариев — в обе стороны.
+  // Мышью — перетаскиванием (рука → зажатая рука): ленты, карусель и схемы `[data-drag]` — вбок,
+  // карта сценариев — в обе стороны.
   // Колесо над картой листает сам кейс; на тачпаде у карусели и на телефоне — обычная прокрутка.
   document.addEventListener('pointerdown', (event) => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
     const frame = (event.target as Element | null)?.closest<HTMLElement>(
-      '.case-figure--loop .case-figure__frame, .case-figure--box .case-figure__frame',
+      '.case-figure--scroll .case-figure__frame, [data-drag]',
     );
     if (!frame) return;
     event.preventDefault();

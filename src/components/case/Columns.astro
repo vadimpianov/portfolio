@@ -1,8 +1,13 @@
 ---
-/** Две колонки текста рядом (на мобиле — одна под другой). Каждый ребёнок-`<div>` — колонка. */
+/** Две колонки текста рядом (на мобиле — одна под другой). Каждый ребёнок-`<div>` — колонка.
+    `center` — колонки по середине друг друга (текст рядом с высокой картинкой). */
+interface Props {
+  center?: boolean;
+}
+const { center = false } = Astro.props;
 ---
 
-<div class="case-columns">
+<div class:list={['case-columns', { 'case-columns--center': center }]}>
   <slot />
 </div>
 
@@ -19,6 +24,14 @@
     .case-columns {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
+
+  .case-columns--center {
+    align-items: center;
+  }
+
+  .case-columns--center > :global(*) > :global(:last-child) {
+    margin-bottom: 0;
   }
 
   .case-columns > :global(*) > :global(:first-child) {
