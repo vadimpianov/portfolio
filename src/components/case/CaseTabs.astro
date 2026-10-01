@@ -150,6 +150,11 @@ const name = 'case-tabs';
     font-weight: 600;
   }
 
+  /* Лента с заголовком внутри (модальные окна) — отступ сверху как у заголовка раздела. */
+  .case-tabs .case-tabs__panel--main > :global(.case-figure--intro) {
+    margin-top: var(--case-tabs-section-gap);
+  }
+
   /* Абзацы сценария идут подряд, без пустой строки — начало абзаца отмечает красная строка. */
   .case-tabs .case-tabs__panel--main :global(p:not([class]) + p:not([class])) {
     margin-top: 0;

@@ -19,6 +19,9 @@ interface Props {
   side?: boolean;
   /** Листаемая рамка высотой --case-figure-box-h; "ширина / высота" (например "3200 / 2443") — от неё считается размер картинки. */
   box?: string;
+  /** Для `scroll`: заголовок и подзаголовок слева в начале ленты, по середине её высоты (листаются вместе с картинкой). */
+  title?: string;
+  lead?: string;
   /** Для `box`: высота картинки = ширина текста × (высота / ширина из `box`) × zoom; что не влезло — листается вбок и вниз. */
   zoom?: number;
 }
@@ -34,6 +37,8 @@ const {
   side = false,
   box,
   zoom = 1,
+  title,
+  lead,
 } = Astro.props;
 ---
 
@@ -45,12 +50,21 @@ const {
       'case-figure--bleed': bleed,
       'case-figure--side': side,
       'case-figure--box': box,
+      'case-figure--intro': title,
     },
   ]}
   style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
 >
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined}>
+    {
+      title && (
+        <div class="case-figure__intro">
+          <h2 class="case-figure__title">{typograph(title)}</h2>
+          {lead && <p class="case-figure__lead">{typograph(lead)}</p>}
+        </div>
+      )
+    }
     <img src={asset(src)} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
   </div>
 </figure>
@@ -88,15 +102,12 @@ const {
     height: var(--case-strip-h);
   }
 
-  /* Листаемая рамка: высота фиксирована (--case-figure-box-h), справа уходит до края панели — картинка
-     не обрезается по полю. Картинка внутри листается свободно и вбок, и вниз; в конце прокрутки справа —
-     отступ как поле панели (flex: отступ рамки входит в область прокрутки). */
+  /* Листаемая рамка: высота фиксирована (--case-figure-box-h), в пределах полей панели (за правый край
+     не уходит). Картинка внутри листается свободно и вбок, и вниз. */
   .case-figure--box .case-figure__frame {
     display: flex;
     align-items: flex-start;
     height: var(--case-figure-box-h);
-    margin-right: calc(-1 * var(--gutter));
-    padding-right: var(--gutter);
     overflow: auto;
     overscroll-behavior: contain;
     /* Одна полоса прокрутки — тёмная, без светлой дорожки: на macOS системная полоса при наведении
@@ -109,6 +120,43 @@ const {
     flex: none;
     width: round(calc(var(--figure-img-h) * var(--figure-ratio)), 2px);
     height: var(--figure-img-h);
+  }
+
+  /* Лента с заголовком в начале: текст слева, по середине высоты ленты, дальше — экраны. */
+  .case-figure--intro .case-figure__frame {
+    display: flex;
+    align-items: center;
+    gap: var(--case-strip-intro-gap);
+  }
+
+  .case-figure--intro .case-figure__frame img {
+    flex: none;
+  }
+
+  .case-figure__intro {
+    flex: none;
+    width: round(min(var(--case-strip-intro-w), 70cqi), 2px);
+  }
+
+  .case-figure__intro .case-figure__title {
+    margin: 0;
+    font-size: var(--text-case-body);
+    font-weight: 500;
+    --lh: var(--leading-tight);
+    letter-spacing: normal;
+    text-transform: uppercase;
+    color: var(--case-text);
+  }
+
+  .case-figure__intro .case-figure__lead {
+    margin-top: var(--case-strip-intro-lead-gap);
+    font-size: var(--text-case-body);
+    --lh: var(--leading-body);
+    text-indent: 0;
+    /* Не подзаголовок капсом (общее правило h2 + p): обычный регистр. */
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--case-muted);
   }
 
   .case-figure--bleed .case-figure__frame {
