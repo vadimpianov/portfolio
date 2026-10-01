@@ -49,11 +49,11 @@ const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
     margin-top: round(1.1em, 2px);
   }
 
-  /* Маркер: тёмная плашка, светлый текст; на переносе строки плашка не рвётся. */
+  /* Маркер: белая плашка, тёмный текст; на переносе строки плашка не рвётся. */
   .about__text mark {
     padding: 2px round(0.25em, 2px);
-    background: var(--color-text);
-    color: #fff;
+    background: #fff;
+    color: var(--color-text);
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }

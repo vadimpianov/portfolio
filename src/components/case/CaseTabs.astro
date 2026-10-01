@@ -6,6 +6,7 @@
  */
 import { getLocaleFromUrl, useTranslations } from '../../i18n/utils';
 import { typograph } from '../../i18n/typograph';
+import Soon from './Soon.astro';
 
 interface Props {
   items: string[];
@@ -39,18 +40,7 @@ const name = 'case-tabs';
   </div>
 
   <div class="case-tabs__panel case-tabs__panel--soon">
-    {/* Картинка «в работе»: экран-заготовка, блоки проявляются по очереди. */}
-    <svg class="case-tabs__soon-art" viewBox="0 0 160 240" aria-hidden="true">
-      <rect class="frame" x="12.5" y="4.5" width="135" height="231" rx="23" />
-      <rect class="notch" x="56" y="12" width="48" height="10" rx="5" />
-      <rect class="block b1" x="28" y="40" width="64" height="10" rx="5" />
-      <rect class="block b2" x="28" y="62" width="104" height="36" rx="8" />
-      <rect class="block b3" x="28" y="110" width="104" height="10" rx="5" />
-      <rect class="block b4" x="28" y="130" width="80" height="10" rx="5" />
-      <rect class="block b5" x="28" y="160" width="104" height="24" rx="8" />
-      <rect class="bar" x="56" y="220" width="48" height="4" rx="2" />
-    </svg>
-    <p class="case-tabs__soon-text">{typograph(t('case.soon'))}</p>
+    <Soon />
   </div>
 </div>
 
@@ -213,72 +203,6 @@ const name = 'case-tabs';
   }
 
   .case-tabs__panel--soon {
-    display: grid;
-    justify-items: center;
-    gap: 24px;
     padding: var(--case-section-gap) 0;
-  }
-
-  .case-tabs__soon-art {
-    width: 160px;
-    height: 240px;
-  }
-
-  .case-tabs__soon-art .frame {
-    fill: none;
-    stroke: var(--case-tabs-border-strong);
-    stroke-width: 1;
-  }
-
-  .case-tabs__soon-art .notch,
-  .case-tabs__soon-art .bar {
-    fill: var(--case-tabs-border-strong);
-  }
-
-  .case-tabs__soon-art .block {
-    fill: var(--case-accent);
-    opacity: 0.15;
-    animation: case-soon 2.4s ease-in-out infinite;
-  }
-
-  .case-tabs__soon-art .b2 {
-    animation-delay: 0.2s;
-  }
-
-  .case-tabs__soon-art .b3 {
-    animation-delay: 0.4s;
-  }
-
-  .case-tabs__soon-art .b4 {
-    animation-delay: 0.6s;
-  }
-
-  .case-tabs__soon-art .b5 {
-    animation-delay: 0.8s;
-  }
-
-  @keyframes case-soon {
-    0%,
-    100% {
-      opacity: 0.15;
-    }
-
-    40% {
-      opacity: 0.9;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .case-tabs__soon-art .block {
-      animation: none;
-      opacity: 0.4;
-    }
-  }
-
-  .case-tabs__soon-text {
-    color: var(--case-text);
-    font-size: var(--text-case-body);
-    --lh: var(--leading-body);
-    text-align: center;
   }
 </style>
