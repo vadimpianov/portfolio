@@ -11,7 +11,7 @@ import { getLocaleFromUrl } from '../../i18n/utils';
 import { asset } from '../../utils/asset';
 
 interface Props {
-  /** `texture` — имя картинки в `public/images/cases/` без `.webp` (текстура столбика, 2x). */
+  /** `label`: «\n» — принудительный перенос строки. `texture` — имя картинки в `public/images/cases/` без `.webp` (текстура столбика, 2x). */
   items: { value: number; label: string; texture?: string }[];
 }
 
@@ -33,7 +33,14 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
             />
           </div>
           <p class="case-metrics__value" data-value={value}>{format(value)}</p>
-          <p class="case-metrics__label">{typograph(label)}</p>
+          <p class="case-metrics__label">
+            {label.split('\n').map((line, j) => (
+              <>
+                {j > 0 && <br />}
+                {typograph(line)}
+              </>
+            ))}
+          </p>
         </li>
       ))
     }
