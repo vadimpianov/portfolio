@@ -1,0 +1,122 @@
+---
+# Шаблон кейса. Копия → src/content/ru/cases/<slug>.mdx и src/content/en/cases/<slug>.mdx (EN — параллельно).
+title: Заголовок кейса
+description: Одно предложение — что за продукт и что сделано (для SEO и превью).
+date: 2026-01-01
+period: 2020–2022
+tags: [Отрасль, iOS/Android & Web]
+theme: dark
+# Обложка: либо слайдер экранов (слева направо, первым показан средний) — public/images/cases/<slug>/<имя>-{750,1125}.webp,
+slides: [<slug>/cover-left, <slug>/cover-center, <slug>/cover-right]
+# либо одна картинка: cover: <slug>/cover
+---
+
+import CaseTabs from '../../../components/case/CaseTabs.astro';
+import Chips from '../../../components/case/Chips.astro';
+import Columns from '../../../components/case/Columns.astro';
+import TextColumns from '../../../components/case/TextColumns.astro';
+import Flow from '../../../components/case/Flow.astro';
+import Screens from '../../../components/case/Screens.astro';
+import Figure from '../../../components/case/Figure.astro';
+import Metrics from '../../../components/case/Metrics.astro';
+
+Вводный абзац: в какой момент подключился, что ожидал бизнес, какая была ситуация.
+
+Второй абзац и список фокуса:
+
+- **Сценарий 1** — зачем он важен
+- **Сценарий 2** — зачем он важен
+
+<TextColumns>
+
+Передо мной стояло несколько задач:
+
+<Columns>
+<div>
+
+- Задача 1
+- Задача 2
+
+</div>
+<div>
+
+- Задача 3
+
+</div>
+</Columns>
+
+</TextColumns>
+
+<Chips items={['Навык 1', 'Навык 2', 'Навык 3']} />
+
+<CaseTabs items={['Сценарий 1', 'Сценарий 2', 'Сценарий 3']} active={0}>
+
+## Сценарий «до и после»
+
+### До
+
+<Flow>
+
+Сплошной текст — перетекает в две колонки, колонки равны по строкам.
+
+</Flow>
+
+<Screens caption="Макеты до" items={[
+  { src: '<slug>/old-1', alt: 'Описание экрана' },
+  { src: '<slug>/old-2', alt: 'Описание экрана' },
+  { src: '<slug>/old-3', alt: 'Описание экрана' },
+]} />
+
+### После
+
+<Flow>
+
+Что сделали и почему.
+
+</Flow>
+
+<Figure wide src="/images/cases/<slug>/flow.webp" width={2640} height={950} caption="Mind map" alt="Описание схемы" />
+
+## Подробнее о процессе
+
+<Columns>
+<div>
+
+Текст слева.
+
+</div>
+<div>
+
+<Figure side src="/images/cases/<slug>/process.webp" width={768} height={757} alt="Описание схемы" />
+
+</div>
+</Columns>
+
+## Раздел с лентой экранов
+
+Подпись под заголовком
+
+<Figure src="/images/cases/<slug>/screens.webp" width={4286} height={804} scroll loop alt="Описание экранов" />
+
+## С поставленными задачами я справился
+
+Подпись под заголовком
+
+<Metrics active={1} sets={[
+  { label: 'Старая', items: [
+      { value: 100, label: 'Шаг 1' },
+      { value: 50, label: 'Шаг 2' },
+  ] },
+  { label: 'Новая', items: [
+      { value: 100, label: 'Шаг 1' },
+      { value: 70, label: 'Шаг 2' },
+  ] },
+]} />
+
+<Flow>
+
+Итоги: что сделано и к каким цифрам привело.
+
+</Flow>
+
+</CaseTabs>
