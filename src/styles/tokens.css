@@ -124,6 +124,7 @@
   --case-metrics-radius: 38px;
   --case-metrics-duration: 1.1s; /* рост столбика с отскоком */
   --case-metrics-stagger: 90ms; /* задержка следующего столбика */
+  --case-metrics-col-mobile: 148px; /* колонка воронки на телефоне (лента с прокруткой) */
   --case-metrics-tabs-gap: 32px; /* «Старая» ↔ «Новая» */
   --case-metrics-tabs-offset: 32px; /* переключатель → график */
   --case-metrics-tab-line: #3d6ff2; /* подчёркивание выбранного графика (синее, как в макете) */

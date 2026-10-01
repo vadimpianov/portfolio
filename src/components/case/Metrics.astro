@@ -128,13 +128,35 @@ const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
     display: none;
   }
 
+  /* Все шаги — всегда в один ряд. На узком контейнере (телефон) — лента с прокруткой вбок. */
   .case-metrics__chart {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 32px var(--case-metrics-gap);
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: var(--case-metrics-gap);
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  @container case (max-width: 599px) {
+    .case-metrics__chart {
+      grid-auto-columns: var(--case-metrics-col-mobile);
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+
+    .case-metrics__chart::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* В ленте колонки шире — подпись обычным кеглем текста кейса. */
+    .case-metrics .case-metrics__label {
+      font-size: var(--text-case-body);
+    }
   }
 
   .case-metrics__track {
@@ -233,16 +255,18 @@ const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
 
   .case-metrics__value {
     margin-top: 24px;
-    font-size: var(--case-metric-size);
+    /* Число уменьшается вместе с колонкой, чтобы помещаться в одну строку. */
+    font-size: round(min(var(--case-metric-size), max(24px, 3.4cqi)), 1px);
     font-weight: var(--weight-heavy);
+    white-space: nowrap;
     --lh: var(--leading-title);
     color: var(--case-text);
   }
 
   .case-metrics__label {
     margin-top: 4px;
-    /* Длинное слово («Идентифицировались») в узкой колонке переносится по слогам, а не рвётся где попало. */
-    hyphens: auto;
+    /* Подпись мельче на средних экранах, чтобы колонки не вытягивались. */
+    font-size: round(min(var(--text-case-body), max(13px, 1.6cqi)), 1px);
     color: var(--case-muted);
   }
 </style>

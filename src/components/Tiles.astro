@@ -99,7 +99,7 @@ const more = (
     ['tiles.9.title', '2014–2015'],
     ['tiles.8.title', '2012–2014'],
   ] as const
-).map(([key, year]) => ({ year, title: t(key), lead: t('tiles.placeholder.lead') }));
+).map(([key, year]) => ({ year, title: t(key), lead: t(key.replace('.title', '.lead') as UIKey) }));
 ---
 
 <section class="tiles" data-tiles>
