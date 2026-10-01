@@ -47,7 +47,7 @@ const {
       'case-figure--box': box,
     },
   ]}
-  style={box ? `--figure-box: ${box}; --figure-zoom: ${zoom}` : undefined}
+  style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}` : undefined}
 >
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined}>
@@ -89,8 +89,11 @@ const {
   }
 
   /* Рамка заданной пропорции: картинка высотой с рамку, лишнее по ширине листается. */
+  /* Высота — по пропорции от ширины текста (как раньше), а справа рамка уходит до края панели:
+     картинка не обрезается по полю, а продолжается за правый край. */
   .case-figure--box .case-figure__frame {
-    aspect-ratio: var(--figure-box);
+    height: round(calc(100cqi * var(--figure-box-k)), 2px);
+    margin-right: calc(-1 * var(--gutter));
     overflow: auto;
     overscroll-behavior: contain;
   }
