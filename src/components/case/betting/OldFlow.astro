@@ -165,11 +165,10 @@ const title = typograph(
 
   .flow__label {
     margin-bottom: var(--case-caption-gap);
-    /* Подпись — кеглем текста кейса, акцентным жёлтым (как «Передо мной стояло…»). */
+    /* Подпись — как раньше «До / После»: белым, вес 500, обычным регистром (стили поменяны местами). */
     font-size: var(--text-case-body);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--case-accent);
+    font-weight: 500;
+    color: var(--case-text);
   }
 
   /* Уже --case-flow-min-w — схема листается по горизонтали, текст не мельчит. */

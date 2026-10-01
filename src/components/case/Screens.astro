@@ -48,10 +48,10 @@ const size = (name: string) => {
 
   .case-screens__label {
     margin-bottom: var(--case-caption-gap);
+    /* Подпись — как раньше «До / После»: белым, вес 500, обычным регистром (стили поменяны местами). */
     font-size: var(--text-case-body);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--case-accent);
+    font-weight: 500;
+    color: var(--case-text);
   }
 
   /* Узкий: лента, экраны по 240px, листается по горизонтали. */

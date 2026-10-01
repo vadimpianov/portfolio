@@ -165,11 +165,13 @@ const name = 'case-tabs';
   /* Метки «До» / «После»: сверху — 24px от блока выше (у обеих одинаково). */
   .case-tabs .case-tabs__panel--main > :global(h3) {
     margin-top: var(--case-tabs-title-gap);
-    color: var(--case-text);
+    /* «До» / «После» — стилем подписей к картинкам: жёлтым, капсом (стили поменяны местами по просьбе). */
+    color: var(--case-accent);
     font-size: var(--text-case-body);
+    font-weight: var(--weight-regular);
     text-align: center;
-    text-transform: none;
-    letter-spacing: 0;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
   }
 
   /* Нижний отступ блока над меткой не должен «перебивать» её 24px (отступы схлопываются в больший). */
