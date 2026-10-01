@@ -17,14 +17,40 @@ interface Props {
   bleed?: boolean;
   /** Рядом с текстом в `<Columns>`: высотой с колонку текста, крупнее и уходит за правый край панели. */
   side?: boolean;
+  /** Пропорция рамки «ширина / высота» (например "3200 / 2443"): картинка — высотой с рамку, что не влезло по ширине — листается. */
+  box?: string;
+  /** Для `box`: во сколько раз картинка выше рамки (лишнее листается и вбок, и вниз). */
+  zoom?: number;
 }
 
-const { src, width, height, alt, caption, scroll = false, bleed = false, side = false } = Astro.props;
+const {
+  src,
+  width,
+  height,
+  alt,
+  caption,
+  scroll = false,
+  bleed = false,
+  side = false,
+  box,
+  zoom = 1,
+} = Astro.props;
 ---
 
-<figure class:list={['case-figure', { 'case-figure--scroll': scroll, 'case-figure--bleed': bleed, 'case-figure--side': side }]}>
+<figure
+  class:list={[
+    'case-figure',
+    {
+      'case-figure--scroll': scroll || box,
+      'case-figure--bleed': bleed,
+      'case-figure--side': side,
+      'case-figure--box': box,
+    },
+  ]}
+  style={box ? `--figure-box: ${box}; --figure-zoom: ${zoom}` : undefined}
+>
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
-  <div class="case-figure__frame" tabindex={scroll ? 0 : undefined}>
+  <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined}>
     <img src={asset(src)} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
   </div>
 </figure>
@@ -60,6 +86,17 @@ const { src, width, height, alt, caption, scroll = false, bleed = false, side = 
     width: auto;
     max-width: none;
     height: var(--case-strip-h);
+  }
+
+  /* Рамка заданной пропорции: картинка высотой с рамку, лишнее по ширине листается. */
+  .case-figure--box .case-figure__frame {
+    aspect-ratio: var(--figure-box);
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .case-figure--box .case-figure__frame img {
+    height: calc(100% * var(--figure-zoom));
   }
 
   .case-figure--bleed .case-figure__frame {

@@ -263,6 +263,16 @@ const close = t('case.close');
     });
   }
 
+  /** Большие схемы в рамке с прокруткой (`Figure box`): сразу показываем середину по высоте — там основной поток. */
+  function centerBoxes(root: ParentNode) {
+    root.querySelectorAll<HTMLElement>('.case-figure--box .case-figure__frame').forEach((frame) => {
+      const img = frame.querySelector('img');
+      const center = () => (frame.scrollTop = (frame.scrollHeight - frame.clientHeight) / 2);
+      if (img && !img.complete) img.addEventListener('load', center, { once: true });
+      center();
+    });
+  }
+
   const covers = new ResizeObserver((entries) => entries.forEach((e) => centerCover(e.target)));
 
   let pageTitle = '';
@@ -300,6 +310,7 @@ const close = t('case.close');
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
     centerCover(body);
+    centerBoxes(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
@@ -357,6 +368,7 @@ const close = t('case.close');
     dialog.classList.add('is-instant', 'is-open');
     dialog.showModal();
     centerCover(body);
+    centerBoxes(body);
     covers.observe(body);
     document.fonts?.ready.then(() => centerCover(body));
     document.documentElement.classList.add('case-open');
