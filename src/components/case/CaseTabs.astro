@@ -55,9 +55,9 @@ const name = 'case-tabs';
 </div>
 
 <style>
-  /* Чипсы → селектор. */
+  /* Чипсы → селектор — 60px. */
   .case-tabs {
-    margin-top: var(--case-tabs-gap);
+    margin-top: var(--case-tabs-section-gap);
   }
 
   .case-tabs__list {
@@ -144,9 +144,9 @@ const name = 'case-tabs';
   }
 
   /* Заголовок сценария и метки «до / после» — по центру. */
-  /* Заголовки разделов сценария — как заголовок сценария: вес 600, сверху 48px (как селектор → заголовок). */
+  /* Заголовки разделов сценария — как заголовок сценария: вес 600, сверху 60px (от блока выше). */
   .case-tabs .case-tabs__panel--main > :global(h2) {
-    margin-top: var(--case-tabs-gap);
+    margin-top: var(--case-tabs-section-gap);
     font-weight: 600;
   }
 
