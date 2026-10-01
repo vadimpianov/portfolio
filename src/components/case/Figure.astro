@@ -17,9 +17,9 @@ interface Props {
   bleed?: boolean;
   /** Рядом с текстом в `<Columns>`: высотой с колонку текста, крупнее и уходит за правый край панели. */
   side?: boolean;
-  /** Пропорция рамки «ширина / высота» (например "3200 / 2443"): картинка — высотой с рамку, что не влезло по ширине — листается. */
+  /** Листаемая рамка высотой --case-figure-box-h; "ширина / высота" (например "3200 / 2443") — от неё считается размер картинки. */
   box?: string;
-  /** Для `box`: во сколько раз картинка выше рамки (лишнее листается и вбок, и вниз). */
+  /** Для `box`: высота картинки = ширина текста × (высота / ширина из `box`) × zoom; что не влезло — листается вбок и вниз. */
   zoom?: number;
 }
 
@@ -47,7 +47,7 @@ const {
       'case-figure--box': box,
     },
   ]}
-  style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}` : undefined}
+  style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
 >
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined}>
@@ -88,18 +88,24 @@ const {
     height: var(--case-strip-h);
   }
 
-  /* Рамка заданной пропорции: картинка высотой с рамку, лишнее по ширине листается. */
-  /* Высота — по пропорции от ширины текста (как раньше), а справа рамка уходит до края панели:
-     картинка не обрезается по полю, а продолжается за правый край. */
+  /* Листаемая рамка: высота фиксирована (--case-figure-box-h), справа уходит до края панели — картинка
+     не обрезается по полю. Картинка внутри листается свободно и вбок, и вниз; в конце прокрутки справа —
+     отступ как поле панели (flex: отступ рамки входит в область прокрутки). */
   .case-figure--box .case-figure__frame {
-    height: round(calc(100cqi * var(--figure-box-k)), 2px);
+    display: flex;
+    align-items: flex-start;
+    height: var(--case-figure-box-h);
     margin-right: calc(-1 * var(--gutter));
+    padding-right: var(--gutter);
     overflow: auto;
     overscroll-behavior: contain;
   }
 
   .case-figure--box .case-figure__frame img {
-    height: calc(100% * var(--figure-zoom));
+    --figure-img-h: round(calc(100cqi * var(--figure-box-k) * var(--figure-zoom)), 2px);
+    flex: none;
+    width: round(calc(var(--figure-img-h) * var(--figure-ratio)), 2px);
+    height: var(--figure-img-h);
   }
 
   .case-figure--bleed .case-figure__frame {
