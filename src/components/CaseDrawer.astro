@@ -464,6 +464,9 @@ const close = t('case.close');
       await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
+    // Кейс всегда открывается с начала: у закрытого диалога (display: none) сброс прокрутки не срабатывал,
+    // и при повторном входе панель оставалась там, где из неё вышли.
+    body.scrollTop = 0;
     layout(body);
     centerBoxes(body);
     initLoops(body);
