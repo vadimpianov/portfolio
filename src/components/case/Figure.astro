@@ -19,7 +19,7 @@ interface Props {
   side?: boolean;
   /** Листаемая рамка высотой --case-figure-box-h; "ширина / высота" (например "3200 / 2443") — от неё считается размер картинки. */
   box?: string;
-  /** Для `scroll`: заголовок и подзаголовок слева в начале ленты, по середине её высоты (листаются вместе с картинкой). */
+  /** Для `scroll`: заголовок и/или подзаголовок слева в начале ленты, по середине её высоты (листаются вместе с картинкой). */
   title?: string;
   lead?: string;
   /** Для `box`: высота картинки = ширина текста × (высота / ширина из `box`) × zoom; что не влезло — листается вбок и вниз. */
@@ -50,7 +50,7 @@ const {
       'case-figure--bleed': bleed,
       'case-figure--side': side,
       'case-figure--box': box,
-      'case-figure--intro': title,
+      'case-figure--intro': title || lead,
     },
   ]}
   style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
@@ -58,9 +58,9 @@ const {
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined}>
     {
-      title && (
+      (title || lead) && (
         <div class="case-figure__intro">
-          <h2 class="case-figure__title">{typograph(title)}</h2>
+          {title && <h2 class="case-figure__title">{typograph(title)}</h2>}
           {lead && <p class="case-figure__lead">{typograph(lead)}</p>}
         </div>
       )
@@ -127,6 +127,10 @@ const {
     display: flex;
     align-items: center;
     gap: var(--case-strip-intro-gap);
+  }
+
+  .case-figure__intro .case-figure__lead:first-child {
+    margin-top: 0;
   }
 
   .case-figure--intro .case-figure__frame img {

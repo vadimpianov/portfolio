@@ -150,8 +150,8 @@ const name = 'case-tabs';
     font-weight: 600;
   }
 
-  /* Лента с заголовком внутри (модальные окна) — отступ сверху как у заголовка раздела. */
-  .case-tabs .case-tabs__panel--main > :global(.case-figure--intro) {
+  /* Лента с заголовком внутри (без заголовка раздела над ней) — отступ сверху как у заголовка раздела. */
+  .case-tabs .case-tabs__panel--main > :global(:not(h2) + .case-figure--intro) {
     margin-top: var(--case-tabs-section-gap);
   }
 
