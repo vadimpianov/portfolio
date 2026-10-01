@@ -139,14 +139,15 @@ const {
     width: round(min(var(--case-strip-intro-w), 70cqi), 2px);
   }
 
+  /* Заголовок в ленте — как заголовок раздела кейса (h2): тот же кегль, начертание и цвет. */
   .case-figure__intro .case-figure__title {
     margin: 0;
-    font-size: var(--text-case-body);
-    font-weight: 500;
-    --lh: var(--leading-tight);
-    letter-spacing: normal;
-    text-transform: uppercase;
-    color: var(--case-text);
+    font-size: var(--text-tile-title);
+    font-weight: 600;
+    --lh: var(--leading-title);
+    letter-spacing: var(--tracking-title);
+    text-transform: none;
+    color: var(--color-text);
   }
 
   .case-figure__intro .case-figure__lead {

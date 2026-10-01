@@ -155,6 +155,15 @@ const name = 'case-tabs';
     margin-top: var(--case-tabs-section-gap);
   }
 
+  /* Заголовки разделов и подписи под ними — по центру (кроме заголовка над текстом с картинкой рядом,
+     «Подробнее о процессе»). */
+  .case-tabs .case-tabs__panel--main > :global(h2:not(:has(+ .case-columns))),
+  .case-tabs .case-tabs__panel--main > :global(h2 + p) {
+    text-align: center;
+    /* Подпись — без красной строки, иначе центр смещается. */
+    text-indent: 0;
+  }
+
   /* Абзацы сценария идут подряд, без пустой строки — начало абзаца отмечает красная строка. */
   .case-tabs .case-tabs__panel--main :global(p:not([class]) + p:not([class])) {
     margin-top: 0;
