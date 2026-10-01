@@ -1,7 +1,7 @@
 ---
 /**
  * Воронка результатов: жёлтые столбики, высота — доля от первого шага (по процентам под ними),
- * под столбиком — процент и название шага. Столбики — с текстурой из макета (`texture`), «линия пола»
+ * под столбиком — процент (при появлении «досчитывает» от 0, CaseDrawer) и название шага. Столбики — с текстурой из макета (`texture`), «линия пола»
  * светится, над ней — жёлтая дымка. При докрутке до графика столбики вырастают с лёгким отскоком
  * (запускает CaseDrawer: `data-anim` hidden → play; если уйти вверх так, что график целиком ниже экрана, —
  * снова прячутся и при возвращении вырастают заново).
@@ -21,7 +21,7 @@ const locale = getLocaleFromUrl(Astro.url) === 'ru' ? 'ru-RU' : 'en-US';
 const format = (value: number) => `${value.toLocaleString(locale, { maximumFractionDigits: 2 })}%`;
 ---
 
-<div class="case-metrics" data-metrics>
+<div class="case-metrics" data-metrics data-locale={locale}>
   <ol class="case-metrics__chart">
     {
       items.map(({ value, label, texture }, i) => (
@@ -32,7 +32,7 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
               style={texture ? `background-image: url(${asset(`/images/cases/${texture}.webp`)})` : undefined}
             />
           </div>
-          <p class="case-metrics__value">{format(value)}</p>
+          <p class="case-metrics__value" data-value={value}>{format(value)}</p>
           <p class="case-metrics__label">{typograph(label)}</p>
         </li>
       ))
@@ -42,12 +42,6 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
 
 <style>
   /* Доля роста столбика (0 → 1, с отскоком) — числом, чтобы анимировать высоту через переменную. */
-  @property --grow {
-    syntax: '<number>';
-    inherits: true;
-    initial-value: 1;
-  }
-
   .case-metrics {
     margin-block: var(--case-block-gap);
   }
@@ -107,17 +101,18 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
 
   .case-metrics__bar {
     width: 100%;
-    height: calc(var(--bar-h) * var(--grow));
+    height: var(--bar-h);
+    /* Рост — трансформацией (на видеокарте, без перерисовки страницы): плавно и не дёргается. */
+    transform-origin: bottom;
     border-radius: var(--case-metrics-radius) var(--case-metrics-radius) 0 0;
     background-color: var(--case-metrics-bar);
-    /* Текстура — по итоговой высоте, прижата к полу: пока столбик растёт, он «выходит» из пола. */
-    background-position: bottom;
+    /* Текстура — на весь столбик (растягивается вместе с ним, в том числе на отскоке). */
     background-repeat: no-repeat;
-    background-size: 100% var(--bar-h);
+    background-size: 100% 100%;
   }
 
   .case-metrics[data-anim='hidden'] .case-metrics__bar {
-    --grow: 0;
+    transform: scaleY(0);
   }
 
   .case-metrics[data-anim='play'] .case-metrics__bar {
@@ -128,28 +123,28 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
   /* Рост → чуть выше нужного → чуть ниже → на месте. */
   @keyframes case-metrics-grow {
     0% {
-      --grow: 0;
+      transform: scaleY(0);
       animation-timing-function: cubic-bezier(0.25, 0.7, 0.35, 1);
     }
 
     62% {
-      --grow: 1.07;
+      transform: scaleY(1.07);
       animation-timing-function: ease-in-out;
     }
 
     82% {
-      --grow: 0.98;
+      transform: scaleY(0.98);
       animation-timing-function: ease-in-out;
     }
 
     100% {
-      --grow: 1;
+      transform: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .case-metrics .case-metrics__bar {
-      --grow: 1;
+      transform: none !important;
       animation: none !important;
     }
   }
@@ -164,6 +159,8 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
 
   .case-metrics__label {
     margin-top: 4px;
+    /* Длинное слово («Идентифицировались») в узкой колонке переносится по слогам, а не рвётся где попало. */
+    hyphens: auto;
     color: var(--case-muted);
   }
 </style>

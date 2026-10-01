@@ -339,13 +339,46 @@ const close = t('case.close');
    * Воронка (`Metrics`): столбики вырастают, когда график показался на экране; если уйти вверх так, что график
    * целиком ниже экрана, — прячутся и при возвращении вырастают заново.
    */
+  const counters = new WeakMap<HTMLElement, number>();
+  const ms = (v: string) => (v.trim().endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000);
+
+  /** Состояние воронки: hidden — столбики спрятаны, проценты 0; play — растут, проценты досчитывают. */
+  function setMetrics(el: HTMLElement, state: 'hidden' | 'play') {
+    if (el.dataset.anim === state) return;
+    el.dataset.anim = state;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const css = getComputedStyle(el);
+    const duration = ms(css.getPropertyValue('--case-metrics-duration')) || 1100;
+    const stagger = ms(css.getPropertyValue('--case-metrics-stagger')) || 90;
+    el.querySelectorAll<HTMLElement>('[data-value]').forEach((v, i) => {
+      cancelAnimationFrame(counters.get(v) ?? 0);
+      const target = Number(v.dataset.value);
+      const digits = (v.dataset.value?.split('.')[1] ?? '').length;
+      const nf = new Intl.NumberFormat(el.dataset.locale, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+      });
+      const show = (n: number) => (v.textContent = `${nf.format(n)}%`);
+      if (reduce) return show(target);
+      if (state === 'hidden') return show(0);
+      // Досчитывает за время роста столбика (до отскока), с той же задержкой, что и столбик.
+      const start = performance.now() + i * stagger;
+      const tick = (now: number) => {
+        const t = Math.min(1, Math.max(0, (now - start) / (duration * 0.62)));
+        show(target * (1 - (1 - t) ** 3));
+        if (t < 1) counters.set(v, requestAnimationFrame(tick));
+      };
+      counters.set(v, requestAnimationFrame(tick));
+    });
+  }
+
   const metricsIO = new IntersectionObserver(
     (entries) =>
       entries.forEach((e) => {
         const el = e.target as HTMLElement;
-        if (e.intersectionRatio >= 0.35) el.dataset.anim = 'play';
+        if (e.intersectionRatio >= 0.35) setMetrics(el, 'play');
         else if (!e.isIntersecting && e.boundingClientRect.top > (e.rootBounds?.bottom ?? innerHeight))
-          el.dataset.anim = 'hidden';
+          setMetrics(el, 'hidden');
       }),
     { threshold: [0, 0.35] },
   );
@@ -353,7 +386,8 @@ const close = t('case.close');
   function initMetrics(root: ParentNode) {
     metricsIO.disconnect();
     root.querySelectorAll<HTMLElement>('[data-metrics]').forEach((el) => {
-      el.dataset.anim = 'hidden';
+      delete el.dataset.anim;
+      setMetrics(el, 'hidden');
       metricsIO.observe(el);
     });
   }
