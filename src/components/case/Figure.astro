@@ -71,14 +71,20 @@ const { src, width, height, alt, caption, scroll = false, bleed = false, side = 
   }
 
   /* Картинка рядом с текстом: слева — по левому краю правой колонки, справа уходит за край панели
-     на --case-side-figure-overhang (лишнее обрезается); текст рядом — по середине картинки по высоте. */
+     на --case-side-figure-overhang (лишнее обрезается). По высоте ряд задаёт текст (отступ от заголовка
+     до текста прежний), а картинка стоит по середине текста и может выступать выше и ниже него. */
   @container case (min-width: 800px) {
-    :global(.case-columns:has(.case-figure--side)) {
-      align-items: center;
+    :global(:has(> .case-figure--side)) {
+      position: relative;
     }
 
     .case-figure--side {
-      margin: 0 calc(-1 * var(--gutter)) 0 0;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: calc(-1 * var(--gutter));
+      margin: 0;
+      translate: 0 -50%;
     }
 
     .case-figure--side .case-figure__frame {
