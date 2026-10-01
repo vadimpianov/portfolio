@@ -96,6 +96,13 @@ const close = t('case.close');
   }
 
   /* Внутри панели — свои поля, кейс считает ширину по панели (container query). */
+  /* Полосы прокрутки в кейсе (панель, ленты экранов, схемы, карта) — одна тёмная, без светлой дорожки:
+     системная на macOS при наведении раскрывалась в серую со светлой подложкой. */
+  .case-drawer__scroll,
+  .case-drawer__scroll :global(*) {
+    scrollbar-color: var(--case-scrollbar-thumb) transparent;
+  }
+
   .case-drawer__scroll {
     --gutter: var(--case-panel-gutter);
     /* Сверху до контента — столько же, сколько слева (поле панели). */

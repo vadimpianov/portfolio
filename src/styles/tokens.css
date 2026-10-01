@@ -100,7 +100,7 @@
   --case-tabs-border-strong: rgb(255 255 255 / 0.2);
   --case-tabs-active-text: #141414;
   --case-caption-gap: 24px; /* подпись → картинка, схема, экраны */
-  --case-scrollbar-thumb: rgb(0 0 0 / 0.6); /* полоса прокрутки в рамке картинки (Figure box) */
+  --case-scrollbar-thumb: rgb(0 0 0 / 0.6); /* полосы прокрутки в кейсе (CaseDrawer) */
   --case-figure-box-h: 400px; /* листаемая рамка картинки (Figure box) — карта сценариев */
   --case-side-figure-overhang: 4px; /* картинка рядом с текстом (Figure side): на сколько уходит за правый край панели */
   --case-screen-w: 84%; /* экран в ряду макетов (Screens) — доля своей трети */
