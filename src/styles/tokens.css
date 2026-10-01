@@ -93,6 +93,7 @@
   --case-tabs-section-gap: 80px; /* чипсы → селектор; блок → заголовок раздела сценария */
   --case-tabs-label-gap: 32px; /* «до» / «после» → текст в две колонки */
   --case-tabs-title-gap: 24px; /* заголовок сценария → «до» */
+  --case-tabs-heading-text-gap: 24px; /* заголовок раздела сценария → текст («Подробнее о процессе») */
   --case-tabs-block-gap: 32px; /* между блоками сценария: колонки, схемы, картинки */
   --case-tabs-radius: 10px;
   --case-tabs-border: rgb(255 255 255 / 0.08);

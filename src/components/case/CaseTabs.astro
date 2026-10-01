@@ -184,6 +184,11 @@ const name = 'case-tabs';
     margin-top: var(--case-tabs-label-gap);
   }
 
+  /* Заголовок раздела → текст рядом с картинкой («Подробнее о процессе»). */
+  .case-tabs .case-tabs__panel--main > :global(h2 + .case-columns) {
+    margin-top: var(--case-tabs-heading-text-gap);
+  }
+
   /* «До» / «После» → текст в две колонки. */
   .case-tabs .case-tabs__panel--main > :global(h3 + .case-columns),
   .case-tabs .case-tabs__panel--main > :global(h3 + .case-flow) {
