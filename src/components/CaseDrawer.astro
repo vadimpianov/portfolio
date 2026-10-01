@@ -273,7 +273,27 @@ const close = t('case.close');
     });
   }
 
-  const covers = new ResizeObserver((entries) => entries.forEach((e) => centerCover(e.target)));
+  /**
+   * Картинка рядом с текстом (`Figure side`) стоит по середине текста и может выступать ниже него.
+   * Тогда снизу блока колонок — запас на выступ: следующий заголовок отсчитывает отступ от картинки, а не от текста.
+   */
+  function fitSideFigures(root: ParentNode) {
+    root.querySelectorAll<HTMLElement>('.case-figure--side').forEach((figure) => {
+      const host = figure.closest<HTMLElement>('.case-columns');
+      if (!host) return;
+      host.style.paddingBottom = '';
+      if (getComputedStyle(figure).position !== 'absolute') return;
+      const over = figure.getBoundingClientRect().bottom - host.getBoundingClientRect().bottom;
+      if (over > 0) host.style.paddingBottom = `${Math.ceil(over / 2) * 2}px`; // до чётных px
+    });
+  }
+
+  function layout(root: ParentNode) {
+    centerCover(root);
+    fitSideFigures(root);
+  }
+
+  const covers = new ResizeObserver((entries) => entries.forEach((e) => layout(e.target)));
 
   let pageTitle = '';
   let openedByPointer = false;
@@ -309,7 +329,7 @@ const close = t('case.close');
       await Promise.race([cover?.decode().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
-    centerCover(body);
+    layout(body);
     centerBoxes(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
@@ -367,10 +387,10 @@ const close = t('case.close');
     history.replaceState({ ...history.state, caseDirect: true }, '');
     dialog.classList.add('is-instant', 'is-open');
     dialog.showModal();
-    centerCover(body);
+    layout(body);
     centerBoxes(body);
     covers.observe(body);
-    document.fonts?.ready.then(() => centerCover(body));
+    document.fonts?.ready.then(() => layout(body));
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
     body.focus({ preventScroll: true });
