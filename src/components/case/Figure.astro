@@ -70,33 +70,21 @@ const { src, width, height, alt, caption, scroll = false, bleed = false, side = 
     border-radius: 0;
   }
 
-  /* Картинка рядом с текстом: высота — как у колонки текста (сама на высоту ряда не влияет),
-     ширина — по пропорции, лишнее справа уходит за край панели. */
+  /* Картинка рядом с текстом: крупнее колонки, верх — по первой строке текста, справа уходит
+     за край панели (обрезается по краю панели); ниже текста может быть выше колонки. */
   @container case (min-width: 800px) {
     .case-figure--side {
-      position: absolute;
-      inset: 0 calc(-1 * var(--gutter)) 0 0;
-      margin: 0;
-      overflow: clip;
+      margin: 0 calc(-1 * var(--gutter)) 0 0;
     }
 
     .case-figure--side .case-figure__frame {
-      display: flex;
-      align-items: center;
-      height: 100%;
+      overflow: clip;
     }
 
-    /* Крупнее колонки: по высоте — с запасом (обрезается поровну сверху и снизу), справа — за край панели. */
     .case-figure--side .case-figure__frame img {
-      flex: none;
-      width: auto;
+      width: calc(100% * var(--case-side-figure-scale));
       max-width: none;
-      height: calc(100% * var(--case-side-figure-scale));
       border-radius: 0;
-    }
-
-    :global(:has(> .case-figure--side)) {
-      position: relative;
     }
   }
 </style>
