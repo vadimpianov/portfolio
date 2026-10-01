@@ -431,6 +431,20 @@ const close = t('case.close');
     window.addEventListener('pointerup', up);
   });
 
+  // Колесо/тачпад над картой (мышью её таскают) листает сам кейс — карта прокрутку не забирает.
+  document.addEventListener(
+    'wheel',
+    (event) => {
+      if (!matchMedia('(pointer: fine)').matches) return;
+      const frame = (event.target as Element | null)?.closest('.case-figure--box .case-figure__frame');
+      const scroller = frame?.closest<HTMLElement>('.case-drawer__scroll');
+      if (!frame || !scroller) return;
+      event.preventDefault();
+      scroller.scrollTop += event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+    },
+    { passive: false },
+  );
+
   function layout(root: ParentNode) {
     centerCover(root);
     fitSideFigures(root);

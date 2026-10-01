@@ -168,6 +168,8 @@ const tileList = tiles
   @media (pointer: fine) {
     .case-figure--box .case-figure__frame {
       overflow: hidden;
+      /* Прокрутка над картой уходит странице (contain её останавливал). */
+      overscroll-behavior: auto;
       cursor: grab;
       user-select: none;
     }
