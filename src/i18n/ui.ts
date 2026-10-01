@@ -30,6 +30,8 @@ export const ui = {
     'case.soon': 'Кейс в разработке',
     'tiles.1.title': 'Альфа Банк',
     'tiles.2.title': 'Betting',
+    'tiles.2.lead':
+      'Выстроил дизайн-процесс и пересобрал ключевые revenue-сценарии беттинга — повысил конверсию в завершённую регистрацию и первое пополнение на 26% и 10% соответственно',
     'tiles.3.title': 'Quantori',
     'tiles.4.title': 'Метр квадратный',
     'tiles.5.title': 'BelkaCar',
@@ -72,6 +74,8 @@ export const ui = {
     'case.soon': 'Case in progress',
     'tiles.1.title': 'Alfa-Bank',
     'tiles.2.title': 'Betting',
+    'tiles.2.lead':
+      'Built the design process and reworked the key revenue flows in betting — lifting conversion to completed registration and first deposit by 26% and 10% respectively',
     'tiles.3.title': 'Quantori',
     'tiles.4.title': 'Metr Kvadratny',
     'tiles.5.title': 'BelkaCar',

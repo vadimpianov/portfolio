@@ -1,6 +1,6 @@
 ---
 import { asset } from '../utils/asset';
-import type { Locale } from '../i18n/ui';
+import type { Locale, UIKey } from '../i18n/ui';
 import { getLocaleFromUrl, localePath, useTranslations } from '../i18n/utils';
 
 /** Второй слайд: плитки 2 × 2 — год, проект, подпись и картинка; ниже ещё 6 карточек по 3 в ряд — год, проект, подпись.
@@ -72,6 +72,9 @@ const TILE_IMAGES: Partial<Record<string, string>> = {
 const TILE_CASES: Partial<Record<string, string>> = {
   'tiles.2.title': 'betting',
 };
+// Описания плиток (у остальных пока заглушка).
+const TILE_LEADS: Partial<Record<string, UIKey>> = { 'tiles.2.title': 'tiles.2.lead' };
+
 const tiles = (
   [
     ['tiles.1.title', '2024–2026'],
@@ -82,7 +85,7 @@ const tiles = (
 ).map(([key, year]) => ({
   year,
   title: t(key),
-  lead: t('tiles.placeholder.lead'),
+  lead: t(TILE_LEADS[key] ?? 'tiles.placeholder.lead'),
   image: TILE_IMAGES[key],
   href: TILE_CASES[key] && localePath(locale, `cases/${TILE_CASES[key]}`),
 }));

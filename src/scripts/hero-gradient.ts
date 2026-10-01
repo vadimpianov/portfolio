@@ -423,7 +423,8 @@ export function mountHeroGradient(
   const unsubscribe = onFrame((now) => {
     const dt = lastFrame === null ? 0 : Math.min(now - lastFrame, 0.1);
     lastFrame = now;
-    if (!visible || document.hidden) return;
+    // Под открытым кейсом (модалка) градиент не рисуем: он за затемнением, а кадры нужны прокрутке кейса.
+    if (!visible || document.hidden || document.documentElement.classList.contains('case-open')) return;
     // timeScale замедляет всё движение градиента целиком (поток, изгибы, оттенки).
     time += dt * timeScale;
     draw();
