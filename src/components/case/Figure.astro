@@ -163,6 +163,20 @@ const tileList = tiles
     overscroll-behavior: contain;
   }
 
+  /* Мышью карту таскают (рука → зажатая рука), колесо листает кейс, а не карту.
+     На сенсорных экранах — обычная прокрутка пальцем. */
+  @media (pointer: fine) {
+    .case-figure--box .case-figure__frame {
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .case-figure--box .case-figure__frame.is-dragging {
+      cursor: grabbing;
+    }
+  }
+
   .case-figure--box .case-figure__frame .case-figure__tiles {
     --figure-img-h: round(calc(100cqi * var(--figure-box-k) * var(--figure-zoom)), 2px);
     position: relative;

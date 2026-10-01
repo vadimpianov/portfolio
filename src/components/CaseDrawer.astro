@@ -402,17 +402,25 @@ const close = t('case.close');
     });
   }
 
-  // Карусель мышью — перетаскиванием (на тачпаде и на телефоне листается и так).
+  // Мышью — перетаскиванием (рука → зажатая рука): карусель — вбок, карта сценариев — в обе стороны.
+  // Колесо над картой листает сам кейс; на тачпаде у карусели и на телефоне — обычная прокрутка.
   document.addEventListener('pointerdown', (event) => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
-    const frame = (event.target as Element | null)?.closest<HTMLElement>('.case-figure--loop .case-figure__frame');
+    const frame = (event.target as Element | null)?.closest<HTMLElement>(
+      '.case-figure--loop .case-figure__frame, .case-figure--box .case-figure__frame',
+    );
     if (!frame) return;
+    event.preventDefault();
+    const both = !!frame.closest('.case-figure--box');
     let lastX = event.clientX;
+    let lastY = event.clientY;
     frame.classList.add('is-dragging');
-    // Сдвиг — от прошлого положения курсора: при переходе между копиями прокрутка перескакивает.
+    // Сдвиг — от прошлого положения курсора: при переходе между копиями карусели прокрутка перескакивает.
     const move = (e: PointerEvent) => {
       frame.scrollLeft -= e.clientX - lastX;
+      if (both) frame.scrollTop -= e.clientY - lastY;
       lastX = e.clientX;
+      lastY = e.clientY;
     };
     const up = () => {
       frame.classList.remove('is-dragging');
