@@ -335,6 +335,29 @@ const close = t('case.close');
     });
   }
 
+  /**
+   * Воронка (`Metrics`): столбики вырастают, когда график показался на экране; если уйти вверх так, что график
+   * целиком ниже экрана, — прячутся и при возвращении вырастают заново.
+   */
+  const metricsIO = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        const el = e.target as HTMLElement;
+        if (e.intersectionRatio >= 0.35) el.dataset.anim = 'play';
+        else if (!e.isIntersecting && e.boundingClientRect.top > (e.rootBounds?.bottom ?? innerHeight))
+          el.dataset.anim = 'hidden';
+      }),
+    { threshold: [0, 0.35] },
+  );
+
+  function initMetrics(root: ParentNode) {
+    metricsIO.disconnect();
+    root.querySelectorAll<HTMLElement>('[data-metrics]').forEach((el) => {
+      el.dataset.anim = 'hidden';
+      metricsIO.observe(el);
+    });
+  }
+
   // Карусель мышью — перетаскиванием (на тачпаде и на телефоне листается и так).
   document.addEventListener('pointerdown', (event) => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
@@ -400,6 +423,7 @@ const close = t('case.close');
     layout(body);
     centerBoxes(body);
     initLoops(body);
+    initMetrics(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
@@ -461,6 +485,7 @@ const close = t('case.close');
     layout(body);
     centerBoxes(body);
     initLoops(body);
+    initMetrics(body);
     covers.observe(body);
     document.fonts?.ready.then(() => layout(body));
     document.documentElement.classList.add('case-open');

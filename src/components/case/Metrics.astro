@@ -1,13 +1,18 @@
 ---
 /**
- * Воронка результатов: жёлтые столбики, высота — доля от первого шага,
- * под столбиком — процент и название шага. Светящаяся «линия пола», как в макете.
+ * Воронка результатов: жёлтые столбики, высота — доля от первого шага (по процентам под ними),
+ * под столбиком — процент и название шага. Столбики — с текстурой из макета (`texture`), «линия пола»
+ * светится, над ней — жёлтая дымка. При докрутке до графика столбики вырастают с лёгким отскоком
+ * (запускает CaseDrawer: `data-anim` hidden → play; если уйти вверх так, что график целиком ниже экрана, —
+ * снова прячутся и при возвращении вырастают заново).
  */
 import { typograph } from '../../i18n/typograph';
 import { getLocaleFromUrl } from '../../i18n/utils';
+import { asset } from '../../utils/asset';
 
 interface Props {
-  items: { value: number; label: string }[];
+  /** `texture` — имя картинки в `public/images/cases/` без `.webp` (текстура столбика, 2x). */
+  items: { value: number; label: string; texture?: string }[];
 }
 
 const { items } = Astro.props;
@@ -16,21 +21,33 @@ const locale = getLocaleFromUrl(Astro.url) === 'ru' ? 'ru-RU' : 'en-US';
 const format = (value: number) => `${value.toLocaleString(locale, { maximumFractionDigits: 2 })}%`;
 ---
 
-<div class="case-metrics">
+<div class="case-metrics" data-metrics>
   <ol class="case-metrics__chart">
-    {items.map(({ value, label }) => (
-      <li class="case-metrics__col" style={`--share: ${value / max}`}>
-        <div class="case-metrics__track">
-          <div class="case-metrics__bar" />
-        </div>
-        <p class="case-metrics__value">{format(value)}</p>
-        <p class="case-metrics__label">{typograph(label)}</p>
-      </li>
-    ))}
+    {
+      items.map(({ value, label, texture }, i) => (
+        <li class="case-metrics__col" style={`--share: ${value / max}; --i: ${i}`}>
+          <div class="case-metrics__track">
+            <div
+              class="case-metrics__bar"
+              style={texture ? `background-image: url(${asset(`/images/cases/${texture}.webp`)})` : undefined}
+            />
+          </div>
+          <p class="case-metrics__value">{format(value)}</p>
+          <p class="case-metrics__label">{typograph(label)}</p>
+        </li>
+      ))
+    }
   </ol>
 </div>
 
 <style>
+  /* Доля роста столбика (0 → 1, с отскоком) — числом, чтобы анимировать высоту через переменную. */
+  @property --grow {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 1;
+  }
+
   .case-metrics {
     margin-block: var(--case-block-gap);
   }
@@ -38,30 +55,103 @@ const format = (value: number) => `${value.toLocaleString(locale, { maximumFract
   .case-metrics__chart {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 20px;
+    gap: 32px var(--case-metrics-gap);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .case-metrics__track {
+    --bar-h: round(calc(var(--share) * var(--case-bar-h)), 2px);
     position: relative;
     display: flex;
     align-items: flex-end;
     height: var(--case-bar-h);
-    border-bottom: 4px solid var(--case-accent);
-    box-shadow: 0 14px 14px -12px var(--case-accent);
+  }
+
+  /* Светящаяся линия пола — через зазоры, сплошной полосой. */
+  .case-metrics__track::before,
+  .case-metrics__track::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--case-metrics-gap) / -2);
+    right: calc(var(--case-metrics-gap) / -2);
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  /* Крайние столбики — линия и дымка не выходят за поля. */
+  .case-metrics__col:first-child .case-metrics__track::before,
+  .case-metrics__col:first-child .case-metrics__track::after {
+    left: 0;
+  }
+
+  .case-metrics__col:last-child .case-metrics__track::before,
+  .case-metrics__col:last-child .case-metrics__track::after {
+    right: 0;
+  }
+
+  .case-metrics__track::before {
+    z-index: 2;
+    height: 4px;
+    background: var(--case-metrics-floor);
+    box-shadow: 0 1px 14px 2px var(--case-metrics-floor);
+  }
+
+  /* Дымка над полом: снизу жёлтая, к верху прозрачная (поверх столбиков и зазоров). */
+  .case-metrics__track::after {
+    z-index: 1;
+    height: round(calc(var(--case-bar-h) * 0.284), 2px);
+    background: linear-gradient(to top, var(--case-metrics-haze), transparent);
   }
 
   .case-metrics__bar {
     width: 100%;
-    height: round(calc(var(--share) * var(--case-bar-h)), 2px);
-    border-radius: 24px 24px 0 0;
-    background: linear-gradient(
-      180deg,
-      var(--case-accent) 0%,
-      color-mix(in srgb, var(--case-accent) 80%, #f59e0b) 100%
-    );
+    height: calc(var(--bar-h) * var(--grow));
+    border-radius: var(--case-metrics-radius) var(--case-metrics-radius) 0 0;
+    background-color: var(--case-metrics-bar);
+    /* Текстура — по итоговой высоте, прижата к полу: пока столбик растёт, он «выходит» из пола. */
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: 100% var(--bar-h);
+  }
+
+  .case-metrics[data-anim='hidden'] .case-metrics__bar {
+    --grow: 0;
+  }
+
+  .case-metrics[data-anim='play'] .case-metrics__bar {
+    animation: case-metrics-grow var(--case-metrics-duration) both;
+    animation-delay: calc(var(--i) * var(--case-metrics-stagger));
+  }
+
+  /* Рост → чуть выше нужного → чуть ниже → на месте. */
+  @keyframes case-metrics-grow {
+    0% {
+      --grow: 0;
+      animation-timing-function: cubic-bezier(0.25, 0.7, 0.35, 1);
+    }
+
+    62% {
+      --grow: 1.07;
+      animation-timing-function: ease-in-out;
+    }
+
+    82% {
+      --grow: 0.98;
+      animation-timing-function: ease-in-out;
+    }
+
+    100% {
+      --grow: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-metrics .case-metrics__bar {
+      --grow: 1;
+      animation: none !important;
+    }
   }
 
   .case-metrics__value {

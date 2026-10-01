@@ -101,15 +101,22 @@
   --case-tabs-active-text: #141414;
   --case-caption-gap: 24px; /* подпись → картинка, схема, экраны */
   --case-scrollbar-thumb: rgb(0 0 0 / 0.6); /* полосы прокрутки в кейсе (CaseDrawer) */
-  --case-figure-box-h: 400px; /* листаемая рамка картинки (Figure box) — карта сценариев */
+  --case-figure-box-h: 600px; /* листаемая рамка картинки (Figure box) — карта сценариев */
   --case-side-figure-overhang: 4px; /* картинка рядом с текстом (Figure side): на сколько уходит за правый край панели */
   --case-screen-w: 84%; /* экран в ряду макетов (Screens) — доля своей трети */
   --case-strip-h: round(clamp(252px, 27vw, 402px), 2px); /* лента экранов (Figure scroll) */
-  --case-strip-loop-gap: 24px; /* карусель (Figure scroll loop): между копиями ленты — как между экранами */
+  --case-strip-loop-gap: 32px; /* карусель (Figure scroll loop): между копиями ленты — как между экранами */
   --case-strip-intro-w: 420px; /* ширина заголовка в начале ленты */
   --case-strip-intro-gap: 48px; /* заголовок → первый экран ленты */
   --case-strip-intro-lead-gap: 12px; /* заголовок → подзаголовок в ленте */
   --case-bar-h: round(clamp(180px, 22vw, 352px), 2px);
+  --case-metrics-gap: round(5cqi, 2px); /* между столбиками воронки (в макете 7% — подписи вроде «на идентификацию» не влезали) */
+  --case-metrics-bar: #fad036;
+  --case-metrics-floor: #fce24a; /* светящаяся линия пола */
+  --case-metrics-haze: rgb(252 226 74 / 0.27); /* жёлтая дымка над полом */
+  --case-metrics-radius: 38px;
+  --case-metrics-duration: 1.1s; /* рост столбика с отскоком */
+  --case-metrics-stagger: 90ms; /* задержка следующего столбика */
   /* Схемы кейса (кодом): узлы, линии, итоговые узлы; уже min-w — листаются по горизонтали. */
   --case-flow-node: #162d3c;
   --case-flow-line: #214156;
