@@ -383,6 +383,16 @@ const close = t('case.close');
     { threshold: [0, 0.35] },
   );
 
+  // Переключили график («Старая / Новая») — он вырастает заново, проценты досчитывают.
+  document.addEventListener('change', (event) => {
+    const input = event.target as HTMLInputElement | null;
+    if (!input?.matches('[data-metrics-tab]')) return;
+    const el = input.closest<HTMLElement>('[data-metrics]');
+    if (!el || el.dataset.anim !== 'play') return;
+    setMetrics(el, 'hidden');
+    requestAnimationFrame(() => requestAnimationFrame(() => setMetrics(el, 'play')));
+  });
+
   function initMetrics(root: ParentNode) {
     metricsIO.disconnect();
     root.querySelectorAll<HTMLElement>('[data-metrics]').forEach((el) => {

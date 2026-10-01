@@ -10,47 +10,122 @@ import { typograph } from '../../i18n/typograph';
 import { getLocaleFromUrl } from '../../i18n/utils';
 import { asset } from '../../utils/asset';
 
+type Item = { value: number; label: string; texture?: string };
+
 interface Props {
   /** `label`: «\n» — принудительный перенос строки. `texture` — имя картинки в `public/images/cases/` без `.webp` (текстура столбика, 2x). */
-  items: { value: number; label: string; texture?: string }[];
+  items?: Item[];
+  /** Несколько графиков с переключателем над ними (например «Старая / Новая»); `active` — открытый сразу. */
+  sets?: { label: string; items: Item[] }[];
+  active?: number;
 }
 
-const { items } = Astro.props;
-const max = Math.max(...items.map((item) => item.value));
+const { items = [], sets, active = 0 } = Astro.props;
+const charts = sets ?? [{ label: '', items }];
+// Шкала общая для всех графиков — высоты сравнимы между «старой» и «новой».
+const max = Math.max(...charts.flatMap((set) => set.items.map((item) => item.value)));
 const locale = getLocaleFromUrl(Astro.url) === 'ru' ? 'ru-RU' : 'en-US';
 const format = (value: number) => `${value.toLocaleString(locale, { maximumFractionDigits: 2 })}%`;
+const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <div class="case-metrics" data-metrics data-locale={locale}>
-  <ol class="case-metrics__chart">
-    {
-      items.map(({ value, label, texture }, i) => (
-        <li class="case-metrics__col" style={`--share: ${value / max}; --i: ${i}`}>
-          <div class="case-metrics__track">
-            <div
-              class="case-metrics__bar"
-              style={texture ? `background-image: url(${asset(`/images/cases/${texture}.webp`)})` : undefined}
-            />
-          </div>
-          <p class="case-metrics__value" data-value={value}>{format(value)}</p>
-          <p class="case-metrics__label">
-            {label.split('\n').map((line, j) => (
-              <>
-                {j > 0 && <br />}
-                {typograph(line)}
-              </>
-            ))}
-          </p>
-        </li>
-      ))
-    }
-  </ol>
+  {
+    sets && (
+      <div class="case-metrics__tabs" role="radiogroup">
+        {sets.map((set, i) => (
+          <label class="case-metrics__tab">
+            <input type="radio" name={name} value={i} checked={i === active} data-metrics-tab />
+            <span>{typograph(set.label)}</span>
+          </label>
+        ))}
+      </div>
+    )
+  }
+  {
+    charts.map((set, k) => (
+      <ol class="case-metrics__chart" data-set={k}>
+        {set.items.map(({ value, label, texture }, i) => (
+          <li class="case-metrics__col" style={`--share: ${value / max}; --i: ${i}`}>
+            <div class="case-metrics__track">
+              <div
+                class="case-metrics__bar"
+                style={texture ? `background-image: url(${asset(`/images/cases/${texture}.webp`)})` : undefined}
+              />
+            </div>
+            <p class="case-metrics__value" data-value={value}>
+              {format(value)}
+            </p>
+            <p class="case-metrics__label">
+              {label.split('\n').map((line, j) => (
+                <>
+                  {j > 0 && <br />}
+                  {typograph(line)}
+                </>
+              ))}
+            </p>
+          </li>
+        ))}
+      </ol>
+    ))
+  }
 </div>
 
 <style>
   /* Доля роста столбика (0 → 1, с отскоком) — числом, чтобы анимировать высоту через переменную. */
   .case-metrics {
     margin-block: var(--case-block-gap);
+  }
+
+  /* Переключатель графиков: по центру, капсом; выбранный — жёлтый с подчёркиванием. Без JS (радиокнопки + :has). */
+  .case-metrics__tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--case-metrics-tabs-gap);
+    margin-bottom: var(--case-metrics-tabs-offset);
+  }
+
+  .case-metrics__tab {
+    position: relative;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    color: var(--case-muted);
+    font-size: var(--case-label-size);
+    --lh: var(--leading-tight);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      color 0.3s,
+      border-color 0.3s;
+  }
+
+  .case-metrics__tab:hover {
+    color: var(--case-text);
+  }
+
+  .case-metrics__tab:has(input:checked) {
+    border-color: var(--case-metrics-tab-line);
+    color: var(--case-accent);
+  }
+
+  .case-metrics__tab:has(input:focus-visible) {
+    outline: 2px solid var(--case-accent);
+    outline-offset: 4px;
+  }
+
+  .case-metrics__tab input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Показан только выбранный график. */
+  .case-metrics:has(.case-metrics__tab input[value='0']:checked) .case-metrics__chart:not([data-set='0']),
+  .case-metrics:has(.case-metrics__tab input[value='1']:checked) .case-metrics__chart:not([data-set='1']),
+  .case-metrics:has(.case-metrics__tab input[value='2']:checked) .case-metrics__chart:not([data-set='2']),
+  .case-metrics:has(.case-metrics__tab input[value='3']:checked) .case-metrics__chart:not([data-set='3']) {
+    display: none;
   }
 
   .case-metrics__chart {
