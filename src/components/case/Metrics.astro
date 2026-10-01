@@ -153,6 +153,10 @@ const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
       display: none;
     }
 
+    .case-metrics {
+      --case-metrics-radius: var(--case-metrics-radius-mobile);
+    }
+
     /* В ленте колонки шире — подпись обычным кеглем текста кейса. */
     .case-metrics .case-metrics__label {
       font-size: var(--text-case-body);
@@ -187,6 +191,15 @@ const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
   .case-metrics__col:last-child .case-metrics__track::before,
   .case-metrics__col:last-child .case-metrics__track::after {
     right: 0;
+  }
+
+  /* Дымка у крайних столбиков растворяется к краю (иначе у скруглённого угла торчал её прямоугольник). */
+  .case-metrics__col:first-child .case-metrics__track::after {
+    mask-image: linear-gradient(to right, transparent, #000 var(--case-metrics-radius));
+  }
+
+  .case-metrics__col:last-child .case-metrics__track::after {
+    mask-image: linear-gradient(to left, transparent, #000 var(--case-metrics-radius));
   }
 
   .case-metrics__track::before {

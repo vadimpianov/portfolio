@@ -22,6 +22,8 @@ interface Props {
   /** Для `scroll`: заголовок и/или подзаголовок слева в начале ленты, по середине её высоты (листаются вместе с картинкой). */
   title?: string;
   lead?: string;
+  /** Широкая схема: на узком контейнере не мельчит, а листается вбок (не уже --case-flow-min-w, как схема старой регистрации). */
+  wide?: boolean;
   /** Для `scroll`: карусель — лента в край панели (за поля слева и справа), по умолчанию по центру,
       листается по кругу (картинка повторена 3 раза, прокрутку держит в средней копии CaseDrawer). */
   loop?: boolean;
@@ -47,6 +49,7 @@ const {
   title,
   lead,
   loop = false,
+  wide = false,
   tiles,
 } = Astro.props;
 
@@ -80,6 +83,7 @@ const tileList = tiles
       'case-figure--box': box,
       'case-figure--intro': title || lead,
       'case-figure--loop': scroll && loop,
+      'case-figure--wide': wide,
     },
   ]}
   style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
@@ -301,5 +305,29 @@ const tileList = tiles
       max-width: none;
       border-radius: 0;
     }
+  }
+
+  /* На узком — картинка рядом с текстом тоже уходит за правый край панели. */
+  @container case (max-width: 799px) {
+    .case-figure--side .case-figure__frame {
+      margin-right: calc(-1 * var(--gutter));
+      overflow: clip;
+    }
+
+    .case-figure--side .case-figure__frame img {
+      width: calc(100% + var(--case-side-figure-overhang));
+      max-width: none;
+      border-radius: 0;
+    }
+  }
+
+  /* Широкая схема: уже --case-flow-min-w — листается вбок, текст не мельчит. */
+  .case-figure--wide .case-figure__frame {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .case-figure--wide .case-figure__frame img {
+    min-width: var(--case-flow-min-w);
   }
 </style>

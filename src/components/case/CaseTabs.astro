@@ -119,16 +119,14 @@ const name = 'case-tabs';
       grid-auto-flow: row;
     }
 
-    .case-tabs__tab + .case-tabs__tab {
+    /* Разделитель — между колонками (у 2-й и 4-й вкладки), у 3-й (начало второго ряда) — нет.
+       Селектор той же силы, что и общий «+», иначе он перебивал (вертикальных линий не было). */
+    .case-tabs__tab + .case-tabs__tab:nth-child(odd) {
       border-left: 0;
     }
 
     .case-tabs__tab:nth-child(n + 3) {
       border-top: 1px solid var(--case-tabs-border);
-    }
-
-    .case-tabs__tab:nth-child(even) {
-      border-left: 1px solid var(--case-tabs-border);
     }
   }
 
