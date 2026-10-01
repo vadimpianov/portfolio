@@ -56,10 +56,13 @@
   /* Цвет */
   /* Страница кейса (тёмная тема — под тёмные макеты; цвета из макета кейса). */
   --case-bg: #0f1f2a;
-  /* Фон кейса — тонкие диагональные полоски из макета пользователя (design/cases/case-bg.svg):
-     плитка 12 × 12 (2x) чёрным 20%, на экране — 6 × 6. */
-  --case-bg-pattern: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAXUlEQVR42o3RsQ2AMAxE0R9dnQFgAPafCgYIA9AkwopiuGscF0+RfIU3G7CH/QJOpii87z5rmAVoGbDQDH7RCnyiDKRI/TLNRQKO1TUyNH6oLlIoy0JyyopIbsMjD6sBF59/lhfZAAAAAElFTkSuQmCC');
-  --case-bg-pattern-size: 6px;
+  /* Фон кейса — тонкие диагональные полоски из макета пользователя (design/cases/case-bg.svg), нарисованы
+     кодом: линии «\» под 45°, шаг 6px по горизонтали (≈4.24px поперёк), толщина — 5/12 шага, чёрным 20%. */
+  --case-bg-pattern: repeating-linear-gradient(
+    45deg,
+    rgb(0 0 0 / 0.2) 0 calc(6px * 0.7071 * 5 / 12),
+    transparent 0 calc(6px * 0.7071)
+  );
   --case-text: #f6f6f6;
   --case-muted: #9fa5aa;
   --case-accent: #fcd537;
