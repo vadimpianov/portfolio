@@ -119,6 +119,23 @@ I built a process grounded in design thinking principles and brought the whole t
 
 Conversion to registration and deposit went up
 
+<Metrics active={1} sets={[
+  { label: 'Old', items: [
+      { value: 100, label: 'Started registration', texture: 'betting/metric-bar-1' },
+      { value: 68.6, label: 'Entered the\nSMS code', texture: 'betting/metric-bar-2' },
+      { value: 55.11, label: 'Went on to verification', texture: 'betting/metric-bar-3' },
+      { value: 21.67, label: 'Deposited right away', texture: 'betting/metric-bar-4' },
+      { value: 19.16, label: 'Placed a bet within 10 minutes', texture: 'betting/metric-bar-5' },
+  ] },
+  { label: 'New', items: [
+      { value: 100, label: 'Entered a phone number', texture: 'betting/metric-bar-1' },
+      { value: 93.45, label: 'Entered the\nSMS code', texture: 'betting/metric-bar-2' },
+      { value: 81.76, label: 'Went on to verification', texture: 'betting/metric-bar-3' },
+      { value: 31.11, label: 'Deposited right away', texture: 'betting/metric-bar-4' },
+      { value: 27.69, label: 'Placed a bet within 10 minutes', texture: 'betting/metric-bar-5' },
+  ] },
+]} />
+
 <Flow>
 
 In 3 months we rebuilt registration: studied TsUPIS requirements and constraints. United the team around one goal — higher conversion, and shipped the app to the stores.
@@ -139,31 +156,6 @@ I focused on simplification and growth:
 This wasn't just a registration redesign. It was a shift from a formal compliance process to a product model, where registration stops being a barrier and becomes the entry point to the product.
 
 As always, I produced a full set of design artefacts — CJM, user flows, prototypes, error scenarios and edge cases — which removed uncertainty in development and sped up delivery.
-
-</Flow>
-
-<Metrics active={1} sets={[
-  { label: 'Old', items: [
-      { value: 100, label: 'Started registration', texture: 'betting/metric-bar-1' },
-      { value: 68.6, label: 'Entered the\nSMS code', texture: 'betting/metric-bar-2' },
-      { value: 55.11, label: 'Went on to verification', texture: 'betting/metric-bar-3' },
-      { value: 21.67, label: 'Deposited right away', texture: 'betting/metric-bar-4' },
-      { value: 19.16, label: 'Placed a bet within 10 minutes', texture: 'betting/metric-bar-5' },
-  ] },
-  { label: 'New', items: [
-      { value: 100, label: 'Entered a phone number', texture: 'betting/metric-bar-1' },
-      { value: 93.45, label: 'Entered the\nSMS code', texture: 'betting/metric-bar-2' },
-      { value: 81.76, label: 'Went on to verification', texture: 'betting/metric-bar-3' },
-      { value: 31.11, label: 'Deposited right away', texture: 'betting/metric-bar-4' },
-      { value: 27.69, label: 'Placed a bet within 10 minutes', texture: 'betting/metric-bar-5' },
-  ] },
-]} />
-
-<Flow>
-
-According to the stats, registration performed well: only about 20% of users dropped off along the whole path.
-
-Deposits, however, aren't working so well. Next up — redesigning the Deposit flow.
 
 </Flow>
 

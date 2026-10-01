@@ -164,6 +164,11 @@ const name = 'case-tabs';
     text-indent: 0;
   }
 
+  /* Снизу кейса — отступ как сбоку (поле панели): у последнего блока свой нижний отступ не добавляется. */
+  .case-tabs .case-tabs__panel--main > :global(:last-child) {
+    margin-bottom: 0;
+  }
+
   /* Абзацы сценария идут подряд, без пустой строки — начало абзаца отмечает красная строка. */
   .case-tabs .case-tabs__panel--main :global(p:not([class]) + p:not([class])) {
     margin-top: 0;

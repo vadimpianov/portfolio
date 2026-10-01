@@ -119,6 +119,23 @@ import Metrics from '../../../components/case/Metrics.astro';
 
 Конверсия в регистрацию и пополнение выросла
 
+<Metrics active={1} sets={[
+  { label: 'Старая', items: [
+      { value: 100, label: 'Начали регистрацию', texture: 'betting/metric-bar-1' },
+      { value: 68.6, label: 'Ввели код\nиз СМС', texture: 'betting/metric-bar-2' },
+      { value: 55.11, label: 'Ушли на идентифика­цию', texture: 'betting/metric-bar-3' },
+      { value: 21.67, label: 'Сразу пополнили счёт', texture: 'betting/metric-bar-4' },
+      { value: 19.16, label: 'В течение 10 минут сделали ставку', texture: 'betting/metric-bar-5' },
+  ] },
+  { label: 'Новая', items: [
+      { value: 100, label: 'Ввели номер телефона', texture: 'betting/metric-bar-1' },
+      { value: 93.45, label: 'Ввели код\nиз СМС', texture: 'betting/metric-bar-2' },
+      { value: 81.76, label: 'Ушли на идентифика­цию', texture: 'betting/metric-bar-3' },
+      { value: 31.11, label: 'Сразу пополнили счёт', texture: 'betting/metric-bar-4' },
+      { value: 27.69, label: 'В течение 10 минут сделали ставку', texture: 'betting/metric-bar-5' },
+  ] },
+]} />
+
 <Flow>
 
 За 3 месяца мы пересобрали регистрацию: изучили требования и ограничения ЦУПИС. Объединили команду вокруг одной цели — роста конверсии, и опубликовали приложение в сторы.
@@ -139,31 +156,6 @@ import Metrics from '../../../components/case/Metrics.astro';
 Это был не просто редизайн регистрации. Это был переход от формального compliance-процесса к продуктовой модели, где регистрация перестаёт быть барьером и становится точкой входа.
 
 Как и всегда, я разработал полный комплект дизайн-артефактов: CJM, user flows, прототипы, сценарии ошибок и граничные состояния — это убрало неопределённость в разработке и ускорило delivery.
-
-</Flow>
-
-<Metrics active={1} sets={[
-  { label: 'Старая', items: [
-      { value: 100, label: 'Начали регистрацию', texture: 'betting/metric-bar-1' },
-      { value: 68.6, label: 'Ввели код\nиз СМС', texture: 'betting/metric-bar-2' },
-      { value: 55.11, label: 'Ушли на идентифика­цию', texture: 'betting/metric-bar-3' },
-      { value: 21.67, label: 'Сразу пополнили счёт', texture: 'betting/metric-bar-4' },
-      { value: 19.16, label: 'В течение 10 минут сделали ставку', texture: 'betting/metric-bar-5' },
-  ] },
-  { label: 'Новая', items: [
-      { value: 100, label: 'Ввели номер телефона', texture: 'betting/metric-bar-1' },
-      { value: 93.45, label: 'Ввели код\nиз СМС', texture: 'betting/metric-bar-2' },
-      { value: 81.76, label: 'Ушли на идентифика­цию', texture: 'betting/metric-bar-3' },
-      { value: 31.11, label: 'Сразу пополнили счёт', texture: 'betting/metric-bar-4' },
-      { value: 27.69, label: 'В течение 10 минут сделали ставку', texture: 'betting/metric-bar-5' },
-  ] },
-]} />
-
-<Flow>
-
-Судя по статистике, регистрация показала себя хорошо: на всём пути «отвалилось» всего около 20% пользователей.
-
-А вот пополнение работает не очень. Дальше переходим к редизайну флоу «Пополнение».
 
 </Flow>
 
