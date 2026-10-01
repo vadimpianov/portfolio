@@ -54,7 +54,7 @@ const coverSize = (() => {
     {tags.length > 0 && (
       <ul class="case__chips">
         {tags.map((tag, i) => (
-          <li class="case__chip" style={`--tag-color: var(--case-tag-${(i % 2) + 1})`}>
+          <li class="case__chip" style={`--tag-color: var(--case-tag-${(i % 3) + 1})`}>
             {typograph(tag)}
           </li>
         ))}
@@ -155,7 +155,7 @@ const coverSize = (() => {
     list-style: none;
   }
 
-  /* Теги — цветные плашки (цвета по порядку: --case-tag-1, -2), кегль и начертание — как у текста кейса. */
+  /* Теги — цветные плашки (цвета по порядку: --case-tag-1, -2, -3), кегль и начертание — как у текста кейса. */
   .case__chip {
     padding: round(0.25em, 2px) round(0.75em, 2px);
     border-radius: var(--case-tag-radius);

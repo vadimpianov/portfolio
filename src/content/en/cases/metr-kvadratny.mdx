@@ -1,0 +1,62 @@
+---
+title: From five disparate services to a real-estate ecosystem
+description: Metr Kvadratny — we brought five real-estate services together into a mobile ecosystem and shipped the MVP in 4 months.
+date: 2022-06-01
+period: 2020–2022
+tags: [Real estate, Ecosystem, iOS & Android]
+theme: dark
+slides: [metr-kvadratny/cover-mortgage, metr-kvadratny/cover-main, metr-kvadratny/cover-mortgage]
+---
+
+import CaseTabs from '../../../components/case/CaseTabs.astro';
+import Chips from '../../../components/case/Chips.astro';
+import Columns from '../../../components/case/Columns.astro';
+import TextColumns from '../../../components/case/TextColumns.astro';
+import Flow from '../../../components/case/Flow.astro';
+
+When the project started, the company had mature, scalable web products with steady traffic and well-established business processes. There was no mobile app, even though research showed that 57.8% of users searched for property on mobile devices.
+
+<TextColumns>
+
+We had two goals:
+
+<Columns>
+<div>
+
+- Build an ecosystem that ties five business units into one consistent user journey
+
+</div>
+<div>
+
+- Ship the MVP as fast as possible: a 15-person development team was already in place, and only the missing design was holding development back
+
+</div>
+</Columns>
+
+</TextColumns>
+
+<Chips items={['Benchmarking', 'Requirements gathering', 'CJM', 'Product thinking', 'Brainstorming']} />
+
+<CaseTabs items={['Search', 'New builds', 'Mortgage', 'Deal', 'How to buy', 'Renovation']} active={0}>
+
+## An end-to-end user journey across products
+
+Using a successful scenario for two products out of five as an example
+
+<Flow>
+
+We started by collecting data about the products, how they worked and what made them different. We paid special attention to the points where the products touched. This stage required close communication with stakeholders and the team. Several times a week we held product sessions where we discussed how the products worked and gathered information about what development could and couldn’t do.
+
+We found that mobile users spend 5 to 25 minutes per session with the product on average, mostly in the morning and evening. More than 42% of them come back to search at least three times before contacting the owner. Funnel analysis showed that, without a single user journey, moving between the key stages — from finding a property to the mortgage and the deal — came with a conversion drop of up to 35%.
+
+</Flow>
+
+<Flow>
+
+Search looks simple at first glance, but huge result lists slow down the choice, and overloaded filters get in the way. We rebuilt the filter, keeping only parameters that cut more than 60% of irrelevant listings — more of an axe than a scalpel.
+
+Already in the MVP we shipped Saved search and Quick match, which capture the user’s intent and let them come back to it without setting everything up again. All of this sped up repeat sessions and made it easier to find the right property.
+
+</Flow>
+
+</CaseTabs>

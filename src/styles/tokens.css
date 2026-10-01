@@ -73,6 +73,7 @@
   /* Теги под заголовком кейса: цвета по порядку тегов. */
   --case-tag-1: #2fa802;
   --case-tag-2: #ad0063;
+  --case-tag-3: #0d69eb;
   --case-tag-radius: 8px;
   --text-case-body: round(clamp(16px, 15px + 0.35vw, 20px), 1px);
   --case-label-size: round(clamp(14px, 13px + 0.3vw, 18px), 1px);
