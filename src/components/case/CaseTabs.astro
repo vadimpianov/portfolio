@@ -217,4 +217,9 @@ const name = 'case-tabs';
   .case-tabs--bare .case-tabs__panel--main > :global(h2:first-child) {
     margin-top: 0;
   }
+
+  /* Колонки с заголовком внутри (заголовок и текст рядом с картинкой) — отступ сверху как у раздела. */
+  .case-tabs .case-tabs__panel--main > :global(.case-columns:has(h2)) {
+    margin-top: var(--case-tabs-section-gap);
+  }
 </style>

@@ -198,6 +198,21 @@ const coverSize = (() => {
     letter-spacing: var(--tracking-label);
   }
 
+  /* Заголовок внутри колонок (рядом с картинкой): сверху без отступа, под ним — обычный текст
+     (не подпись капсом), от заголовка до текста — --case-tabs-heading-text-gap. */
+  .case__body :global(.case-columns h2) {
+    margin-top: 0;
+    font-weight: 600;
+  }
+
+  .case__body :global(.case-columns h2 + p) {
+    margin-top: var(--case-tabs-heading-text-gap);
+    font-size: inherit;
+    text-indent: var(--case-indent);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
   .case__body :global(h3) {
     margin-top: var(--case-block-gap);
     font-size: var(--case-label-size);
