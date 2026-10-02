@@ -16,6 +16,7 @@ import Flow from '../../../components/case/Flow.astro';
 import UserPath from '../../../components/case/metr/UserPath.astro';
 import StatusChain from '../../../components/case/metr/StatusChain.astro';
 import Figure from '../../../components/case/Figure.astro';
+import Metrics from '../../../components/case/Metrics.astro';
 
 На старте проекта у компании были зрелые и масштабируемые веб-продукты с устойчивым трафиком и выстроенными бизнес-процессами. Мобильного приложения не существовало, хотя, согласно исследованиям, 57,8% пользователей искали недвижимость с мобильных устройств.
 
@@ -97,7 +98,7 @@ import Figure from '../../../components/case/Figure.astro';
 
 … На все случаи жизни, так сказать
 
-<Figure src="/images/cases/metr-kvadratny/modals.webp" width={5936} height={880} scroll loop alt="Модальные окна: сервиса нет в регионе, нет соединения, iPhone с Jailbreak, включите уведомления, сохранить поиск без подтверждения почты, удалить поиск, биометрия изменена, что-то пошло не так" />
+<Figure src="/images/cases/metr-kvadratny/modals.webp" width={5936} height={880} scroll loop strip={0.7} alt="Модальные окна: сервиса нет в регионе, нет соединения, iPhone с Jailbreak, включите уведомления, сохранить поиск без подтверждения почты, удалить поиск, биометрия изменена, что-то пошло не так" />
 
 ## И приступил к проработке сервиса «Ипотека»
 
@@ -111,9 +112,26 @@ P.S. Это был основной сервис, так как мы работ�
 
 </Flow>
 
-<Figure src="/images/cases/metr-kvadratny/mortgage.webp" width={6282} height={1240} scroll alt="Сценарий ипотечной анкеты: параметры кредита, данные клиента, работа, доходы, выбор банков" />
+<Figure src="/images/cases/metr-kvadratny/mortgage.webp" width={6282} height={1240} scroll strip={1.2} alt="Сценарий ипотечной анкеты: параметры кредита, данные клиента, работа, доходы, выбор банков" />
 
 ## Остальные продукты, надеюсь, опишу позже, а пока — выводы
+
+<Metrics active={1} sets={[
+  { label: 'До', items: [
+      { value: 100, label: 'Начали поиск', texture: 'betting/metric-bar-1' },
+      { value: 52, label: 'Связались с собственником', texture: 'betting/metric-bar-2' },
+      { value: 34, label: 'Перешли\nв ипотеку', texture: 'betting/metric-bar-3' },
+      { value: 21.4, label: 'Отправили анкету', texture: 'betting/metric-bar-4' },
+      { value: 13.2, label: 'Вышли на сделку', texture: 'betting/metric-bar-5' },
+  ] },
+  { label: 'После', items: [
+      { value: 100, label: 'Начали поиск', texture: 'betting/metric-bar-1' },
+      { value: 61, label: 'Связались с собственником', texture: 'betting/metric-bar-2' },
+      { value: 48.8, label: 'Перешли\nв ипотеку', texture: 'betting/metric-bar-3' },
+      { value: 36.3, label: 'Отправили анкету', texture: 'betting/metric-bar-4' },
+      { value: 24.7, label: 'Вышли на сделку', texture: 'betting/metric-bar-5' },
+  ] },
+]} />
 
 <Flow>
 

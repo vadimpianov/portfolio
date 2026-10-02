@@ -36,6 +36,8 @@ interface Props {
   /** Для `box`: точка картинки "x y" (доли 0…1), которая при открытии кейса стоит в центре рамки
       (у края — рамка прижата к краю). По умолчанию — середина по высоте, левый край. */
   focus?: string;
+  /** Для `scroll`: высота ленты относительно --case-strip-h (0.7 — на 30% ниже, 1.2 — на 20% выше). */
+  strip?: number;
 }
 
 const {
@@ -55,6 +57,7 @@ const {
   wide = false,
   tiles,
   focus,
+  strip,
 } = Astro.props;
 
 // Плитки большой картинки: положение и размер — в % от всей картинки (с нахлёстом 2px справа и снизу).
@@ -90,7 +93,13 @@ const tileList = tiles
       'case-figure--wide': wide,
     },
   ]}
-  style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
+  style={
+    box
+      ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})`
+      : strip
+        ? `--strip-k: ${strip}`
+        : undefined
+  }
 >
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
   <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined} data-focus={box ? focus : undefined}>
@@ -179,7 +188,7 @@ const tileList = tiles
     border-radius: 0;
     width: auto;
     max-width: none;
-    height: var(--case-strip-h);
+    height: round(calc(var(--case-strip-h) * var(--strip-k, 1)), 2px);
   }
 
   /* Листаемая рамка: высота фиксирована (--case-figure-box-h), в пределах полей панели (за правый край

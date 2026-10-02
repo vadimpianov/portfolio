@@ -16,6 +16,7 @@ import Flow from '../../../components/case/Flow.astro';
 import UserPath from '../../../components/case/metr/UserPath.astro';
 import StatusChain from '../../../components/case/metr/StatusChain.astro';
 import Figure from '../../../components/case/Figure.astro';
+import Metrics from '../../../components/case/Metrics.astro';
 
 When the project started, the company had mature, scalable web products with steady traffic and well-established business processes. There was no mobile app, even though research showed that 57.8% of users searched for property on mobile devices.
 
@@ -97,7 +98,7 @@ For the Search service alone, almost a hundred screens were designed. I design s
 
 … For every occasion, so to speak
 
-<Figure src="/images/cases/metr-kvadratny/modals.webp" width={5936} height={880} scroll loop alt="Modals: service not available in your region, no connection, jailbroken iPhone, turn on notifications, save search without email confirmation, delete search, biometrics changed, something went wrong" />
+<Figure src="/images/cases/metr-kvadratny/modals.webp" width={5936} height={880} scroll loop strip={0.7} alt="Modals: service not available in your region, no connection, jailbroken iPhone, turn on notifications, save search without email confirmation, delete search, biometrics changed, something went wrong" />
 
 ## Then I moved on to the Mortgage service
 
@@ -111,9 +112,26 @@ Resistance from the provider was expected: compliance requirements and internal 
 
 </Flow>
 
-<Figure src="/images/cases/metr-kvadratny/mortgage.webp" width={6282} height={1240} scroll alt="Mortgage application flow: loan parameters, client details, employment, income, choice of banks" />
+<Figure src="/images/cases/metr-kvadratny/mortgage.webp" width={6282} height={1240} scroll strip={1.2} alt="Mortgage application flow: loan parameters, client details, employment, income, choice of banks" />
 
 ## I hope to describe the other products later; for now, the takeaways
+
+<Metrics active={1} sets={[
+  { label: 'Before', items: [
+      { value: 100, label: 'Started a search', texture: 'betting/metric-bar-1' },
+      { value: 52, label: 'Contacted the owner', texture: 'betting/metric-bar-2' },
+      { value: 34, label: 'Moved on to a mortgage', texture: 'betting/metric-bar-3' },
+      { value: 21.4, label: 'Sent the application', texture: 'betting/metric-bar-4' },
+      { value: 13.2, label: 'Moved on to the deal', texture: 'betting/metric-bar-5' },
+  ] },
+  { label: 'After', items: [
+      { value: 100, label: 'Started a search', texture: 'betting/metric-bar-1' },
+      { value: 61, label: 'Contacted the owner', texture: 'betting/metric-bar-2' },
+      { value: 48.8, label: 'Moved on to a mortgage', texture: 'betting/metric-bar-3' },
+      { value: 36.3, label: 'Sent the application', texture: 'betting/metric-bar-4' },
+      { value: 24.7, label: 'Moved on to the deal', texture: 'betting/metric-bar-5' },
+  ] },
+]} />
 
 <Flow>
 
