@@ -1,5 +1,7 @@
-"""Картинка плитки Quantori на главной: карточки экранов PharmaKB внахлёст (как в референсе пользователя).
-1200 × 1632, прозрачный фон, карточки — белые, скругление 24px, мягкая тень.
+"""Картинка плитки Quantori на главной — один в один по референсу пользователя (2000 × 1353):
+четыре карточки экранов PharmaKB внахлёст — шапка отчёта по препарату, патенты по типам, акции, коммерческая таблица.
+Собирается в координатах референса, затем уменьшается до ширины плитки 1200; верх первой карточки — y 0
+(вровень с картинками других плиток). Холст 1200 × 1632, прозрачный фон.
 Запуск из корня репозитория: python3 design/cases/quantori/tile.py
 """
 import pymupdf
@@ -7,44 +9,55 @@ from PIL import Image, ImageDraw, ImageFilter
 
 SRC = 'design/cases/quantori/screens/'
 OUT = 'public/images/cases/'
+REF_W, TOP = 2000, 25  # ширина референса; верх первой карточки в референсе
 W, H = 1200, 1632
+RADIUS, SS = 16, 2  # скругление в px референса; рендер карточек с запасом ×2
 
-# Файл, область в pt (x0, y0, x1, y1), ширина карточки в плитке, положение (x, y).
+# Файл, карточка в px референса (x0, y0, x1, y1), левый верхний угол карточки в pt, масштаб px/pt.
 CARDS = [
-    ('4-drug-report/Drug Report - Default.pdf', (80, 90, 1240, 830), 760, (40, 40)),
-    ('6-company-report/Patents by State - Filters.pdf', (140, 124, 1290, 700), 760, (400, 330)),
-    ('6-company-report/Company Reports - Comparison - 3.pdf', (100, 470, 1240, 1100), 760, (40, 700)),
-    ('5-disease-report/Disease Report - Default.pdf', (90, 2080, 1240, 2900), 720, (440, 980)),
+    ('4-drug-report/Drug Report - Default.pdf', (15, 25, 1055, 858), (-11, 47), 0.717),
+    ('6-company-report/Patents by State - Filters-1.pdf', (937, 78, 1980, 720), (27, 102), 0.79),
+    ('6-company-report/Company Reports - Comparison - 3.pdf', (140, 672, 1055, 1325), (0, 629), 0.641),
+    ('5-disease-report/Disease Report - Default.pdf', (985, 585, 1828, 1117), (-75, 2039), 0.6),
 ]
 
 
-def card(path, clip, width):
+def card(path, box, origin, s):
+    w, h = box[2] - box[0], box[3] - box[1]
     page = pymupdf.open(SRC + path)[0]
-    z = width * 2 / (clip[2] - clip[0])  # 2x — с запасом, потом уменьшаем
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(z, z), clip=pymupdf.Rect(*clip), alpha=False)
-    im = Image.frombytes('RGB', (pix.width, pix.height), pix.samples)
-    im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS).convert('RGBA')
+    z = s * SS
+    clip = pymupdf.Rect(origin[0], origin[1], origin[0] + w / s, origin[1] + h / s) & page.rect
+    pix = page.get_pixmap(matrix=pymupdf.Matrix(z, z), clip=clip, alpha=False)
+    shot = Image.frombytes('RGB', (pix.width, pix.height), pix.samples)
+    im = Image.new('RGB', (w * SS, h * SS), 'white')
+    im.paste(shot, (round((clip.x0 - origin[0]) * z), round((clip.y0 - origin[1]) * z)))
+    # Кнопка «Go to top» поверх графика акций — в референсе её нет.
+    if 'Comparison' in path:
+        cx, cy, r = (1232 - origin[0]) * z, (1531 - origin[1]) * z, 36 * z
+        ImageDraw.Draw(im).ellipse((cx - r, cy - r, cx + r, cy + r), fill='white')
+    im = im.convert('RGBA')
     mask = Image.new('L', im.size, 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, im.width - 1, im.height - 1), 24, fill=255)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, im.width - 1, im.height - 1), RADIUS * SS, fill=255)
     im.putalpha(mask)
     return im
 
 
+k = W / REF_W
 tile = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-for path, clip, width, (x, y) in CARDS:
-    im = card(path, clip, width)
-    # Тень: размытая подложка 0 20px 48px, чёрный 16%.
-    pad = 96
-    shadow = Image.new('RGBA', (im.width + pad * 2, im.height + pad * 2), (0, 0, 0, 0))
-    sm = Image.new('L', shadow.size, 0)
-    ImageDraw.Draw(sm).rounded_rectangle((pad, pad, pad + im.width, pad + im.height), 24, fill=41)
-    shadow.putalpha(sm.filter(ImageFilter.GaussianBlur(24)))
-    tile.alpha_composite(shadow, (max(0, x - pad), max(0, y - pad + 20))) if x - pad >= 0 else None
-    if x - pad < 0:
-        layer = Image.new('RGBA', tile.size, (0, 0, 0, 0))
-        layer.paste(shadow, (x - pad, y - pad + 20), shadow)
-        tile = Image.alpha_composite(tile, layer)
+for path, box, origin, s in CARDS:
+    im = card(path, box, origin, s)
+    w, h = round((box[2] - box[0]) * k), round((box[3] - box[1]) * k)
+    x, y = round(box[0] * k), round((box[1] - TOP) * k)
+    im = im.resize((w, h), Image.LANCZOS)
+    # Мягкая тень, как в референсе: 0 12px 40px, чёрный 10%.
+    pad = 60
+    sh = Image.new('L', (w + pad * 2, h + pad * 2), 0)
+    ImageDraw.Draw(sh).rounded_rectangle((pad, pad, pad + w, pad + h), round(RADIUS * k), fill=26)
+    sh = sh.filter(ImageFilter.GaussianBlur(20))
     layer = Image.new('RGBA', tile.size, (0, 0, 0, 0))
+    black = Image.new('RGBA', sh.size, (0, 0, 0, 255))
+    black.putalpha(sh)
+    layer.paste(black, (x - pad, y - pad + 8), black)
     layer.paste(im, (x, y), im)
     tile = Image.alpha_composite(tile, layer)
 
