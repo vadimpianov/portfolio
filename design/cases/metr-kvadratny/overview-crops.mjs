@@ -12,7 +12,6 @@ const OUT = 'public/images/cases/metr-kvadratny/';
 // erase — что стереть (координаты кропа, 1x): ['rect', x, y, w, h] — текст макета поверх карты,
 // ['circle', cx, cy, r] — круглые стрелки навигации Figma поверх лент.
 const crops = [
-  ['modals', 666, 5605, 2968, 440, [['circle', 768, 218, 30]]],
   ['mortgage', 140, 6573, 3141, 620, [['circle', 1294, 308, 30]]],
 ];
 for (const [name, x, y, w, h, erase = []] of crops) {
