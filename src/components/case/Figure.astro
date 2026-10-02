@@ -155,6 +155,13 @@ const tileList = tiles
     scrollbar-width: thin;
   }
 
+  /* Длинная лента экранов (не карусель и не карта в рамке) уходит за правый край панели, не обрезается по полю;
+     в конце прокрутки — отступ, как поле. */
+  .case-figure--scroll:not(.case-figure--loop):not(.case-figure--box) .case-figure__frame {
+    margin-right: calc(-1 * var(--gutter));
+    padding-right: var(--gutter);
+  }
+
   /* Мышью ленту таскают (рука → зажатая рука, `pointerdown` в CaseDrawer). */
   @media (pointer: fine) {
     .case-figure--scroll .case-figure__frame {
