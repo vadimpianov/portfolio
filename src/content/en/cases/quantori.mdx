@@ -1,0 +1,139 @@
+---
+title: "Drug data you can work with for hours"
+description: "Quantori — PharmaKB, a knowledge base on drug development: we brought dozens of tables and charts into one system, unified FDA and EMA data, and analysts now work twice as long without a break."
+date: 2023-06-01
+period: 2022–2023
+tags: [Pharma & Biotech, B2B SaaS, Web]
+theme: dark
+cover: quantori/cover
+---
+
+import CaseTabs from '../../../components/case/CaseTabs.astro';
+import Chips from '../../../components/case/Chips.astro';
+import Columns from '../../../components/case/Columns.astro';
+import TextColumns from '../../../components/case/TextColumns.astro';
+import Flow from '../../../components/case/Flow.astro';
+import Figure from '../../../components/case/Figure.astro';
+import Dashboard from '../../../components/case/quantori/Dashboard.astro';
+import PhaseChart from '../../../components/case/quantori/PhaseChart.astro';
+import ReviewChart from '../../../components/case/quantori/ReviewChart.astro';
+import AreaTable from '../../../components/case/quantori/AreaTable.astro';
+import Results from '../../../components/case/quantori/Results.astro';
+
+At Quantori I worked on PharmaKB, a knowledge base on drug development built for Collaborative Drug Discovery. The service gathers historical data from open sources: approvals by the US regulator FDA and the European EMA, clinical trials by phase, patents, sales, adverse events and PubMed publications. These add up to reports on a drug, a disease and a company.
+
+The reports are used by analysts, BD managers and investors at pharma companies: before betting on a new molecule, they look for historical analogues. The stakes are high: according to BIO, only 7.9% of drugs entering phase 1 trials reach approval, and the journey takes 10.5 years on average. The first version of the product was built by developers without a designer: there was plenty of data, but working with it was hard.
+
+<TextColumns>
+
+I had several goals:
+
+<Columns>
+<div>
+
+- Make the reports comfortable for long sessions: analysts were worn out after just 20 minutes
+- Bring dozens of tables and charts into one system
+
+</div>
+<div>
+
+- Unify FDA and EMA data in one interface without losing a single number
+
+</div>
+</Columns>
+
+</TextColumns>
+
+<Chips items={['Analyst interviews', 'Complex B2B interfaces', 'Data visualization', 'Design system', 'Usability testing']} />
+
+<CaseTabs>
+
+## Why analysts were worn out after 20 minutes
+
+I started by watching people work
+
+<Flow>
+
+I interviewed 12 analysts from five client companies and watched them prepare real reports. The picture kept repeating itself: after 15–20 minutes people took a break, exported a table to Excel or closed the tab. Product analytics showed the average uninterrupted session lasted 18 minutes.
+
+The problem wasn't the amount of data but the way it was presented. The drug report was a single page 16,000 pixels tall: nine sections and almost 30 tables and charts. Every table had been built on its own, with its own width, font size, row height and header color, and numbers aligned left in one place and centered in another. The eye had to readjust to every block. Dashboard research shows that nine information modules on a screen are already enough to overload people, and we had three times as many.
+
+FDA and EMA data lived in separate tables with different field names, and analysts had to cross-check them by hand. 64% of sessions ended with an export to Excel: analysts assembled their reports where the columns were at least aligned.
+
+</Flow>
+
+<Dashboard caption="The same report section, before and after — switch between them" />
+
+## What we changed
+
+One system for every table and chart
+
+<Flow>
+
+Instead of redrawing pages one by one, I started with rules. We described what any report is made of — a header, section tabs, a collapsible section, a table, a chart, a tooltip, an empty state — and built a design system for data out of it. Now developers assemble a new section from ready-made components instead of inventing it from scratch.
+
+- One grid: all tables on a page share the same width, row height and font size
+- Numbers are right-aligned in tabular figures, text is left-aligned
+- Section tabs stay visible while scrolling, sections collapse
+- FDA and EMA are a switch in every section, with the same columns in the same order
+- Every chart has a table view, every table has sorting and filters
+- Empty, loading and error states live inside each section instead of a blank page
+
+The report is as detailed as before: we didn't remove a single number. What changed is how the eye moves through it.
+
+</Flow>
+
+<Figure box="1440 / 15900" tiles={2048} focus="0 0" src="/images/cases/quantori/drug-report" width={2880} height={31800} caption="The whole drug report: nine sections, almost 30 tables and charts" alt="PharmaKB drug report: header, section tabs, events timeline, commercial data, clinical trials, targets, financials, trends and safety" />
+
+## FDA and EMA in one coordinate system
+
+A source switch instead of two different tables
+
+<Flow>
+
+American and European statistics are structured differently: the FDA has NDA and BLA applications, the EMA has the centralised procedure and its own statuses, and dates, phase names and formats differ. Together with a data analyst we built a mapping dictionary and brought both sources to a common form. Now the source switches with one click in any report section, while columns and row order stay put, so the eye doesn't have to hunt for the number again.
+
+What matters most to an analyst is the probability of success at each stage. It used to be calculated by hand in Excel; now it is right in the report: the chart shows where a drug's path breaks off most often, and hovering shows the exact values.
+
+</Flow>
+
+<PhaseChart caption="Probability of moving between trial phases — switch the source" note="“All” — BIO, Clinical Development Success Rates 2011–2020; FDA and EMA — demo data" />
+
+<ReviewChart caption="FDA and EMA application review time by year — hover over a year" note="Demo data" />
+
+## Tables that answer the question
+
+Sorting and filters instead of scrolling and Ctrl+F
+
+<Flow>
+
+Analysts used to find the row they needed by scrolling and using the browser search. We added sorting by any column, filters by therapeutic area, phase and status, and long tables now show the first rows with a "Show more" button instead of an endless sheet.
+
+Numbers in a column are aligned by digit, so you can compare them without reading: a longer number stands out right away. The share that reached the market comes with a bar, so the most successful area is visible before you read the figures. Try it yourself: click a column header.
+
+</Flow>
+
+<AreaTable caption="Therapeutic areas — click a column header" note="Demo data" />
+
+<Figure scroll loop src="/images/cases/quantori/screens.webp" width={10464} height={834} caption="PharmaKB screens: search, disease and company reports, trials, chart table view, favorites" alt="PharmaKB screens: report search, disease report with a competitive landscape map, company stock comparison, clinical trials by phase, US drug spending table, my reports, report download" />
+
+## Results
+
+Analysts now work with reports twice as long without a break
+
+<Results caption="Before and after" was="was" note="Product analytics for three months before and after the release; SUS — the same 12 analysts" />
+
+<Flow>
+
+In six months we moved all three report types — drug, disease and company — and search onto the new system. We compared results using product analytics for three months before and after the release, and the SUS usability score on the same 12 analysts we started with.
+
+- Uninterrupted work with a report grew from 18 to 41 minutes
+- Analysts find the metric they need three times faster
+- Excel exports dropped almost threefold
+- The SUS usability score rose from 52 to 81
+
+The main result is that analysts stopped fighting the interface and went back to working with data. The design system for data lives separately from the reports: new sections ship faster and look just like the old ones.
+
+</Flow>
+
+</CaseTabs>

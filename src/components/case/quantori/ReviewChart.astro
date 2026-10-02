@@ -1,0 +1,297 @@
+---
+/**
+ * Срок рассмотрения заявки FDA и EMA по годам: две линии, которые «прорисовываются» при прокрутке.
+ * Наведение на год — направляющая, точки крупнее и подсказка с обоими значениями (CSS, без JS).
+ * Высота графика фиксированная (px), поэтому координаты точек — целые пиксели.
+ */
+import { typograph } from '../../../i18n/typograph';
+import { getLocaleFromUrl } from '../../../i18n/utils';
+import Block from './Block.astro';
+import { review } from './data';
+
+interface Props {
+  caption: string;
+  note?: string;
+}
+
+const { caption, note } = Astro.props;
+const lang = getLocaleFromUrl(Astro.url);
+const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
+const num = (v: number) => v.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+const H = 320;
+const PAD = 32;
+const MIN = 8;
+const MAX = 16;
+const y = (v: number) => Math.round(PAD + ((MAX - v) / (MAX - MIN)) * (H - PAD * 2));
+const step = 100;
+const x = (i: number) => i * step + step / 2;
+const W = review.years.length * step;
+const path = (values: number[]) => values.map((v, i) => `${i ? 'L' : 'M'}${x(i)} ${y(v)}`).join(' ');
+const grid = [8, 10, 12, 14, 16];
+const series = [
+  { key: 'fda', label: 'FDA', values: review.fda },
+  { key: 'ema', label: 'EMA', values: review.ema },
+] as const;
+---
+
+<Block caption={caption} note={note}>
+  <div class="q-line" style={`--q-line-h: ${H}px`}>
+    <ul class="q-line__legend">
+      {series.map((s) => <li class={`q-line__key q-line__key--${s.key}`}>{s.label}</li>)}
+    </ul>
+    <div class="q-line__plot">
+      <div class="q-line__grid" aria-hidden="true">
+        {grid.map((g) => (
+          <div class="q-line__gridline" style={`top: ${y(g)}px`}>
+            <span>{g}</span>
+          </div>
+        ))}
+      </div>
+      <svg class="q-line__svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+        {series.map((s) => (
+          <path class={`q-line__path q-line__path--${s.key}`} d={path(s.values)} pathLength="1" />
+        ))}
+      </svg>
+      <ol class="q-line__cols">
+        {review.years.map((year, i) => (
+          <li class="q-line__col" style={`--i: ${i}`}>
+            {series.map((s) => (
+              <span class={`q-line__dot q-line__dot--${s.key}`} style={`top: ${y(s.values[i])}px`} />
+            ))}
+            <span class="q-line__tip">
+              <b>{year}</b>
+              {series.map((s) => (
+                <span class={`q-line__tip-row q-line__tip-row--${s.key}`}>
+                  {s.label} {typograph(`${num(s.values[i])} ${review.unit[lang]}`)}
+                </span>
+              ))}
+            </span>
+            <span class="q-line__year">{year}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</Block>
+
+<style>
+  .q-line__legend {
+    display: flex;
+    gap: 24px;
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+    color: var(--case-text);
+  }
+
+  .q-line__key {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .q-line__key::before {
+    content: '';
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--q-c);
+  }
+
+  .q-line__key--fda,
+  .q-line__dot--fda,
+  .q-line__path--fda,
+  .q-line__tip-row--fda {
+    --q-c: var(--case-data-fda);
+  }
+
+  .q-line__key--ema,
+  .q-line__dot--ema,
+  .q-line__path--ema,
+  .q-line__tip-row--ema {
+    --q-c: var(--case-data-ema);
+  }
+
+  .q-line__plot {
+    position: relative;
+    margin-left: 32px;
+    padding-bottom: 32px;
+  }
+
+  .q-line__grid {
+    position: absolute;
+    inset: 0 0 32px;
+  }
+
+  .q-line__gridline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--case-tabs-border);
+  }
+
+  .q-line__gridline span {
+    position: absolute;
+    right: 100%;
+    top: -10px;
+    padding-right: 10px;
+    color: var(--case-muted);
+    font-size: var(--case-label-size);
+    --lh: var(--leading-tight);
+  }
+
+  .q-line__svg {
+    display: block;
+    width: 100%;
+    height: var(--q-line-h);
+    overflow: visible;
+  }
+
+  .q-line__path {
+    fill: none;
+    stroke: var(--q-c);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1.8s var(--case-slide-ease);
+  }
+
+  .q-line__path--ema {
+    transition-delay: 0.25s;
+  }
+
+  :global([data-reveal='pending']) .q-line__path {
+    stroke-dashoffset: 1;
+  }
+
+  .q-line__cols {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .q-line__col {
+    position: relative;
+    height: calc(var(--q-line-h) + 32px);
+    cursor: crosshair;
+  }
+
+  /* Направляющая года. */
+  .q-line__col::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 32px;
+    left: 50%;
+    border-left: 1px dashed var(--case-tabs-border-strong);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .q-line__dot {
+    position: absolute;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    border: 2px solid var(--q-c);
+    border-radius: 50%;
+    background: var(--case-bg);
+    transition:
+      transform 0.25s,
+      opacity 0.4s calc(0.6s + var(--i) * 120ms);
+  }
+
+  :global([data-reveal='pending']) .q-line__dot {
+    opacity: 0;
+    transition: none;
+  }
+
+  .q-line__year {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: var(--case-muted);
+    font-size: var(--case-label-size);
+    --lh: var(--leading-tight);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .q-line__tip {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    display: grid;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--case-text);
+    color: var(--case-tabs-active-text);
+    font-size: var(--case-label-size);
+    --lh: var(--leading-tight);
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
+    pointer-events: none;
+    opacity: 0;
+    translate: 12px 0;
+    transition:
+      opacity 0.2s,
+      translate 0.2s;
+  }
+
+  /* У правого края подсказка открывается влево. */
+  .q-line__col:nth-child(n + 6) .q-line__tip {
+    left: auto;
+    right: 50%;
+    translate: -12px 0;
+  }
+
+  .q-line__tip-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .q-line__tip-row::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--q-c);
+  }
+
+  .q-line__col:hover::before {
+    opacity: 1;
+  }
+
+  .q-line__col:hover .q-line__dot {
+    transform: scale(1.4);
+    background: var(--q-c);
+  }
+
+  .q-line__col:hover .q-line__tip {
+    opacity: 1;
+    translate: 20px 0;
+  }
+
+  .q-line__col:nth-child(n + 6):hover .q-line__tip {
+    translate: -20px 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .q-line__path,
+    .q-line__dot {
+      transition: none;
+    }
+  }
+</style>
