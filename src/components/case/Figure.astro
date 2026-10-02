@@ -33,6 +33,9 @@ interface Props {
   tiles?: number;
   /** Для `box`: высота картинки = ширина текста × (высота / ширина из `box`) × zoom; что не влезло — листается вбок и вниз. */
   zoom?: number;
+  /** Для `box`: точка картинки "x y" (доли 0…1), которая при открытии кейса стоит в центре рамки
+      (у края — рамка прижата к краю). По умолчанию — середина по высоте, левый край. */
+  focus?: string;
 }
 
 const {
@@ -51,6 +54,7 @@ const {
   loop = false,
   wide = false,
   tiles,
+  focus,
 } = Astro.props;
 
 // Плитки большой картинки: положение и размер — в % от всей картинки (с нахлёстом 2px справа и снизу).
@@ -89,7 +93,7 @@ const tileList = tiles
   style={box ? `--figure-box-k: calc(${box.split('/')[1].trim()} / ${box.split('/')[0].trim()}); --figure-zoom: ${zoom}; --figure-ratio: calc(${width} / ${height})` : undefined}
 >
   {caption && <figcaption class="case-figure__label">{typograph(caption)}</figcaption>}
-  <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined}>
+  <div class="case-figure__frame" tabindex={scroll || box ? 0 : undefined} data-focus={box ? focus : undefined}>
     {
       (title || lead) && (
         <div class="case-figure__intro">
