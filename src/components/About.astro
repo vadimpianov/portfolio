@@ -42,18 +42,19 @@ const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
     margin-top: round(clamp(24px, 16px + 1.5vw, 48px), 2px);
     font-size: var(--text-about);
     --lh: 1.55;
-    color: var(--color-text-body);
+    /* Текст — белый, выделения — чёрной плашкой (по просьбе пользователя). */
+    color: #fff;
   }
 
   .about__text p + p {
     margin-top: round(1.1em, 2px);
   }
 
-  /* Маркер: белая плашка, тёмный текст; на переносе строки плашка не рвётся. */
+  /* Маркер: чёрная плашка, белый текст; на переносе строки плашка не рвётся. */
   .about__text mark {
     padding: 2px round(0.25em, 2px);
-    background: #fff;
-    color: var(--color-text);
+    background: var(--color-text);
+    color: #fff;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
