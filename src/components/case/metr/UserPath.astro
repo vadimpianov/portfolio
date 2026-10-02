@@ -4,12 +4,13 @@
  * 3. Сделка») и схема этапа кодом (SVG, наш шрифт, тексты по локали). Раскладка — из макета (Frame 5, 1320 × 332):
  * три ряда плашек, связи считаются от плашек (справа → слева, снизу → сверху с поворотом, обход слева, вверх).
  * «Поиск объекта» — из макета; «Ипотека» — по той же раскладке, по логике сервиса из кейса (короткая анкета,
- * выбор банков, остальное — после предварительного одобрения). У «Сделки» — заглушка «Кейс в разработке».
+ * выбор банков, остальное — после предварительного одобрения). «Сделка» — по этапам «Гарантированной сделки» m2.ru
+ * и «Сделки» Домклик (тариф → документы → юридическая проверка → ДКП → подписание и регистрация → расчёты)
+ * и цепочке статусов кейса (электронная подпись, запись в офис, «Документы готовы в профиле»).
  * Переключение без JS (радиокнопки + :has). Уже --case-flow-min-w схема листается по горизонтали.
  */
 import { typograph } from '../../../i18n/typograph';
 import { getLocaleFromUrl } from '../../../i18n/utils';
-import Soon from '../Soon.astro';
 
 const en = getLocaleFromUrl(Astro.url) === 'en';
 const tr = (ru: string, eng: string) => (en ? eng : ru);
@@ -75,14 +76,40 @@ const mortgage: Diagram = {
     ['short', 'banks', 'h'],
     ['banks', 'push', 'h'],
     ['calc', 'compare', 'down'],
-    ['short', 'approval', 'down'],
-    ['banks', 'approval', 'down'],
     ['push', 'approval', 'down'],
     ['approval', 'deal', 'h'],
     ['compare', 'consult', 'detour'],
     ['consult', 'manager', 'h'],
     ['manager', 'picks', 'h'],
     ['picks', 'deal', 'up'],
+  ],
+};
+
+const deal: Diagram = {
+  nodes: {
+    plan: { x: 0, y: 0, w: 200, label: tr('Выбор тарифа', 'Choosing a plan') },
+    docs: { x: 308, y: 0, w: 244, label: tr('Загрузка документов', 'Uploading documents') },
+    check: { x: 660, y: 0, w: 254, label: tr('Юридическая проверка', 'Legal check') },
+    push: { x: 1024, y: 0, w: 296, label: tr('Пуш с отчётом о проверке', 'Check report push'), tone: 'touch' },
+    sign: { x: 120, y: 120, w: 317, label: tr('Выпуск электронной подписи', 'Issuing an e-signature') },
+    contract: { x: 535, y: 120, w: 330, label: tr('Подготовка ДКП', 'Drafting the sale agreement') },
+    ready: { x: 950, y: 120, w: 370, label: tr('Документы готовы в профиле', 'Documents ready in your profile'), tone: 'success' },
+    escrow: { x: 485, y: 172, w: 430, label: tr('Безопасные расчёты после регистрации', 'Safe payment after registration') },
+    office: { x: 120, y: 292, w: 317, label: tr('Выбор даты и офиса', 'Choosing a date and office') },
+    manager: { x: 500, y: 292, w: 317, label: tr('Звонок менеджера сделки', 'Call from the deal manager'), tone: 'touch' },
+    registry: { x: 880, y: 292, w: 440, label: tr('Подписание и регистрация в Росреестре', 'Signing and Rosreestr registration') },
+  },
+  links: [
+    ['plan', 'docs', 'h'],
+    ['docs', 'check', 'h'],
+    ['check', 'push', 'h'],
+    ['plan', 'sign', 'down'],
+    ['push', 'contract', 'down'],
+    ['contract', 'ready', 'h'],
+    ['sign', 'office', 'detour'],
+    ['office', 'manager', 'h'],
+    ['manager', 'registry', 'h'],
+    ['registry', 'ready', 'up'],
   ],
 };
 
@@ -128,7 +155,7 @@ const arrow = ([x, y]: Point, dir: Dir) =>
     : dir === 'down'
       ? `M${x - 7} ${y - 8} L${x} ${y} L${x + 7} ${y - 8}`
       : `M${x - 7} ${y + 8} L${x} ${y} L${x + 7} ${y + 8}`;
-const diagrams = [search, mortgage].map((dg) => ({
+const diagrams = [search, mortgage, deal].map((dg) => ({
   nodes: Object.values(dg.nodes),
   links: dg.links.map(([a, b, kind]) => route(dg.nodes[a], dg.nodes[b], kind)),
 }));
@@ -181,7 +208,6 @@ const diagrams = [search, mortgage].map((dg) => ({
       </div>
     ))
   }
-  <div class="user-path__panel user-path__panel--soon" data-step="2"><Soon /></div>
 </div>
 
 <style>
@@ -240,9 +266,6 @@ const diagrams = [search, mortgage].map((dg) => ({
     display: none;
   }
 
-  .user-path__panel--soon {
-    padding-block: var(--case-tabs-block-gap);
-  }
 
   .user-path__frame {
     padding-bottom: 8px;
