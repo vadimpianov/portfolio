@@ -1,7 +1,4 @@
-/**
- * Данные интерактивных блоков кейса Quantori (BioHarmony). Переходы между фазами «Все» — отчёт BIO
- * «Clinical Development Success Rates 2011–2020»; остальное — демо-данные, похожие на данные продукта.
- */
+/** Данные интерактивных блоков кейса Quantori (PharmaKB). */
 /**
  * Мок отчёта по препарату «до/после»: одни и те же таблицы в двух раскладках. Интерфейс продукта —
  * на английском (как в PharmaKB), значения — с экранов пользователя.
@@ -67,54 +64,6 @@ export const dashboard = {
     },
   ],
 };
-
-/** Вероятность перехода между фазами, %. */
-export const phases = {
-  sources: [
-    { key: 'all', label: { ru: 'Все', en: 'All' } },
-    { key: 'fda', label: { ru: 'FDA', en: 'FDA' } },
-    { key: 'ema', label: { ru: 'EMA', en: 'EMA' } },
-  ],
-  steps: [
-    { label: { ru: 'Фаза I → II', en: 'Phase I → II' }, all: 52.0, fda: 54.1, ema: 49.3 },
-    { label: { ru: 'Фаза II → III', en: 'Phase II → III' }, all: 28.9, fda: 30.2, ema: 27.4 },
-    { label: { ru: 'Фаза III → подача', en: 'Phase III → filing' }, all: 57.8, fda: 59.6, ema: 55.1 },
-    { label: { ru: 'Подача → одобрение', en: 'Filing → approval' }, all: 90.6, fda: 91.8, ema: 88.2 },
-  ],
-  /** Доля препаратов из фазы I, дошедших до одобрения (произведение переходов), %. */
-  total: { ru: 'Дошли до рынка из фазы I', en: 'Reached the market from phase I' },
-  hint: { ru: 'Источник данных', en: 'Data source' },
-};
-
-/** Медианный срок рассмотрения заявки, месяцев, по годам (демо). */
-export const review = {
-  years: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
-  fda: [12.1, 11.4, 10.6, 10.2, 10.0, 10.4, 10.1, 9.8],
-  ema: [14.8, 14.2, 13.9, 13.6, 13.1, 13.7, 13.3, 12.9],
-  unit: { ru: 'мес.', en: 'mo' },
-};
-
-/** Терапевтические области (демо): сортируемая таблица. */
-export const areas = {
-  cols: [
-    { key: 'area', label: { ru: 'Область', en: 'Area' }, type: 'text' },
-    { key: 'programs', label: { ru: 'Программ', en: 'Programs' }, type: 'num' },
-    { key: 'loa', label: { ru: 'Фаза I → рынок, %', en: 'Phase I → market, %' }, type: 'num' },
-    { key: 'years', label: { ru: 'Путь, лет', en: 'Path, years' }, type: 'num' },
-    { key: 'fda', label: { ru: 'Одобрено FDA', en: 'FDA approved' }, type: 'num' },
-    { key: 'ema', label: { ru: 'Одобрено EMA', en: 'EMA approved' }, type: 'num' },
-  ],
-  rows: [
-    { area: { ru: 'Онкология', en: 'Oncology' }, programs: 3412, loa: 5.3, years: 11.2, fda: 118, ema: 104 },
-    { area: { ru: 'Гематология', en: 'Hematology' }, programs: 612, loa: 23.9, years: 9.1, fda: 41, ema: 37 },
-    { area: { ru: 'Неврология', en: 'Neurology' }, programs: 1287, loa: 5.9, years: 12.4, fda: 46, ema: 39 },
-    { area: { ru: 'Инфекции', en: 'Infectious diseases' }, programs: 1043, loa: 13.2, years: 9.6, fda: 63, ema: 58 },
-    { area: { ru: 'Иммунология', en: 'Immunology' }, programs: 894, loa: 10.7, years: 10.3, fda: 38, ema: 35 },
-    { area: { ru: 'Кардиология', en: 'Cardiology' }, programs: 701, loa: 4.8, years: 11.9, fda: 22, ema: 24 },
-    { area: { ru: 'Офтальмология', en: 'Ophthalmology' }, programs: 318, loa: 11.9, years: 10.1, fda: 17, ema: 12 },
-    { area: { ru: 'Метаболизм', en: 'Metabolic' }, programs: 655, loa: 7.4, years: 10.8, fda: 29, ema: 27 },
-  ],
-} as const;
 
 /** Результаты: было → стало. */
 export const results = [
