@@ -15,8 +15,8 @@ const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
 const LINKEDIN = 'https://www.linkedin.com/in/vadimpianov/';
 const PHONE = { href: 'tel:+79162946526', text: '+7 916 294-65-26' };
 const QR = [
-  { name: 'Telegram', href: 'https://t.me/V_PIANOV', src: '/images/contacts/telegram-qr.webp', width: 1695, height: 2000 },
-  { name: 'MAX', href: 'https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA', src: '/images/contacts/max-qr.webp', width: 530, height: 780 },
+  { name: 'Telegram', href: 'https://t.me/V_PIANOV', src: '/images/contacts/telegram-qr.webp', width: 720, height: 720, tilt: -3 },
+  { name: 'MAX', href: 'https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA', src: '/images/contacts/max-qr.webp', width: 720, height: 720, tilt: 3 },
 ];
 ---
 
@@ -31,15 +31,22 @@ const QR = [
       ))}
     </div>
     <aside class="about__contacts" aria-label={t('about.contacts')}>
-      <a class="about__link" href={LINKEDIN} target="_blank" rel="noopener">LinkedIn</a>
-      <a class="about__link" href={PHONE.href} aria-label={`${t('about.phone.label')} ${PHONE.text}`}>{PHONE.text}</a>
+      <p class="about__label">{t('about.contacts')}</p>
+      <a class="about__phone" href={PHONE.href} aria-label={`${t('about.phone.label')} ${PHONE.text}`}>{PHONE.text}</a>
+      <a class="about__row" href={LINKEDIN} target="_blank" rel="noopener">
+        <span>LinkedIn</span>
+        <svg class="about__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+      </a>
       <div class="about__qrs">
         {QR.map((qr) => (
-          <a class="about__qr" href={qr.href} target="_blank" rel="noopener">
+          <a class="about__qr" href={qr.href} target="_blank" rel="noopener" style={`--tilt: ${qr.tilt}deg`}>
             <span class="about__qr-card">
               <img src={asset(qr.src)} width={qr.width} height={qr.height} alt={`QR ${qr.name}`} loading="lazy" decoding="async" />
             </span>
-            <span class="about__qr-name">{qr.name}</span>
+            <span class="about__qr-name">
+              {qr.name}
+              <svg class="about__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+            </span>
           </a>
         ))}
       </div>
@@ -58,6 +65,7 @@ const QR = [
   }
 
   .about__title {
+    color: #fff;
     font-size: var(--text-display);
     font-weight: var(--weight-heavy);
     --lh: var(--leading-display);
@@ -100,67 +108,136 @@ const QR = [
     -webkit-box-decoration-break: clone;
   }
 
+  /* Контакты — тёмная карточка в цвет маркеров текста: крупный телефон, LinkedIn со стрелкой,
+     QR-коды мессенджеров (на наведении карточка QR выпрямляется из наклона и поднимается). */
   .about__contacts {
     display: grid;
-    justify-items: start;
-    gap: 12px;
+    gap: 20px;
+    width: round(clamp(320px, 24vw, 420px), 2px);
+    padding: 32px;
+    border-radius: 24px;
+    background: rgb(20 20 20 / 0.92);
+    color: #fff;
+    box-shadow: 0 24px 48px rgb(0 0 0 / 0.18);
+  }
+
+  @media (max-width: 1023px) {
+    .about__contacts {
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+    }
+  }
+
+  .about__label {
+    color: rgb(255 255 255 / 0.56);
+    font-size: var(--text-tile-lead);
+    --lh: var(--leading-tight);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .about__phone {
+    margin-top: -8px;
+    color: #fff;
+    font-size: round(clamp(24px, 14px + 1.2vw, 34px), 1px);
+    font-weight: var(--weight-heavy);
+    --lh: var(--leading-title);
+    letter-spacing: var(--tracking-title);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .about__phone:hover {
+    color: var(--case-accent);
+  }
+
+  .about__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-block: 1px solid rgb(255 255 255 / 0.14);
     color: #fff;
     font-size: var(--text-about);
-    --lh: 1.55;
+    --lh: var(--leading-tight);
+    text-decoration: none;
   }
 
-  .about__link {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
-    transition: opacity 0.2s;
+  .about__arrow {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: translate 0.25s ease;
   }
 
-  .about__link:hover {
-    opacity: 0.7;
+  .about__row:hover .about__arrow,
+  .about__qr:hover .about__arrow {
+    translate: 4px -4px;
   }
 
-  /* QR-коды — белые карточки одной высоты; по нажатию открывают чат. */
   .about__qrs {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
-    margin-top: 12px;
+    margin-top: 4px;
   }
 
   .about__qr {
     display: grid;
-    justify-items: center;
-    gap: 8px;
-    color: inherit;
+    gap: 12px;
+    color: #fff;
     text-decoration: none;
   }
 
   .about__qr-card {
     display: block;
-    padding: 12px;
+    padding: 10px;
     border-radius: 16px;
     background: #fff;
-    transition: translate 0.2s;
+    rotate: var(--tilt);
+    transition:
+      rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  .about__qr:hover .about__qr-card {
-    translate: 0 -4px;
+  .about__qr:hover .about__qr-card,
+  .about__qr:focus-visible .about__qr-card {
+    rotate: 0deg;
+    translate: 0 -6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about__qr-card {
+      rotate: 0deg;
+    }
   }
 
   .about__qr-card img {
     display: block;
-    width: auto;
-    height: round(clamp(160px, 12vw, 220px), 2px);
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
   }
 
-  .about__qr-name,
-  .about__hint {
+  .about__qr-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: var(--text-tile-lead);
+    font-weight: 600;
     --lh: var(--leading-tight);
   }
 
   .about__hint {
-    opacity: 0.8;
+    color: rgb(255 255 255 / 0.56);
+    font-size: var(--text-tile-lead);
+    --lh: var(--leading-tight);
   }
 </style>
