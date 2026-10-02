@@ -167,7 +167,9 @@ const tileList = tiles
     }
   }
 
+  /* Лента экранов — без скругления: у экранов свои углы, общее скругление срезало угол первого экрана. */
   .case-figure--scroll .case-figure__frame img {
+    border-radius: 0;
     width: auto;
     max-width: none;
     height: var(--case-strip-h);
