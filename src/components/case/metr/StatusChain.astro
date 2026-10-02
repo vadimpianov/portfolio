@@ -83,8 +83,11 @@ const links = cards.slice(1).map((c, k) => {
 </div>
 
 <style>
+  /* Цепочка длинная — уходит за правый край панели (не обрезается по полю); в конце прокрутки — отступ, как поле. */
   .status-chain {
     margin-block: var(--case-block-gap);
+    margin-right: calc(-1 * var(--gutter));
+    padding-right: var(--gutter);
     padding-bottom: 8px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
