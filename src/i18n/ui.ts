@@ -49,6 +49,9 @@ export const ui = {
     'tiles.9.lead': 'Переработал iOS- и Android-приложения крупного букмекера на основе анализа рынка',
     'tiles.10.lead': 'Строил стратегию и дизайн клиентских продуктов на основе исследований и видения',
     'about.title': 'Обо мне',
+    'about.contacts': 'Контакты',
+    'about.phone.label': 'Телефон',
+    'about.qr.hint': 'Нажмите на QR-код, чтобы открыть чат',
     'about.p1':
       'За годы работы я **сотрудничал с ведущими** продуктовыми компаниями, стартапами и агентствами из совершенно разных сфер — **каршеринг, беттинг, строительные компании, банки и криптобанки, недвижимость**.',
     'about.p2':
@@ -101,6 +104,9 @@ export const ui = {
     'tiles.9.lead': 'Redesigned the iOS and Android apps of a major bookmaker based on market analysis',
     'tiles.10.lead': 'Shaped product strategy and design for agency clients, from research to interfaces',
     'about.title': 'About me',
+    'about.contacts': 'Contacts',
+    'about.phone.label': 'Phone',
+    'about.qr.hint': 'Tap a QR code to open the chat',
     'about.p1':
       'Over the years **I’ve worked with leading** product companies, startups and agencies in completely different areas — **carsharing, betting, construction, banks and crypto banks, real estate**.',
     'about.p2':
