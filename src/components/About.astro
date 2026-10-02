@@ -25,7 +25,7 @@ const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
   /* Отдельный слайд поверх того же серого фона hero; контент — в полях сетки.
      Как у карточек: доводка ставит верх слайда на --tiles-final-top от верха экрана (под шапкой). */
   .about {
-    min-height: round(calc(100dvh - var(--tiles-final-top)), 2px);
+    min-height: round(calc(100svh - var(--tiles-final-top)), 2px);
     padding: 0 var(--gutter) var(--tile-gap);
     color: var(--color-text);
   }

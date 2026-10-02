@@ -120,12 +120,14 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
 
   /* Фон: липкий слой высотой в экран. margin-bottom съедает его место в потоке,
      поэтому первый слайд начинается с того же верха. */
+  /* Высота — 100lvh (самый высокий экран, когда адресная строка спрятана), а не dvh: в iOS Safari dvh
+     меняется при прокрутке, холст WebGL пересоздавался каждый кадр — чёрные вспышки фона. */
   .hero__bg {
     position: sticky;
     top: 0;
     z-index: -1;
-    height: 100dvh;
-    margin-bottom: -100dvh;
+    height: 100lvh;
+    margin-bottom: -100lvh;
     overflow: hidden;
     isolation: isolate;
     /* Фолбэк, пока шейдер не отрисовался (или если WebGL недоступен). */
@@ -139,7 +141,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     column-gap: round(clamp(32px, 5vw, 96px), 2px);
     align-items: center;
     justify-items: start;
-    height: 100dvh;
+    height: 100svh;
     padding-inline: var(--gutter);
   }
 
@@ -289,7 +291,7 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
       align-content: center;
       row-gap: 40px;
       height: auto;
-      min-height: 100dvh;
+      min-height: 100svh;
       padding-block: calc(var(--header-h) + 48px) 48px;
     }
 
@@ -448,7 +450,9 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
       // Текст hero реагирует на скролл не сразу: первые TEXT_HOLD экрана стоит на месте
       // (сдвиг компенсирует скролл), затем плавно трогается и дальше едет со страницей.
       // ease power1.out: в начале скорость сдвига = скорости скролла, к концу — ноль, без рывка.
-      const TEXT_HOLD = 0.15; // доля высоты экрана
+      // На телефоне (плитки в колонку) — без задержки: текст hero высокий и стоит у низа экрана,
+      // с задержкой он оставался на месте, и первая плитка наезжала на него (чипсы просвечивали сквозь плашку).
+      const TEXT_HOLD = window.matchMedia('(max-width: 767px)').matches ? 0 : 0.15; // доля высоты экрана
       const holdPx = () => window.innerHeight * TEXT_HOLD;
       gsap.fromTo(
         content,
@@ -550,7 +554,9 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
       // Если скролл остановился недалеко от ряда (после сильного или слабого скролла) — доезжаем до него.
       // Свой snap вместо lenis/snap: тот решает по ещё не доехавшей позиции и тянет назад.
       // Здесь ждём полной остановки скролла (и после инерции), потом доводим до ближайшего ряда.
-      const lenis = getLenis();
+      // На сенсорных экранах доводки нет: она срабатывала, пока палец на экране или идёт инерция,
+      // и тянула прокрутку обратно — страница «скакала» туда-сюда.
+      const lenis = window.matchMedia('(hover: none), (pointer: coarse)').matches ? null : getLenis();
       if (lenis) {
         const SNAP_RANGE = 0.5; // доля высоты экрана, в пределах которой ряд притягивает
         const SNAP_IDLE = 90; // мс без движения — скролл считается остановившимся

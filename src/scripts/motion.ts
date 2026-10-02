@@ -41,6 +41,9 @@ let lenis: Lenis | null = null;
 function initLenis() {
   if (lenis || prefersReducedMotion()) return;
   lenis = new Lenis({ autoRaf: false });
+  // На телефоне адресная строка прячется/появляется при прокрутке (resize по высоте) — не пересчитываем
+  // сцены скролла, иначе позиции прыгали.
+  ScrollTrigger.config({ ignoreMobileResize: true });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis?.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);

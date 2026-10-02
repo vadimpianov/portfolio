@@ -218,10 +218,10 @@ const more = (
     gap: var(--tile-gap);
     /* Плитки заезжают на первый слайд: верх первого ряда — на --tiles-start от верха экрана.
        Проявляются при скролле (см. Hero.astro). */
-    margin-top: calc(var(--tiles-start) - 100dvh);
+    margin-top: calc(var(--tiles-start) - 100svh);
     /* Снизу — место, чтобы последний ряд тоже мог встать верхом на --tiles-final-top (snap). */
     padding: 0 var(--gutter)
-      round(max(var(--tile-gap), calc(100dvh - var(--tiles-final-top) - var(--tile-est-h))), 2px);
+      round(max(var(--tile-gap), calc(100svh - var(--tiles-final-top) - var(--tile-est-h))), 2px);
     /* Оценка высоты плитки: ширина колонки × (высота / ширина). */
     --tile-est-h: calc((100vw - 2 * var(--gutter)) * 1.5);
   }

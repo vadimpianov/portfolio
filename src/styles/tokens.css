@@ -46,7 +46,7 @@
   --tile-print: rgb(20 20 20 / 0.16);
   --tile-print-fill: rgb(20 20 20 / 0.06);
   /* Где на первом экране появляется верх плиток. */
-  --tiles-start: 100dvh;
+  --tiles-start: 100svh; /* svh, а не dvh: в iOS Safari dvh меняется при прокрутке — всё ниже скакало */
 
   /* Шрифт */
   --font-sans: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

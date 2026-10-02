@@ -397,9 +397,10 @@ export function mountHeroGradient(
   };
   canvas.addEventListener('webglcontextlost', onLost);
 
+  // После смены размера холст пустой до следующего кадра — рисуем сразу, без чёрной вспышки.
   const resizeObserver = new ResizeObserver(() => {
     resize();
-    if (reducedMotion) draw();
+    draw();
   });
   resizeObserver.observe(canvas);
   resize();
