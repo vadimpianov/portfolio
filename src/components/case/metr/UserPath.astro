@@ -1,8 +1,10 @@
 ---
 /**
  * Кейс «Метр квадратный»: сквозной путь пользователя — переключатель этапов («1. Поиск объекта / 2. Ипотека /
- * 3. Сделка») и схема этапа кодом (SVG, наш шрифт, тексты по локали). Геометрия — из макета (Frame 5, 1320 × 332).
- * Готов только «Поиск объекта», у остальных этапов — заглушка «Кейс в разработке».
+ * 3. Сделка») и схема этапа кодом (SVG, наш шрифт, тексты по локали). Раскладка — из макета (Frame 5, 1320 × 332):
+ * три ряда плашек, связи считаются от плашек (справа → слева, снизу → сверху с поворотом, обход слева, вверх).
+ * «Поиск объекта» — из макета; «Ипотека» — по той же раскладке, по логике сервиса из кейса (короткая анкета,
+ * выбор банков, остальное — после предварительного одобрения). У «Сделки» — заглушка «Кейс в разработке».
  * Переключение без JS (радиокнопки + :has). Уже --case-flow-min-w схема листается по горизонтали.
  */
 import { typograph } from '../../../i18n/typograph';
@@ -16,54 +18,122 @@ const steps = [tr('1. Поиск объекта', '1. Finding a property'), tr('
 const name = `user-path-${Math.random().toString(36).slice(2, 8)}`;
 
 type Node = { x: number; y: number; w: number; label: string; tone?: 'success' | 'touch' };
-const H = 40;
-const nodes: Node[] = [
-  { x: 0, y: 0, w: 111, label: tr('Выдача', 'Listings') },
-  { x: 281, y: 0, w: 223, label: tr('Настройка фильтра', 'Filter setup') },
-  { x: 674, y: 0, w: 226, label: tr('Сохранённый поиск', 'Saved search') },
-  { x: 1070, y: 0, w: 250, label: tr('Пуш о новых объектах', 'New listings push'), tone: 'touch' },
-  { x: 145, y: 120, w: 197, label: tr('Быстрый подбор', 'Quick match') },
-  { x: 556, y: 120, w: 206, label: tr('Работа с выдачей', 'Browsing listings') },
-  { x: 949, y: 120, w: 279, label: tr('Контакт с собственником', 'Contacting the owner'), tone: 'success' },
-  { x: 478, y: 172, w: 363, label: tr('Баннеры со смежными сервисами', 'Banners for related services') },
-  { x: 145, y: 292, w: 223, label: tr('Заполнение анкеты', 'Filling in the form') },
-  { x: 500, y: 292, w: 226, label: tr('Звонок колл-центра', 'Call from the call centre'), tone: 'touch' },
-  { x: 858, y: 292, w: 462, label: tr('PDF на почту с актуальными предложениями', 'PDF by email with current offers') },
-];
+// h — с правого края на левый (один ряд); down — снизу вниз-вверх с поворотом посередине;
+// detour — снизу, обходом слева, в левый край; up — вертикально вверх по центру цели.
+type LinkSpec = [from: string, to: string, kind: 'h' | 'down' | 'detour' | 'up'];
+type Diagram = { nodes: Record<string, Node>; links: LinkSpec[] };
 
-// Связи: линия от точки (кружок) до стрелки. Повороты — скругление 20px.
-type Link = { d: string; from: [number, number]; to: [number, number]; dir: 'right' | 'down' | 'up' };
+const H = 40;
 const R = 20;
-const elbowDown = (x1: number, y1: number, x2: number, y2: number, mid: number) => {
-  const sx = Math.sign(x2 - x1);
-  return `M${x1} ${y1} V${mid - R} Q${x1} ${mid} ${x1 + sx * R} ${mid} H${x2 - sx * R} Q${x2} ${mid} ${x2} ${mid + R} V${y2}`;
-};
-const links: Link[] = [
-  { d: 'M111 20 H280', from: [111, 20], to: [280, 20], dir: 'right' },
-  { d: 'M504 20 H673', from: [504, 20], to: [673, 20], dir: 'right' },
-  { d: 'M900 20 H1069', from: [900, 20], to: [1069, 20], dir: 'right' },
-  { d: elbowDown(56, 40, 244, 119, 80), from: [56, 40], to: [244, 119], dir: 'down' },
-  { d: elbowDown(392, 40, 659, 119, 80), from: [392, 40], to: [659, 119], dir: 'down' },
-  { d: elbowDown(787, 40, 659, 119, 80), from: [787, 40], to: [659, 119], dir: 'down' },
-  { d: elbowDown(1195, 40, 659, 119, 80), from: [1195, 40], to: [659, 119], dir: 'down' },
-  { d: 'M762 140 H948', from: [762, 140], to: [948, 140], dir: 'right' },
-  {
-    d: `M244 160 V212 Q244 232 224 232 H133 Q113 232 113 252 V292 Q113 312 133 312 H144`,
-    from: [244, 160],
-    to: [144, 312],
-    dir: 'right',
+
+const search: Diagram = {
+  nodes: {
+    listings: { x: 0, y: 0, w: 111, label: tr('Выдача', 'Listings') },
+    filter: { x: 281, y: 0, w: 223, label: tr('Настройка фильтра', 'Filter setup') },
+    saved: { x: 674, y: 0, w: 226, label: tr('Сохранённый поиск', 'Saved search') },
+    push: { x: 1070, y: 0, w: 250, label: tr('Пуш о новых объектах', 'New listings push'), tone: 'touch' },
+    quick: { x: 145, y: 120, w: 197, label: tr('Быстрый подбор', 'Quick match') },
+    browse: { x: 556, y: 120, w: 206, label: tr('Работа с выдачей', 'Browsing listings') },
+    owner: { x: 949, y: 120, w: 279, label: tr('Контакт с собственником', 'Contacting the owner'), tone: 'success' },
+    banners: { x: 478, y: 172, w: 363, label: tr('Баннеры со смежными сервисами', 'Banners for related services') },
+    form: { x: 145, y: 292, w: 223, label: tr('Заполнение анкеты', 'Filling in the form') },
+    call: { x: 500, y: 292, w: 226, label: tr('Звонок колл-центра', 'Call from the call centre'), tone: 'touch' },
+    pdf: { x: 858, y: 292, w: 462, label: tr('PDF на почту с актуальными предложениями', 'PDF by email with current offers') },
   },
-  { d: 'M368 312 H499', from: [368, 312], to: [499, 312], dir: 'right' },
-  { d: 'M726 312 H857', from: [726, 312], to: [857, 312], dir: 'right' },
-  { d: 'M1088 292 V161', from: [1088, 292], to: [1088, 161], dir: 'up' },
-];
-const arrow = ([x, y]: [number, number], dir: Link['dir']) =>
+  links: [
+    ['listings', 'filter', 'h'],
+    ['filter', 'saved', 'h'],
+    ['saved', 'push', 'h'],
+    ['listings', 'quick', 'down'],
+    ['filter', 'browse', 'down'],
+    ['saved', 'browse', 'down'],
+    ['push', 'browse', 'down'],
+    ['browse', 'owner', 'h'],
+    ['quick', 'form', 'detour'],
+    ['form', 'call', 'h'],
+    ['call', 'pdf', 'h'],
+    ['pdf', 'owner', 'up'],
+  ],
+};
+
+const mortgage: Diagram = {
+  nodes: {
+    calc: { x: 0, y: 0, w: 254, label: tr('Калькулятор ипотеки', 'Mortgage calculator') },
+    short: { x: 400, y: 0, w: 202, label: tr('Короткая анкета', 'Short application') },
+    banks: { x: 748, y: 0, w: 170, label: tr('Выбор банков', 'Choosing banks') },
+    push: { x: 1066, y: 0, w: 254, label: tr('Пуш о решении банка', 'Bank decision push'), tone: 'touch' },
+    compare: { x: 184, y: 120, w: 233, label: tr('Сравнение программ', 'Comparing programmes') },
+    approval: { x: 560, y: 120, w: 306, label: tr('Предварительное одобрение', 'Pre-approval') },
+    deal: { x: 1030, y: 120, w: 212, label: tr('Переход к сделке', 'Moving to the deal'), tone: 'success' },
+    rest: { x: 507, y: 172, w: 412, label: tr('Дозаполнение анкеты после одобрения', 'Completing the form after approval') },
+    consult: { x: 184, y: 292, w: 275, label: tr('Заявка на консультацию', 'Consultation request') },
+    manager: { x: 560, y: 292, w: 328, label: tr('Звонок ипотечного менеджера', 'Call from a mortgage manager'), tone: 'touch' },
+    picks: { x: 1003, y: 292, w: 317, label: tr('Подборка программ на почту', 'Programme picks by email') },
+  },
+  links: [
+    ['calc', 'short', 'h'],
+    ['short', 'banks', 'h'],
+    ['banks', 'push', 'h'],
+    ['calc', 'compare', 'down'],
+    ['short', 'approval', 'down'],
+    ['banks', 'approval', 'down'],
+    ['push', 'approval', 'down'],
+    ['approval', 'deal', 'h'],
+    ['compare', 'consult', 'detour'],
+    ['consult', 'manager', 'h'],
+    ['manager', 'picks', 'h'],
+    ['picks', 'deal', 'up'],
+  ],
+};
+
+type Point = [number, number];
+type Dir = 'right' | 'down' | 'up';
+const cx = (n: Node) => Math.round(n.x + n.w / 2);
+const route = (a: Node, b: Node, kind: LinkSpec[2]): { d: string; from: Point; to: Point; dir: Dir } => {
+  if (kind === 'h') {
+    const y = a.y + H / 2;
+    return { d: `M${a.x + a.w} ${y} H${b.x - 1}`, from: [a.x + a.w, y], to: [b.x - 1, y], dir: 'right' };
+  }
+  if (kind === 'up') {
+    const x = cx(b);
+    return { d: `M${x} ${a.y} V${b.y + H + 1}`, from: [x, a.y], to: [x, b.y + H + 1], dir: 'up' };
+  }
+  const x1 = cx(a);
+  const y1 = a.y + H;
+  if (kind === 'down') {
+    const x2 = cx(b);
+    const mid = Math.round((y1 + b.y) / 2);
+    const sx = Math.sign(x2 - x1);
+    return {
+      d: `M${x1} ${y1} V${mid - R} Q${x1} ${mid} ${x1 + sx * R} ${mid} H${x2 - sx * R} Q${x2} ${mid} ${x2} ${mid + R} V${b.y - 1}`,
+      from: [x1, y1],
+      to: [x2, b.y - 1],
+      dir: 'down',
+    };
+  }
+  // detour: вниз, влево за край цели, вниз до её середины и вправо в левый край.
+  const mid = Math.round((y1 + b.y) / 2) + 12;
+  const xl = b.x - 32;
+  const yc = b.y + H / 2;
+  return {
+    d: `M${x1} ${y1} V${mid - R} Q${x1} ${mid} ${x1 - R} ${mid} H${xl + R} Q${xl} ${mid} ${xl} ${mid + R} V${yc - R} Q${xl} ${yc} ${xl + R} ${yc} H${b.x - 1}`,
+    from: [x1, y1],
+    to: [b.x - 1, yc],
+    dir: 'right',
+  };
+};
+const arrow = ([x, y]: Point, dir: Dir) =>
   dir === 'right'
     ? `M${x - 8} ${y - 7} L${x} ${y} L${x - 8} ${y + 7}`
     : dir === 'down'
       ? `M${x - 7} ${y - 8} L${x} ${y} L${x + 7} ${y - 8}`
       : `M${x - 7} ${y + 8} L${x} ${y} L${x + 7} ${y + 8}`;
+const diagrams = [search, mortgage].map((dg) => ({
+  nodes: Object.values(dg.nodes),
+  links: dg.links.map(([a, b, kind]) => route(dg.nodes[a], dg.nodes[b], kind)),
+}));
 ---
+
 
 <div class="user-path">
   <div class="user-path__tabs" role="radiogroup">
@@ -77,37 +147,40 @@ const arrow = ([x, y]: [number, number], dir: Link['dir']) =>
     }
   </div>
 
-  <div class="user-path__panel" data-step="0">
-    <div class="user-path__frame">
-      <svg class="user-path__svg" viewBox="-4 -4 1328 340" role="img" aria-label={steps[0]}>
-        <g class="user-path__links">
-          {
-            links.map((l) => (
-              <>
-                <path d={l.d} />
-                <path d={arrow(l.to, l.dir)} />
-              </>
-            ))
-          }
-        </g>
-        <g class="user-path__nodes">
-          {
-            nodes.map((n) => (
-              <g class:list={['user-path__node', n.tone && `user-path__node--${n.tone}`]}>
-                <rect x={n.x} y={n.y} width={n.w} height={H} rx="10" />
-                <text x={n.x + n.w / 2} y={n.y + H / 2} text-anchor="middle">
-                  {n.label}
-                </text>
-              </g>
-            ))
-          }
-        </g>
-        {/* Точки начала линий — поверх плашек, на их краю. */}
-        <g class="user-path__dots">{links.map((l) => <circle cx={l.from[0]} cy={l.from[1]} r="4" />)}</g>
-      </svg>
-    </div>
-  </div>
-  <div class="user-path__panel user-path__panel--soon" data-step="1"><Soon /></div>
+  {
+    diagrams.map((dg, i) => (
+      <div class="user-path__panel" data-step={i}>
+        <div class="user-path__frame">
+          <svg class="user-path__svg" viewBox="-4 -4 1328 340" role="img" aria-label={steps[i]}>
+            <g class="user-path__links">
+              {dg.links.map((l) => (
+                <>
+                  <path d={l.d} />
+                  <path d={arrow(l.to, l.dir)} />
+                </>
+              ))}
+            </g>
+            <g class="user-path__nodes">
+              {dg.nodes.map((n) => (
+                <g class:list={['user-path__node', n.tone && `user-path__node--${n.tone}`]}>
+                  <rect x={n.x} y={n.y} width={n.w} height={H} rx="10" />
+                  <text x={n.x + n.w / 2} y={n.y + H / 2} text-anchor="middle">
+                    {n.label}
+                  </text>
+                </g>
+              ))}
+            </g>
+            {/* Точки начала линий — поверх плашек, на их краю. */}
+            <g class="user-path__dots">
+              {dg.links.map((l) => (
+                <circle cx={l.from[0]} cy={l.from[1]} r="4" />
+              ))}
+            </g>
+          </svg>
+        </div>
+      </div>
+    ))
+  }
   <div class="user-path__panel user-path__panel--soon" data-step="2"><Soon /></div>
 </div>
 
