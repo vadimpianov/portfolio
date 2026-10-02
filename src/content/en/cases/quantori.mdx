@@ -17,9 +17,15 @@ import Figure from '../../../components/case/Figure.astro';
 import Dashboard from '../../../components/case/quantori/Dashboard.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
-At Quantori I worked on PharmaKB, a knowledge base on drug development built for Collaborative Drug Discovery. The service gathers historical data from open sources: approvals by the US regulator FDA and the European EMA, clinical trials by phase, patents, sales, adverse events and PubMed publications. These add up to reports on a drug, a disease and a company.
+<div class="case-lead">
 
-The reports are used by analysts, BD managers and investors at pharma companies: before betting on a new molecule, they look for historical analogues. The stakes are high: according to BIO, only 7.9% of drugs entering phase 1 trials reach approval, and the journey takes 10.5 years on average. The first version of the product was built by developers without a designer: there was plenty of data, but working with it was hard.
+PharmaKB gathers historical data on drug development from open sources — the US regulator FDA and the European EMA, clinical trials by phase, patents, sales, adverse events and PubMed publications. These add up to reports on a drug, a disease and a company.
+
+The reports are used by analysts, BD managers and investors at pharma companies: before betting on a new molecule, they look for historical analogues. The stakes are high: according to BIO, only 7.9% of drugs entering phase 1 trials reach approval, and the journey takes 10.5 years on average.
+
+The first version of the product was built by developers without a designer: there was plenty of data, but working with it was hard. The average session lasted 18 minutes, and almost nobody could work with the reports for more than 20 minutes in a row. Users complained that tables on the same page came in different sizes and gave the eye nothing to hold on to, that they had to look up the same number twice — for the FDA and for the EMA, that charts had no labels or legends, and that the only way to find a row was the browser search. Every third support request was about the interface rather than the data.
+
+</div>
 
 <TextColumns>
 
@@ -28,13 +34,13 @@ I had several goals:
 <Columns>
 <div>
 
-- Make the reports comfortable for long sessions: analysts were worn out after just 20 minutes
+- Make the reports comfortable for long sessions
 - Bring dozens of tables and charts into one system
 
 </div>
 <div>
 
-- Unify FDA and EMA data in one interface without losing a single number
+- Present a huge amount of data so it is easy to navigate, from the big picture down to the details, without losing a single number
 
 </div>
 </Columns>

@@ -244,6 +244,11 @@ const coverSize = (() => {
     left: var(--case-indent);
   }
 
+  /* Вводный текст кейса в `<div class="case-lead">` — абзацы без пустой строки, только красная строка. */
+  .case__body :global(.case-lead p:not([class]) + p:not([class])) {
+    margin-top: 0;
+  }
+
   /* Выделение в тексте — как обычный текст: без белого цвета и жирности. */
   .case__body :global(strong) {
     color: inherit;
