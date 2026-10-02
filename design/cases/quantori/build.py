@@ -1,6 +1,5 @@
 """Картинки кейса Quantori (PharmaKB) из PDF пользователя (design/cases/quantori/screens/…).
 
-- cover-{600,1200}.webp — обложка: отчёт по заболеванию с подсказкой «Historical Success Rate»;
 - drug-report/r{ряд}c{колонка}.webp — отчёт по препарату целиком (1440 × 15900 pt, 2x), плитками 2048;
 - screens.webp — лента экранов (1440 × 834 pt каждый, 1x = 2x от высоты ленты на сайте), зазор 64px, скругление 24px.
 Запуск из корня репозитория: python3 design/cases/quantori/build.py
@@ -30,12 +29,6 @@ def rounded(im, r):
     return out
 
 
-# Обложка.
-cover = render('5-disease-report/Disease Report - Tooltip.pdf', 2)
-for w in (600, 1200):
-    rounded(cover.resize((w, round(cover.height * w / cover.width)), Image.LANCZOS), w // 60).save(
-        f'{OUT}/cover-{w}.webp', quality=86, method=6)
-
 # Отчёт по препарату целиком — плитками.
 drug = render('4-drug-report/Drug Report - Default.pdf', 2)
 drug.save('/tmp/quantori-drug-report.png')
@@ -60,4 +53,4 @@ for s in shots:
     strip.paste(s, (x, 0), s)
     x += s.width + GAP
 strip.save(f'{OUT}/screens.webp', quality=86, method=6)
-print('cover', cover.size, 'drug', drug.size, 'strip', strip.size)
+print('drug', drug.size, 'strip', strip.size)
