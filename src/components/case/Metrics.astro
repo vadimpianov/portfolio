@@ -128,7 +128,7 @@ const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
     display: none;
   }
 
-  /* Все шаги — всегда в один ряд. На узком контейнере (телефон) — лента с прокруткой вбок. */
+  /* Все шаги — всегда в один ряд. */
   .case-metrics__chart {
     display: grid;
     grid-auto-columns: minmax(0, 1fr);
@@ -139,27 +139,25 @@ const name = `metrics-${Math.random().toString(36).slice(2, 8)}`;
     list-style: none;
   }
 
+  /* Телефон: график целиком на экране — уменьшен как одна картинка. Макет ряда — колонки
+     --case-metrics-col-mobile (148px) с зазором 18px, всего 812px; всё (колонки, зазоры, высота, скругление,
+     кегли, отступы) умножается на --u = ширина / 812, поэтому подписи переносятся так же, как в макете. */
   @container case (max-width: 599px) {
-    .case-metrics__chart {
-      grid-auto-columns: var(--case-metrics-col-mobile);
-      margin-inline: calc(-1 * var(--gutter));
-      padding-inline: var(--gutter);
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-    }
-
-    .case-metrics__chart::-webkit-scrollbar {
-      display: none;
-    }
-
     .case-metrics {
-      --case-metrics-radius: var(--case-metrics-radius-mobile);
+      --u: calc(100cqi / 812);
+      --case-bar-h: round(calc(180 * var(--u)), 2px);
+      --case-metrics-gap: round(calc(18 * var(--u)), 2px);
+      --case-metrics-radius: round(calc(19 * var(--u)), 2px);
     }
 
-    /* В ленте колонки шире — подпись обычным кеглем текста кейса. */
+    .case-metrics .case-metrics__value {
+      margin-top: round(calc(24 * var(--u)), 2px);
+      font-size: round(calc(24 * var(--u)), 1px);
+    }
+
     .case-metrics .case-metrics__label {
-      font-size: var(--text-case-body);
+      margin-top: round(calc(4 * var(--u)), 2px);
+      font-size: round(calc(15 * var(--u)), 1px);
     }
   }
 

@@ -234,4 +234,13 @@ const coverSize = (() => {
     color: inherit;
     font-weight: inherit;
   }
+
+  /* Телефон: всё, что листается вбок (схемы, ленты экранов, карты, цепочки), уходит за правый край экрана —
+     справа без поля; в конце прокрутки — отступ, как поле. Слева начинается по полю, как текст. */
+  @container case (max-width: 599px) {
+    .case :global(:is(.flow__frame, .case-figure--wide .case-figure__frame, .case-figure--scroll:not(.case-figure--loop) .case-figure__frame, .case-screens__row, .user-path__frame, .status-chain)) {
+      margin-right: calc(-1 * var(--gutter));
+      padding-right: var(--gutter);
+    }
+  }
 </style>
