@@ -3,23 +3,27 @@
  * Селектор сценариев кейса: вкладки в ряд, выбранная — жёлтая. Содержимое выбранной по умолчанию вкладки —
  * в слоте; у остальных пока заглушка «Кейс в разработке». Переключение — без JS (радиокнопки + :has),
  * поэтому работает и в модалке, куда кейс вставляется готовым HTML.
+ * Без `items` (или с пустым списком) селектора нет — только содержимое со стилями сценария
+ * (заголовки разделов по центру, отступы); первый заголовок — на --case-tabs-section-gap от чипсов.
  */
 import { getLocaleFromUrl, useTranslations } from '../../i18n/utils';
 import { typograph } from '../../i18n/typograph';
 import Soon from './Soon.astro';
 
 interface Props {
-  items: string[];
+  items?: string[];
   /** Вкладка, открытая сразу; её содержимое — в слоте. */
   active?: number;
 }
 
-const { items, active = 0 } = Astro.props;
+const { items = [], active = 0 } = Astro.props;
+const tabs = items.length > 0;
 const t = useTranslations(getLocaleFromUrl(Astro.url));
 const name = 'case-tabs';
 ---
 
-<div class="case-tabs">
+<div class:list={['case-tabs', { 'case-tabs--bare': !tabs }]}>
+  {tabs && (
   <div class="case-tabs__list" role="radiogroup" aria-label={t('case.tabs')}>
     {items.map((item, i) => (
       <label class="case-tabs__tab">
@@ -34,14 +38,17 @@ const name = 'case-tabs';
       </label>
     ))}
   </div>
+  )}
 
   <div class="case-tabs__panel case-tabs__panel--main">
     <slot />
   </div>
 
-  <div class="case-tabs__panel case-tabs__panel--soon">
-    <Soon />
-  </div>
+  {tabs && (
+    <div class="case-tabs__panel case-tabs__panel--soon">
+      <Soon />
+    </div>
+  )}
 </div>
 
 <style>
@@ -204,5 +211,10 @@ const name = 'case-tabs';
 
   .case-tabs__panel--soon {
     padding: var(--case-section-gap) 0;
+  }
+
+  /* Без селектора: чипсы → первый заголовок — --case-tabs-section-gap (отступ самого блока). */
+  .case-tabs--bare .case-tabs__panel--main > :global(h2:first-child) {
+    margin-top: 0;
   }
 </style>
