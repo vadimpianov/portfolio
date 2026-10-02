@@ -286,10 +286,11 @@ const close = t('case.close');
   function centerBoxes(root: ParentNode) {
     root.querySelectorAll<HTMLElement>('.case-figure--box .case-figure__frame').forEach((frame) => {
       const img = frame.querySelector('img');
-      // Точка `focus` ("x y", доли картинки) — в центр рамки; без неё — середина по высоте.
+      // Точка `focus` ("x y", доли картинки): по горизонтали — к левому краю рамки, по вертикали — в центр;
+      // без неё — левый край, середина по высоте.
       const [fx, fy] = (frame.dataset.focus ?? '0 0.5').split(' ').map(Number);
       const center = () => {
-        frame.scrollLeft = fx * frame.scrollWidth - frame.clientWidth / 2;
+        frame.scrollLeft = fx * frame.scrollWidth;
         frame.scrollTop = fy * frame.scrollHeight - frame.clientHeight / 2;
       };
       if (img && !img.complete) img.addEventListener('load', center, { once: true });
