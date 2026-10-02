@@ -32,6 +32,8 @@ const LABEL = 40; // метка ряда + отступ до карточек
 const ROW_GAP = 72;
 const top = (row: number) => LABEL + row * (LABEL + CH + ROW_GAP);
 const width = (cards.length - 1) * STEP + W;
+// Метка ряда — над первой плашкой этого ряда.
+const firstInRow = (row: number) => cards.findIndex((c) => c.row === row);
 const height = top(1) + CH;
 const R = 16;
 const links = cards.slice(1).map((c, k) => {
@@ -54,7 +56,7 @@ const links = cards.slice(1).map((c, k) => {
   <div class="status-chain__canvas" style={`width: ${width}px; height: ${height}px`}>
     {
       rows.map((label, row) => (
-        <p class="status-chain__row" style={`top: ${top(row) - LABEL}px`}>
+        <p class="status-chain__row" style={`left: ${firstInRow(row) * STEP}px; top: ${top(row) - LABEL}px`}>
           {typograph(label)}
         </p>
       ))
@@ -111,8 +113,7 @@ const links = cards.slice(1).map((c, k) => {
 
   .status-chain__row {
     position: absolute;
-    left: 0;
-    color: var(--case-text);
+    color: var(--case-accent);
     font-size: var(--case-label-size);
     --lh: var(--leading-tight);
     letter-spacing: var(--tracking-label);
