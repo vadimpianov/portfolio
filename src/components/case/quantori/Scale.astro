@@ -2,7 +2,7 @@
 /**
  * Масштаб PharmaKB: полоски по числу препаратов, компаний и заболеваний (доля от наибольшего),
  * при прокрутке полоски вырастают, числа досчитывают (`data-reveal`, `data-count` — `src/scripts/case-data.ts`).
- * Стоит под вводным текстом, ниже обложки (`clear`); обложка центрируется по высоте до этого блока (`data-cover-below`).
+ * Стоит после чипсов навыков, над первым разделом кейса.
  */
 import { typograph } from '../../../i18n/typograph';
 import { getLocaleFromUrl } from '../../../i18n/utils';
@@ -20,7 +20,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
 const max = Math.max(...scale.map((s) => s.value));
 ---
 
-<div class="q-scale" data-cover-below>
+<div class="q-scale">
   <Block caption={caption} note={note}>
     <ul class="q-scale__list">
       {scale.map((s, i) => (
@@ -47,9 +47,10 @@ const max = Math.max(...scale.map((s) => s.value));
 </div>
 
 <style>
+  /* Между чипсами навыков и первым разделом: сверху и снизу — отступ раздела. */
   .q-scale {
     clear: both;
-    margin-top: var(--case-lead-gap);
+    margin-top: var(--case-tabs-section-gap);
   }
 
   .q-scale :global(.q-block) {

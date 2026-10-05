@@ -99,7 +99,10 @@ export const scale = [
   {
     value: 1700,
     label: { ru: 'Компаний', en: 'Companies' },
-    sub: { ru: 'около 600 торгуются на бирже', en: 'about 600 publicly traded' },
+    sub: {
+      ru: 'около 600 торгуются на бирже, капитализация от $100 млн до $400 млрд',
+      en: 'about 600 publicly traded, market cap from $100M to $400B',
+    },
   },
   {
     value: 1300,
