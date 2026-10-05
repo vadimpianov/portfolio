@@ -93,11 +93,13 @@ for k, e in enumerate(els):
 remove.add(1159)  # стрелка тултипа без плашки
 
 # --- Курсоры и руки ---
+cursors = set()  # в вайрфрейм тоже не попадают
 for k, e in enumerate(els):
     if e['f'] and e['f'].startswith('url(#pattern') and e['w'] < 18:
         remove.add(k)
     if e['f'] == 'white' and e['t'] == 'path' and e['w'] == 11 and e['h'] == 11 and els[k + 1]['f'] == DARK:
         remove.update((k, k + 1))
+        cursors.update((k, k + 1))
 
 # --- Главные вкладки (9 полос) ---
 tabbars = sorted({round(e['y'] - 0.5) for e in els if e['s'] == '#DFDDDF' and e['t'] == 'rect' and e['h'] == 51})
@@ -424,6 +426,6 @@ for k in sorted(remove, reverse=True):
     svg.remove(children[k])
 tree.write(os.path.join(HERE, 'base.svg'))
 json.dump(slices, open(os.path.join(HERE, 'slices.json'), 'w'))
-json.dump(sorted(remove - ui), open(os.path.join(HERE, 'removed.json'), 'w'))
+json.dump(sorted(remove - (ui - cursors)), open(os.path.join(HERE, 'removed.json'), 'w'))
 from collections import Counter
 print('removed', len(remove), 'slices', len(slices), 'items', Counter(i['k'] for i in items), 'points', npoints)

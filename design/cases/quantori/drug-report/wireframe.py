@@ -71,6 +71,11 @@ for k, (e, node) in enumerate(zip(els, children)):
         continue
     x, y, w, h = e['x'], e['y'], e['w'], e['h']
     fill, stroke = e['f'], e['s']
+    if k == 17:  # «Add to Collection» — папка, как на сайте (звёздочку из макета заменили)
+        out.append(f'<g transform="translate({x} {y})" fill="none" stroke="{C_SHAPE}" stroke-width="1.2" '
+                   'stroke-linecap="round" stroke-linejoin="round"><path d="M.8 2.6a.9.9 0 0 1 .9-.9h2.9l1.3 1.4h4.4a.9.9 0 0 1 '
+                   '.9.9v5.9a.9.9 0 0 1-.9.9H1.7a.9.9 0 0 1-.9-.9z"/><path d="M6 4.9v3.2M4.4 6.5h3.2"/></g>')
+        continue
     if k == 30:  # чипс в состоянии наведения из макета — как остальные
         out.append(f'<rect x="{x + .5}" y="{y + .5}" width="{w - 1}" height="{h - 1}" fill="{C_BG}" stroke="{C_LINE}"/>')
         continue
@@ -88,7 +93,8 @@ for k, (e, node) in enumerate(zip(els, children)):
     if fill and fill.startswith('url('):
         continue
     is_text = (tag == 'path' and fill and fill not in LIGHT and fill not in LINE and not stroke
-               and not (w <= 18 and h <= 18 and abs(w - h) < 3) and h < 70 and w > 4)
+               and not (w <= 18 and h <= 18 and abs(w - h) < 3) and not (w <= 14 and h <= 8)
+               and w > 4 and (h < 70 or w > 150))
     if is_text and fill in BLUE and h >= 20 and w < 150:
         is_text = False  # синяя плашка (активный сегмент), не текст
     if is_text:

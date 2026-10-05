@@ -6,7 +6,8 @@
  */
 
 const PAGE_W = 1440;
-const MIN_W = 960; // на телефоне страница не мельчит, а листается вбок
+const MIN_W = 960;
+const DEFAULT_SPLIT = 0.1; // бегунок по умолчанию — 10% ширины окна слева // на телефоне страница не мельчит, а листается вбок
 
 const zoomOf = (page: HTMLElement) => Number(page.style.zoom) || 1;
 
@@ -25,7 +26,7 @@ function setSplit(frame: HTMLElement, pos?: number) {
   const page = frame.querySelector<HTMLElement>('.dr__page');
   const split = win.querySelector<HTMLElement>('[data-dr-split]');
   if (!page || !split) return;
-  const p = Math.min(1, Math.max(0, pos ?? Number(win.dataset.split ?? 0.5)));
+  const p = Math.min(1, Math.max(0, pos ?? Number(win.dataset.split ?? DEFAULT_SPLIT)));
   win.dataset.split = String(p);
   split.style.setProperty('--pos', `${p * 100}%`);
   split.querySelector('[data-dr-knob]')?.setAttribute('aria-valuenow', String(Math.round(p * 100)));
@@ -418,7 +419,7 @@ if (typeof document !== 'undefined') {
     e.preventDefault();
     const win = knob.closest<HTMLElement>('.dr__window')!;
     const step = e.key === 'ArrowLeft' ? -0.05 : 0.05;
-    setSplit(win.querySelector<HTMLElement>('[data-drug-report]')!, Number(win.dataset.split ?? 0.5) + step);
+    setSplit(win.querySelector<HTMLElement>('[data-drug-report]')!, Number(win.dataset.split ?? DEFAULT_SPLIT) + step);
   });
 
   document.addEventListener('change', (e) => {
