@@ -267,12 +267,20 @@ const close = t('case.close');
       cover.style.shapeOutside = '';
       if (getComputedStyle(cover).float === 'none') return;
       const gap = parseFloat(getComputedStyle(below).marginTop);
-      let margin = 0;
+      // Первая строка заголовка шире левой колонки (неразрывная цепочка) — обложка начинается ниже неё.
+      const title = article.querySelector<HTMLElement>('.case__title');
+      let minTop = 0;
+      if (title && title.scrollWidth > title.clientWidth) {
+        const line = parseFloat(getComputedStyle(title).lineHeight);
+        const colGap = parseFloat(getComputedStyle(cover).marginLeft) || 0;
+        minTop = Math.ceil((title.getBoundingClientRect().top + line + colGap - period.getBoundingClientRect().top) / 2) * 2;
+      }
+      let margin = -1;
       cover.style.marginBottom = `${gap}px`;
       for (let i = 0; i < 6; i++) {
         const top = period.getBoundingClientRect().top;
         const textEnd = (below.previousElementSibling ?? below).getBoundingClientRect().bottom + gap;
-        const next = Math.max(0, Math.round((textEnd - top - cover.offsetHeight) / 4) * 2); // до чётных px
+        const next = Math.max(minTop, Math.round((textEnd - top - cover.offsetHeight) / 4) * 2); // до чётных px
         if (next === margin) break;
         margin = next;
         cover.style.marginTop = `${margin}px`;
