@@ -38,7 +38,7 @@ I had one obvious goal:
 
 <Chips items={['Analyst interviews', 'Contextual observation', 'Product analytics', 'Information architecture', 'Complex B2B interfaces', 'Tables, filters and sorting', 'Data visualization', 'Design system']} />
 
-<Scale caption="PharmaKB in numbers" />
+<Scale />
 
 <CaseTabs>
 
@@ -48,9 +48,11 @@ I started by watching people work
 
 <Flow>
 
-I interviewed 12 analysts from five client companies and watched them prepare real reports. They are investors, portfolio managers and pharma market analysts. Their work demands keeping everything in mind at once: comparing competing drugs, spotting a patent cliff in time, forecasting revenue and assessing clinical trial risk. The picture kept repeating itself: after 20–30 minutes people took a break. Product analytics showed the average uninterrupted session lasted 27 minutes.
+I interviewed 12 analysts from five client companies and watched them prepare real reports. They are investors, portfolio managers and pharma market analysts. Their work demands keeping everything in mind at once: comparing competing drugs, spotting a patent cliff in time, forecasting revenue and assessing clinical trial risk.
 
-The problem wasn't the amount of data but the way it was presented. PharmaKB gathers information on 1,700+ companies and 9,770+ drugs from hundreds of sources and updates it every day. All of it went into the report as is. The drug report was a single page 16,000 pixels tall: nine sections — commercial, trials, targets, financials, trends, safety — and almost 30 tables and charts. All of it was laid out poorly, with the wrong contrast and hard-to-read fonts. Every table had been built on its own, with its own width, font size, row height and header color, and numbers aligned left in one place and centered in another. The eye had to readjust to every block.
+The picture kept repeating itself: after 20–30 minutes people took a break. Product analytics showed the average uninterrupted session lasted 27 minutes.
+
+The problem wasn't the amount of data but the way it was presented. The company gathers information on 1,700+ companies and 9,770+ drugs from hundreds of sources and updates it every day. All of it went into the report as is. The drug report was a single page 16,000 pixels tall: nine sections — commercial, trials, targets, financials, trends, safety — and almost 30 tables and charts. All of it was laid out poorly, with the wrong contrast and hard-to-read fonts. Every table had been built on its own, with its own width, font size, row height and header color, and numbers aligned left in one place and centered in another. The eye had to readjust to every block.
 
 To compare two drugs, an analyst scrolled through two such reports and matched the numbers by hand. FDA and EMA data lived in separate tables with different field names, and the revenue, patent and trial charts didn't line up in time. 64% of sessions ended with an export to Excel: analysts assembled their reports where the table columns could at least be lined up.
 

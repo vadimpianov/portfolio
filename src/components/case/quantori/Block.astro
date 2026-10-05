@@ -7,7 +7,7 @@
 import { typograph } from '../../../i18n/typograph';
 
 interface Props {
-  caption: string;
+  caption?: string;
   /** Заметка под блоком: источник данных. */
   note?: string;
 }
@@ -16,7 +16,7 @@ const { caption, note } = Astro.props;
 ---
 
 <figure class="q-block" data-reveal>
-  <figcaption class="q-block__caption">{typograph(caption)}</figcaption>
+  {caption && <figcaption class="q-block__caption">{typograph(caption)}</figcaption>}
   <slot />
   {note && <p class="q-block__note">{typograph(note)}</p>}
 </figure>
