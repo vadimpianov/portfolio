@@ -19,6 +19,12 @@ const { title, flip = [], lead, chips = [], portraitAlt, preset = 'soft' } = Ast
 const space = title.search(/\s/);
 const first = flip.length && space > 0 ? title.slice(0, space) : '';
 const rest = first ? title.slice(space) : title;
+// С перекидным словом заголовок — две строки: «<слово> дизайнер» и остальное отдельной строкой,
+// чтобы вторая строка не перескакивала, когда слово длиннее или короче (перенос — по обычному пробелу).
+const restTrim = rest.trimStart();
+const lineBreak = first ? restTrim.indexOf(' ') : -1;
+const tail = lineBreak > 0 ? restTrim.slice(0, lineBreak) : restTrim;
+const line2 = lineBreak > 0 ? restTrim.slice(lineBreak + 1) : '';
 const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.webp 860w';
 // Кадр с подмигиванием — показывается на мгновение при наведении на портрет.
 const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-860.webp 860w';
@@ -48,7 +54,18 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
               <span class="hero__flip-sr">{first}</span>
             </>
           )
-        }{rest}
+        }
+        {first ? (
+          <>
+            <span class="hero__title-tail">
+              {' '}
+              {tail}
+            </span>
+            {line2 && <span class="hero__title-line">{line2}</span>}
+          </>
+        ) : (
+          rest
+        )}
       </h1>
       {lead && <p class="hero__lead">{lead}</p>}
       {chips.length > 0 && (
@@ -382,6 +399,19 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     transition: none;
   }
 
+  .hero__title-line {
+    display: block;
+  }
+
+  .hero__title-tail {
+    white-space: nowrap;
+  }
+
+  /* Самый длинный вариант первой строки не помещается — «дизайнер» всегда своей строкой (ставит скрипт). */
+  .hero__title--stack .hero__title-tail {
+    display: block;
+  }
+
   .hero__flip-sr {
     position: absolute;
     width: 1px;
@@ -460,8 +490,15 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     const title = flip.closest<HTMLElement>('.hero__title')!;
     let current = 0;
     // Высота заголовка — по самому длинному варианту (слово длиннее может перенести строку): текст ниже не прыгает.
+    const tail = title.querySelector<HTMLElement>('.hero__title-tail');
     const measure = () => {
       title.style.minHeight = '';
+      // Первая строка «<слово> дизайнер» помещается при любом слове? Иначе — «дизайнер» отдельной строкой.
+      if (tail) {
+        title.classList.remove('hero__title--stack');
+        const widest = Math.max(...words.map((w) => w.offsetWidth));
+        title.classList.toggle('hero__title--stack', widest + tail.offsetWidth > title.clientWidth);
+      }
       let max = 0;
       for (const w of words) {
         flip.style.transition = 'none';

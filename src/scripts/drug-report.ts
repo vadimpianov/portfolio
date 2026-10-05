@@ -7,7 +7,10 @@
 
 const PAGE_W = 1440;
 const MIN_W = 960;
-const DEFAULT_SPLIT = 0.1; // бегунок по умолчанию — 10% ширины окна слева // на телефоне страница не мельчит, а листается вбок
+// Бегунок по умолчанию — в левом поле страницы, до начала контента (поле 120px, линия на 76px — как на макете
+// пользователя); на телефоне, где поле прокручено, — посередине видимого остатка поля.
+const SPLIT_PAGE_X = 76;
+const CONTENT_X = 120;
 
 const zoomOf = (page: HTMLElement) => Number(page.style.zoom) || 1;
 
@@ -26,13 +29,23 @@ function setSplit(frame: HTMLElement, pos?: number) {
   const page = frame.querySelector<HTMLElement>('.dr__page');
   const split = win.querySelector<HTMLElement>('[data-dr-split]');
   if (!page || !split) return;
-  const p = Math.min(1, Math.max(0, pos ?? Number(win.dataset.split ?? DEFAULT_SPLIT)));
-  win.dataset.split = String(p);
-  split.style.setProperty('--pos', `${p * 100}%`);
-  split.querySelector('[data-dr-knob]')?.setAttribute('aria-valuenow', String(Math.round(p * 100)));
   const wr = win.getBoundingClientRect();
   const pr = page.getBoundingClientRect();
-  page.style.setProperty('--split', `${Math.round((wr.left + p * wr.width - pr.left) / zoomOf(page))}px`);
+  const z = zoomOf(page);
+  let p: number;
+  if (pos != null) {
+    p = Math.min(1, Math.max(0, pos));
+    win.dataset.split = String(p); // запоминаем только положение, выбранное пользователем
+  } else if (win.dataset.split) {
+    p = Number(win.dataset.split);
+  } else {
+    const left = (wr.left - pr.left) / z; // видимый левый край страницы
+    const x = left < SPLIT_PAGE_X ? SPLIT_PAGE_X : (left + CONTENT_X) / 2;
+    p = Math.min(1, Math.max(0, ((x - left) * z) / wr.width));
+  }
+  split.style.setProperty('--pos', `${p * 100}%`);
+  split.querySelector('[data-dr-knob]')?.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+  page.style.setProperty('--split', `${Math.round((wr.left + p * wr.width - pr.left) / z)}px`);
 }
 
 const resize =
@@ -44,8 +57,9 @@ export function initDrugReports(root: ParentNode) {
   root.querySelectorAll<HTMLElement>('[data-drug-report]').forEach((frame) => {
     fit(frame);
     frame.scrollTop = 0;
-    // На телефоне страница шире окна — сразу к контенту, без левого поля макета (120px).
-    frame.scrollLeft = frame.clientWidth < MIN_W ? 108 * zoomOf(frame.querySelector('.dr__page')!) : 0;
+    // Окно уже страницы (телефон) — тоже с левого края: в поле стоит бегунок «вайрфрейм ↔ дизайн».
+    frame.scrollLeft = 0;
+    setSplit(frame);
     resize?.observe(frame);
     frame.addEventListener('scroll', () => {
       frame.parentElement?.querySelector('.dr__top')?.classList.toggle('is-shown', frame.scrollTop > 400);
@@ -419,7 +433,9 @@ if (typeof document !== 'undefined') {
     e.preventDefault();
     const win = knob.closest<HTMLElement>('.dr__window')!;
     const step = e.key === 'ArrowLeft' ? -0.05 : 0.05;
-    setSplit(win.querySelector<HTMLElement>('[data-drug-report]')!, Number(win.dataset.split ?? DEFAULT_SPLIT) + step);
+    const frame = win.querySelector<HTMLElement>('[data-drug-report]')!;
+    const now = parseFloat(win.querySelector<HTMLElement>('[data-dr-split]')!.style.getPropertyValue('--pos')) / 100;
+    setSplit(frame, now + step);
   });
 
   document.addEventListener('change', (e) => {

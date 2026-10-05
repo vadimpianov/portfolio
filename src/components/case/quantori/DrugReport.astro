@@ -40,7 +40,7 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
         aria-label={t('case.compare')}
         aria-valuemin="0"
         aria-valuemax="100"
-        aria-valuenow="10"
+        aria-valuenow="5"
         data-dr-knob
       >
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
@@ -311,7 +311,7 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
     position: absolute;
     top: 0;
     bottom: 0;
-    left: var(--pos, 10%);
+    left: var(--pos, 5%);
     z-index: 8; /* выше липкой полосы вкладок */
     width: 1px;
     background: #9fa6b0;
