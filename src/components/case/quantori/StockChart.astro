@@ -408,9 +408,11 @@ const { alt } = Astro.props;
     margin-top: 24px;
   }
 
+  /* Плашка тикера: символ слева, цена и % — друг под другом по правому краю; колонка значений фиксированной
+     ширины и цифры одной ширины — при наведении на график плашка не меняет размер. */
   .sc__chip {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 80px;
     column-gap: 12px;
     align-items: center;
     padding: 6px 12px 6px 18px;
@@ -418,15 +420,21 @@ const { alt } = Astro.props;
     border-left: 6px solid var(--c);
     border-radius: 2px;
     font-size: 14px;
+    font-variant-numeric: tabular-nums;
   }
 
   .sc__chip b {
     font-weight: 500;
   }
 
-  .sc__chip span:nth-of-type(2) {
+  .sc__chip--x {
+    grid-template-columns: auto 80px auto;
+  }
+
+  .sc__chip span {
     grid-column: 2;
     justify-self: end;
+    white-space: nowrap;
   }
 
   .sc__chip button {
@@ -519,23 +527,6 @@ const { alt } = Astro.props;
 
   .sc__nav-h {
     cursor: ew-resize;
-  }
-
-  .sc__expand {
-    position: absolute;
-    top: 16px;
-    left: 8px;
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    border: 1px solid #dfdddf !important;
-    border-radius: 4px;
-    background: #fff !important;
-  }
-
-  .sc__expand:hover {
-    background: #f0f5fb !important;
   }
 
   .sc__ohlc {

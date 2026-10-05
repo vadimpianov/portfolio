@@ -196,7 +196,6 @@ type State = {
   events: Set<string>;
   revenue: Set<string>; // "drug:region"
   hover: number | null;
-  tall: boolean;
   panel: { kind: EventKind; items: { t: number }[] } | null;
 };
 
@@ -242,7 +241,6 @@ function mount(root: HTMLElement) {
     events: new Set(EVENT_KINDS.map((k) => k.key)),
     revenue: new Set(DRUGS.map((_, i) => `${i}:0`)),
     hover: null,
-    tall: false,
     panel: null,
   };
   const last = data(MAIN, true);
@@ -324,9 +322,6 @@ function mount(root: HTMLElement) {
       <div class="sc__ev-legend" data-ev-legend></div>
       <div class="sc__plot-wrap">
         <svg class="sc__svg" data-svg></svg>
-        <button type="button" class="sc__expand" data-expand aria-label="Expand chart">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#595959" stroke-width="1.3" stroke-linecap="round"><path d="M8.5 1.5h4v4M12.5 1.5 8 6M5.5 12.5h-4v-4M1.5 12.5 6 8"/></svg>
-        </button>
         <div class="sc__ohlc" data-ohlc hidden></div>
         <div class="sc__tip" data-tip-box hidden></div>
         <div class="sc__panel" data-panel hidden></div>
@@ -343,7 +338,7 @@ function mount(root: HTMLElement) {
     const hasEv = st.events.size > 0;
     const x0 = hasRev ? AXIS_L : 0;
     const x1 = IW - AXIS_R;
-    const plotH = st.tall ? 520 : 360;
+    const plotH = 360;
     const top = 8;
     const xLab = top + plotH + 8;
     // События лежат на шкале времени — в зоне объёмов, над столбиками (зона выше, когда они включены)
@@ -567,7 +562,7 @@ function mount(root: HTMLElement) {
       .map((l: any) => {
         const b: Bar = l.bars[i];
         const ch = ((b.c - l.bars[0].c) / l.bars[0].c) * 100;
-        return `<span class="sc__chip" style="--c:${l.tk.color}"><b>${l.tk.sym}</b><span>${fmt(b.c)}</span><span class="${ch < 0 ? 'sc__neg' : ''}">${fmt(ch)} %</span>${
+        return `<span class="sc__chip${l.tk === MAIN ? '' : ' sc__chip--x'}" style="--c:${l.tk.color}"><b>${l.tk.sym}</b><span>${fmt(b.c)}</span><span class="${ch < 0 ? 'sc__neg' : ''}">${fmt(ch)} %</span>${
           l.tk === MAIN ? '' : `<button type="button" data-tk-off="${l.tk.sym}" aria-label="Remove ${l.tk.sym}">×</button>`
         }</span>`;
       })
@@ -606,7 +601,7 @@ function mount(root: HTMLElement) {
     ]
       .map(([k, v]) => `<div><span>${k}</span><i>→</i><b>${v}</b></div>`)
       .join('')}`;
-    ohlc.style.left = `${g.x0 + 48}px`;
+    ohlc.style.left = `${g.x0 + 12}px`;
     ohlc.style.top = `${g.top + 12}px`;
     ohlc.hidden = false;
   }
@@ -620,7 +615,7 @@ function mount(root: HTMLElement) {
     }
     const { kind, items } = st.panel;
     const { g } = c;
-    panel.style.left = `${g.x0}px`;
+    panel.style.left = '0px'; // от самого левого края графика, поверх оси выручки
     panel.style.top = `${g.top}px`;
     panel.style.height = `${g.navTop + g.navH - g.top}px`;
     panel.innerHTML = `<div class="sc__panel-head"><i style="background:${kind.color}"></i><b>${esc(kind.name)}</b><button type="button" data-panel-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M1 1l12 12M13 1 1 13" stroke="#383A3E" stroke-width="1.5"/></svg></button></div><div class="sc__panel-list">${items
@@ -784,11 +779,6 @@ function mount(root: HTMLElement) {
       st.revenue.clear();
       st.panel = null;
       closeMenus();
-      render();
-      return;
-    }
-    if (el.closest('[data-expand]')) {
-      st.tall = !st.tall;
       render();
       return;
     }
