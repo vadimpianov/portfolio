@@ -82,14 +82,19 @@ const max = Math.max(...scale.map((s) => s.value));
     white-space: nowrap;
   }
 
+  /* Название — слева, серая подпись — справа, над концом полоски. */
   .q-scale__label {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    justify-content: space-between;
     margin-bottom: 12px;
     color: var(--case-text);
   }
 
   .q-scale__sub {
-    margin-left: 12px;
     color: var(--case-muted);
+    text-align: right;
   }
 
   .q-scale__track {
@@ -121,8 +126,7 @@ const max = Math.max(...scale.map((s) => s.value));
     }
 
     .q-scale__sub {
-      display: block;
-      margin-left: 0;
+      text-align: left;
     }
   }
 
