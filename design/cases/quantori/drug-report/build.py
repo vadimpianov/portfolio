@@ -385,7 +385,7 @@ for k, e in enumerate(els):
         lab = els[k + 1]
         add('leg', e['x'] - 4, e['y'] - 4, lab['x'] + lab['w'] - e['x'] + 8, 20, c=e['f'])
 # Панель событий (по клику на квадрат таймлайна) — слева внутри рамки графика
-add('evpanel', 121, 769, 360, 244)
+add('evpanel', 120, 768, 362, 328)  # до низа ползунка, поверх шкалы дат
 # Прочие иконки
 add('icon', 594, 8262, 28, 28, tip={'text': 'Classification differs between FDA and EMA', 'pos': 'top'})
 for k in (734, 910, 968, 989):
