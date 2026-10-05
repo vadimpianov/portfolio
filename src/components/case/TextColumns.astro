@@ -3,9 +3,16 @@
  * Вводная строка и пункты в 2 колонки: вводная — сверху (с отступом абзаца от текста выше),
  * колонки задаёт `<Columns>` внутри (слева и справа — свои списки), пункты начинаются на одном уровне.
  */
+
+interface Props {
+  /** Пункты без <Columns>: текст после вводной строки перетекает в две колонки (как Flow). */
+  flow?: boolean;
+}
+
+const { flow = false } = Astro.props;
 ---
 
-<div class="case-text-columns">
+<div class:list={['case-text-columns', { 'case-text-columns--flow': flow }]}>
   <slot />
 </div>
 
@@ -20,6 +27,17 @@
 
   .case-text-columns > :global(:first-child) {
     margin-top: 0;
+  }
+
+  /* flow: пункты перетекают из левой колонки в правую, колонки — как у <Columns>. */
+  @container case (min-width: 800px) {
+    .case-text-columns--flow > :global(ul) {
+      columns: 2;
+      column-gap: var(--case-col-gap);
+      orphans: 1;
+      widows: 1;
+      overflow: visible !important;
+    }
   }
 
   /* Колонки сразу под вводной строкой, без лишних отступов. */

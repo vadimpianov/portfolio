@@ -123,6 +123,11 @@ const coverSize = (() => {
       margin-left: var(--case-indent);
     }
 
+    /* Заголовок — не шире левой колонки (текста рядом с обложкой), даже если обложка ниже его. */
+    .case__hero--cover .case__title {
+      max-width: calc((100% - var(--case-col-gap)) / 2);
+    }
+
     /* Маркеры списков рядом с обложкой не залезают под неё. */
     .case__body :global(ul) {
       overflow: hidden;
