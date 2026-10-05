@@ -18,6 +18,7 @@ import DrugReport from '../../../components/case/quantori/DrugReport.astro';
 import ChartTabs from '../../../components/case/ChartTabs.astro';
 import StockChart from '../../../components/case/quantori/StockChart.astro';
 import RevenueChart from '../../../components/case/quantori/RevenueChart.astro';
+import PatentChart from '../../../components/case/quantori/PatentChart.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
 <div class="case-lead">
@@ -101,7 +102,7 @@ import Results from '../../../components/case/quantori/Results.astro';
 <ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents']}>
 <div slot="t0"><StockChart alt="График акций AbbVie за всё время в сравнении с индексами SPY и XBI, объём торгов, выбор периода и тикеров" /></div>
 <div slot="t1"><RevenueChart alt="Выручка по препаратам по кварталам и годам: столбцы по регионам Global, US и Rest of World, фильтры по препаратам, годам и кварталам" /></div>
-<div slot="t2"><Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} alt="Диаграмма патентов по кварталам: новые, действующие и истёкшие, граница между историей и прогнозом, таблица патентов" /></div>
+<div slot="t2"><PatentChart alt="Патенты компании по кварталам: новые, действующие и истёкшие или по типам DS и DP, история и прогноз, фильтры и таблица патентов" /></div>
 </ChartTabs>
 
 ## Отчёт по препарату: от испытаний до продаж

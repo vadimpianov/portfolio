@@ -18,6 +18,7 @@ import DrugReport from '../../../components/case/quantori/DrugReport.astro';
 import ChartTabs from '../../../components/case/ChartTabs.astro';
 import StockChart from '../../../components/case/quantori/StockChart.astro';
 import RevenueChart from '../../../components/case/quantori/RevenueChart.astro';
+import PatentChart from '../../../components/case/quantori/PatentChart.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
 <div class="case-lead">
@@ -101,7 +102,7 @@ The company report consisted mostly of charts. Each of them has its own unique a
 <ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents']}>
 <div slot="t0"><StockChart alt="AbbVie share price over the full period compared with the SPY and XBI indices, trading volume, period and ticker selection" /></div>
 <div slot="t1"><RevenueChart alt="Revenue by drug per quarter and year: columns for Global, US and Rest of World, filters by drug, year and quarter" /></div>
-<div slot="t2"><Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} alt="Patent chart by quarter: new, active and expired, the line between history and forecast, and the patent table" /></div>
+<div slot="t2"><PatentChart alt="Company patents per quarter: new, active and expired or by DS and DP type, history and forecast, filters and a patent table" /></div>
 </ChartTabs>
 
 ## The drug report: from trials to sales

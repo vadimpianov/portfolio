@@ -1,0 +1,301 @@
+---
+/**
+ * Рабочий график «Patents» — по макетам пользователя (design/cases/quantori/patents/*.svg).
+ * Разметку и поведение строит `src/scripts/patent-chart.ts` (`initPatentCharts` в CaseDrawer);
+ * общие стили меню, поиска и подсказок — из `StockChart.astro` (классы `sc__…`), здесь — свои.
+ * Свёрстан в ширину 1120px и масштабируется под колонку (`zoom`, на телефоне не уже 760px — листается вбок).
+ */
+import '@fontsource-variable/roboto/wght.css';
+
+interface Props {
+  alt: string;
+}
+
+const { alt } = Astro.props;
+---
+
+<div class="sc" data-patent-chart role="figure" aria-label={alt}></div>
+
+<style is:global>
+  .pc__bar {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 16px;
+  }
+
+  .pc__blue {
+    color: #0d69eb;
+  }
+
+  .pc__clear.is-off {
+    color: #b6b8bb !important;
+    pointer-events: none;
+  }
+
+  .pc__legend {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .pc__bar .pc__legend {
+    margin-left: auto;
+  }
+
+  .pc__legend button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #262626 !important;
+    font-size: 16px;
+  }
+
+  .pc__legend i {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .pc__legend button[aria-pressed='false'] {
+    color: #b6b8bb !important;
+  }
+
+  .pc__legend button[aria-pressed='false'] i {
+    background: #c7c9cd !important;
+  }
+
+  .pc__legend2 {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+  }
+
+  .pc__legend2[hidden],
+  .pc__legend[hidden] {
+    display: none;
+  }
+
+  .pc__legend2 button[data-group] i {
+    width: 40px;
+  }
+
+  .pc__menu-view {
+    left: 92px;
+  }
+
+  .pc__menu-view button.is-active {
+    background: #0d69eb !important;
+    color: #fff !important;
+  }
+
+  .pc__menu-date {
+    left: 0;
+    right: auto;
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .pc__menu-date label {
+    display: grid;
+    grid-template-columns: 112px 128px 128px;
+    align-items: center;
+    gap: 8px;
+    color: #383a3e;
+  }
+
+  .pc__menu-date input {
+    padding: 6px 8px;
+    border: 1px solid #dfdddf;
+    border-radius: 4px;
+    color: #595959;
+    font: inherit;
+    font-size: 13px;
+  }
+
+  .pc__menu-type {
+    left: 0;
+    right: auto;
+    width: 148px;
+    padding: 4px 0 12px;
+  }
+
+  .pc__menu {
+    left: 0;
+    right: auto;
+    width: 412px;
+    padding: 16px 0 12px;
+  }
+
+  .pc__menu--right {
+    left: auto;
+    right: 0;
+  }
+
+  .pc__menu-top {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 16px 12px;
+  }
+
+  .pc__menu-top .sc__search {
+    flex: 1;
+  }
+
+  .pc__list label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    color: #383a3e;
+    cursor: pointer;
+  }
+
+  .pc__list label:hover {
+    background: #f0f5fb;
+  }
+
+  .pc__list span {
+    flex: 1;
+  }
+
+  .pc__pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 12px;
+  }
+
+  .pc__pages button {
+    display: grid;
+    place-items: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px !important;
+    border-radius: 2px;
+    color: #595959 !important;
+    font-size: 14px;
+  }
+
+  .pc__pages button:hover {
+    color: #0d69eb !important;
+  }
+
+  .pc__pages button.is-cur {
+    background: #0d69eb !important;
+    color: #fff !important;
+  }
+
+  .pc__pages button:disabled {
+    color: #c7c9cd !important;
+    cursor: default;
+  }
+
+  .pc__plot {
+    position: relative;
+    margin-top: 40px;
+  }
+
+  .pc__total {
+    fill: #262626;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .pc__lab {
+    font-size: 14px;
+  }
+
+  .pc__era {
+    fill: #8a8d93;
+    font-size: 12px;
+  }
+
+  .pc [data-seg] {
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .pc__pick {
+    margin-top: 20px;
+    color: #383a3e;
+    font-size: 14px;
+  }
+
+  .pc__pick[hidden] {
+    display: none;
+  }
+
+  .pc__pick .sc__link {
+    margin-left: 12px;
+  }
+
+  .pc__table {
+    margin-top: 28px;
+    font-size: 15px;
+  }
+
+  .pc__row {
+    display: grid;
+    grid-template-columns: 112px 112px 112px 104px 208px 176px 1fr;
+    align-items: start;
+    padding: 6px 0;
+    color: #262626;
+    transition: background 0.15s;
+  }
+
+  .pc__row > span {
+    padding-right: 12px;
+  }
+
+  [data-rows] .pc__row:nth-child(odd) {
+    background: #f4f4f4;
+  }
+
+  [data-rows] .pc__row:hover {
+    background: #eaf1fc;
+  }
+
+  [data-rows] .pc__row.is-hl {
+    background: #dbe8fb;
+  }
+
+  .pc__row--head {
+    padding-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .pc__row--empty {
+    display: block;
+    color: #8a8d93;
+  }
+
+  .pc__type-h {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pc__info {
+    display: grid;
+    height: 16px;
+  }
+
+  .pc__info-tip {
+    top: calc(100% + 8px);
+    left: 0;
+    display: none;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .pc__info:hover + .pc__info-tip,
+  .pc__info:focus-visible + .pc__info-tip {
+    display: block;
+  }
+</style>
