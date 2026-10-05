@@ -99,11 +99,11 @@ const QR = [
     margin-top: round(1.1em, 2px);
   }
 
-  /* Маркер: чёрная плашка, белый текст; на переносе строки плашка не рвётся. */
+  /* Маркер: жёлтая плашка (акцент сайта), чёрный текст; на переносе строки плашка не рвётся. */
   .about__text mark {
     padding: 2px round(0.25em, 2px);
-    background: var(--color-text);
-    color: #fff;
+    background: var(--case-accent);
+    color: var(--color-text);
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }

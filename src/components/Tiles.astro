@@ -180,46 +180,31 @@ const more = (
               />
             </div>
           ) : (
-            // Кейс ещё не готов: экран телефона сам собирается по блокам, курсор их «расставляет»,
-            // поперёк — лента «Кейс в разработке».
+            // Кейс ещё не готов: экран-заготовка, блоки которого мягко проявляются по очереди (как загрузка),
+            // и метка «Кейс в разработке».
             <div class="tiles__image tiles__soon" aria-label={soon} role="img">
+              <span class="tiles__soon-badge" aria-hidden="true">
+                <i />
+                {soon}
+              </span>
               <svg class="tiles__soon-phone" viewBox="0 0 240 420" aria-hidden="true">
                 <rect class="tiles__soon-body" x="20.5" y="10.5" width="199" height="399" rx="34" />
-                <rect class="tiles__soon-notch" x="95" y="22" width="50" height="10" rx="5" />
-                <rect class="tiles__soon-b b1" x="40" y="48" width="90" height="12" rx="6" />
-                <circle class="tiles__soon-b b2" cx="190" cy="54" r="10" />
-                <g class="tiles__soon-b b3">
-                  <rect x="40" y="76" width="160" height="96" rx="16" fill="#ef3124" />
-                  <rect x="56" y="92" width="28" height="20" rx="4" fill="#fff" opacity="0.85" />
-                  <rect x="56" y="146" width="96" height="8" rx="4" fill="#fff" opacity="0.85" />
-                </g>
+                <rect class="tiles__soon-notch" x="95" y="22" width="50" height="8" rx="4" />
+                <rect class="tiles__soon-b b1" x="40" y="48" width="90" height="10" rx="5" />
+                <circle class="tiles__soon-b b2" cx="190" cy="53" r="9" />
+                <rect class="tiles__soon-b tiles__soon-card b3" x="40" y="76" width="160" height="96" rx="16" />
                 <g class="tiles__soon-b b4">
-                  <circle cx="54" cy="210" r="14" />
-                  <rect x="78" y="200" width="96" height="9" rx="4.5" />
-                  <rect x="78" y="215" width="60" height="7" rx="3.5" opacity="0.6" />
+                  <circle cx="54" cy="208" r="12" />
+                  <rect x="76" y="200" width="96" height="8" rx="4" />
+                  <rect x="76" y="213" width="60" height="6" rx="3" />
                 </g>
                 <g class="tiles__soon-b b5">
-                  <circle cx="54" cy="258" r="14" />
-                  <rect x="78" y="248" width="110" height="9" rx="4.5" />
-                  <rect x="78" y="263" width="72" height="7" rx="3.5" opacity="0.6" />
+                  <circle cx="54" cy="252" r="12" />
+                  <rect x="76" y="244" width="110" height="8" rx="4" />
+                  <rect x="76" y="257" width="72" height="6" rx="3" />
                 </g>
-                <rect class="tiles__soon-b b6 tiles__soon-cta" x="40" y="340" width="160" height="40" rx="20" />
-                <path
-                  class="tiles__soon-cursor"
-                  d="M0 0v22l6-6 4 10 4-2-4-9.5h8.5z"
-                  fill="#141414"
-                  stroke="#fff"
-                  stroke-width="1.5"
-                  stroke-linejoin="round"
-                />
+                <rect class="tiles__soon-b b6" x="40" y="344" width="160" height="36" rx="18" />
               </svg>
-              <div class="tiles__soon-tape" aria-hidden="true">
-                <div class="tiles__soon-track">
-                  {Array.from({ length: 12 }, () => (
-                    <span>{soon} ✦</span>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
         </div>
@@ -526,171 +511,109 @@ const more = (
     object-position: top center;
   }
 
-  /* Заглушка «Кейс в разработке» (у плитки нет картинки): светлая подложка, телефон собирается по блокам
-     (6с по кругу, блоки по очереди с шагом 0.45с, курсор переходит от блока к блоку), поперёк — чёрная лента
-     с бегущей надписью. При reduced motion всё стоит, экран собран. */
+  /* Заглушка «Кейс в разработке» (у плитки нет картинки): светлая подложка, тонкий контур телефона,
+     блоки-заготовки мягко проявляются по очереди (2.4с по кругу), карта — едва заметного фирменного оттенка;
+     в углу — метка с пульсирующей точкой. При reduced motion всё стоит. */
   .tiles__soon {
     position: relative;
     overflow: hidden;
     place-items: start center;
-    background: rgb(255 255 255 / 0.5);
+    background: rgb(255 255 255 / 0.4);
+  }
+
+  .tiles__soon-badge {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    background: rgb(255 255 255 / 0.85);
+    color: var(--color-text);
+    font-size: var(--text-chip);
+    --lh: var(--leading-tight);
+  }
+
+  .tiles__soon-badge i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef3124;
+    animation: tiles-soon-dot 2.4s ease-in-out infinite;
+  }
+
+  @keyframes tiles-soon-dot {
+    50% {
+      opacity: 0.3;
+    }
   }
 
   /* Телефон с отступом сверху, низ уходит под край плитки — как экраны в других плитках. */
   .tiles__soon-phone {
-    width: min(70%, 320px);
+    width: min(64%, 300px);
     height: auto;
-    margin-top: round(8%, 2px);
-    filter: drop-shadow(0 20px 40px rgb(20 20 20 / 0.12));
+    margin-top: 72px;
   }
 
   .tiles__soon-body {
-    fill: #fff;
-    stroke: rgb(20 20 20 / 0.08);
+    fill: #fbfaf8;
+    stroke: rgb(20 20 20 / 0.12);
   }
 
-  .tiles__soon-notch {
-    fill: #e6e2dc;
+  .tiles__soon-notch,
+  .tiles__soon-b {
+    fill: rgb(20 20 20 / 0.08);
+  }
+
+  .tiles__soon-card {
+    fill: rgb(239 49 36 / 0.12);
   }
 
   .tiles__soon-b {
-    fill: #dcd6cd;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: tiles-soon-build 6s cubic-bezier(0.3, 1.4, 0.5, 1) infinite both;
-  }
-
-  .tiles__soon-cta {
-    fill: #141414;
+    animation: tiles-soon-load 2.4s ease-in-out infinite;
   }
 
   .tiles__soon-b.b2 {
-    animation-delay: 0.45s;
+    animation-delay: 0.15s;
   }
 
   .tiles__soon-b.b3 {
-    animation-delay: 0.9s;
+    animation-delay: 0.3s;
   }
 
   .tiles__soon-b.b4 {
-    animation-delay: 1.35s;
+    animation-delay: 0.45s;
   }
 
   .tiles__soon-b.b5 {
-    animation-delay: 1.8s;
+    animation-delay: 0.6s;
   }
 
   .tiles__soon-b.b6 {
-    animation-delay: 2.25s;
+    animation-delay: 0.75s;
   }
 
-  @keyframes tiles-soon-build {
-    0% {
-      opacity: 0;
-      transform: translateY(10px) scale(0.9);
-    }
-
-    8%,
-    70% {
-      opacity: 1;
-      transform: none;
-    }
-
-    80%,
-    100% {
-      opacity: 0;
-      transform: none;
-    }
-  }
-
-  .tiles__soon-cursor {
-    animation: tiles-soon-cursor 6s ease-in-out infinite;
-  }
-
-  /* Курсор приходит к каждому блоку чуть раньше, чем тот появляется. */
-  @keyframes tiles-soon-cursor {
+  @keyframes tiles-soon-load {
     0%,
-    3% {
-      translate: 136px 62px;
-    }
-
-    7.5%,
-    10% {
-      translate: 198px 64px;
-    }
-
-    15%,
-    18% {
-      translate: 176px 150px;
-    }
-
-    22.5%,
-    25% {
-      translate: 168px 216px;
-    }
-
-    30%,
-    33% {
-      translate: 186px 264px;
-    }
-
-    37.5%,
-    60% {
-      translate: 150px 366px;
-    }
-
-    75%,
     100% {
-      translate: 136px 62px;
+      opacity: 1;
     }
-  }
 
-  .tiles__soon-tape {
-    position: absolute;
-    right: -10%;
-    bottom: 22%;
-    left: -10%;
-    padding-block: 12px;
-    background: #141414;
-    color: var(--case-accent);
-    font-size: var(--text-tile-lead);
-    font-weight: 600;
-    --lh: var(--leading-tight);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    white-space: nowrap;
-    rotate: -6deg;
-    box-shadow: 0 12px 30px rgb(20 20 20 / 0.2);
-  }
-
-  .tiles__soon-track {
-    display: flex;
-    width: max-content;
-    animation: tiles-soon-tape 24s linear infinite;
-  }
-
-  /* Отступ после каждой надписи (не gap) — тогда половина ленты ровно повторяет вторую, шов не виден. */
-  .tiles__soon-track span {
-    padding-right: 24px;
-  }
-
-  @keyframes tiles-soon-tape {
-    to {
-      translate: -50% 0;
+    50% {
+      opacity: 0.4;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .tiles__soon-b,
-    .tiles__soon-cursor,
-    .tiles__soon-track {
+    .tiles__soon-badge i {
       animation: none;
     }
-
-    .tiles__soon-cursor {
-      translate: 150px 366px;
-    }
   }
+}
 
   /* Наведение (только у мыши): плитка приподнимается, заливка плотнее, листья медленно
      разворачиваются, картинка чуть подаётся вперёд. */
