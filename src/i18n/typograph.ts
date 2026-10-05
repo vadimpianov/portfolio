@@ -40,7 +40,7 @@ const isAbbr = (word: string) =>
 export function typograph(text: string): string {
   return text
     .replace(/ +(?=[—–])/g, NBSP)
-    .replace(/(?<=^|[\s («"„*])(\p{L}+) +/gu, (match, word: string) =>
+    .replace(/(?<=^|[\s («"„“‘*])(\p{L}+) +/gu, (match, word: string) =>
       (word.length <= 2 && !isAbbr(word)) || SHORT_WORDS.has(word.toLowerCase()) ? word + NBSP : match,
     );
 }
