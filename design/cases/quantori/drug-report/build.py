@@ -252,10 +252,17 @@ add('menu', 1246, 646, 76, 24, menu='events', options=['Events', 'Approvals', 'C
 # Избранное, коллекция, оповещения — иконка заливается по нажатию
 STAR = '<path fill="#0D69EB" d="M6 .6l1.62 3.47 3.78.47-2.78 2.6.72 3.75L6 9.05 2.66 10.9l.72-3.76L.6 4.54l3.78-.47z"/>'
 BELL = '<path fill="#0D69EB" d="M6 0a1 1 0 0 1 1 1v.3A3.8 3.8 0 0 1 9.8 5v3.2l1.2 1.5V10.5H1v-.8l1.2-1.5V5A3.8 3.8 0 0 1 5 1.3V1a1 1 0 0 1 1-1zm-1.6 11.2h3.2a1.6 1.6 0 0 1-3.2 0z"/>'
-for icon, label_end, shape in ((15, 249, STAR), (17, 393, STAR), (19, 491, BELL)):
+# «Add to Collection»: звёздочка из макета заменена папкой (контур — всегда, залитая с галочкой — по нажатию)
+FOLDER = 'M.8 2.6a.9.9 0 0 1 .9-.9h2.9l1.3 1.4h4.4a.9.9 0 0 1 .9.9v5.9a.9.9 0 0 1-.9.9H1.7a.9.9 0 0 1-.9-.9z'
+FOLDER_LINE = f'<path d="{FOLDER}" fill="none" stroke="#0D69EB" stroke-width="1.2" stroke-linejoin="round"/>' \
+              '<path d="M6 4.9v3.2M4.4 6.5h3.2" stroke="#0D69EB" stroke-width="1.2" stroke-linecap="round"/>'
+FOLDER_FULL = f'<path d="{FOLDER}" fill="#0D69EB" stroke="#0D69EB" stroke-width="1.2" stroke-linejoin="round"/>' \
+              '<path d="M4.3 6.6l1.2 1.2 2.3-2.4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'
+remove.add(17)
+for icon, label_end, shape, base in ((15, 249, STAR, None), (17, 393, FOLDER_FULL, FOLDER_LINE), (19, 491, BELL, None)):
     e = els[icon]
     add('fav', e['x'] - 2, 284, label_end - e['x'] + 4, 24, ix=r1(e['x']), iy=r1(e['y']), iw=r1(e['w']), ih=r1(e['h']),
-        icon=shape)
+        icon=shape, base=base)
 
 # Копировать (иконка в строке Structure)
 add('copy', 1290, 8828, 22, 24)

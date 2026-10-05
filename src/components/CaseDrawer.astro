@@ -270,6 +270,7 @@ const close = t('case.close');
       const prev = below.previousElementSibling as HTMLElement | null;
       const beside = prev?.classList.contains('case-chips--beside') ? prev : null;
       beside?.classList.remove('is-under');
+      if (beside) beside.style.marginTop = '';
       if (getComputedStyle(cover).float === 'none') return;
       const gap = parseFloat(getComputedStyle(below).marginTop);
       // Первая строка заголовка шире левой колонки (неразрывная цепочка) — обложка начинается ниже неё.
@@ -300,8 +301,14 @@ const close = t('case.close');
         // иначе строка уходит под обложку вместе с остальными.
         const items = beside.children;
         const oneRow = items[0]?.getBoundingClientRect().top === items[items.length - 1]?.getBoundingClientRect().top;
-        if (oneRow && beside.getBoundingClientRect().bottom <= cover.getBoundingClientRect().bottom) {
-          cover.style.marginBottom = getComputedStyle(beside).marginTop;
+        const under = parseFloat(getComputedStyle(beside).marginTop); // отступ под обложкой
+        const rowGap = parseFloat(getComputedStyle(below).marginTop); // между строками чипсов
+        const coverBottom = cover.getBoundingClientRect().bottom;
+        const shift = coverBottom + under - rowGap - beside.getBoundingClientRect().bottom;
+        if (oneRow && shift >= 0) {
+          cover.style.marginBottom = `${under}px`;
+          // Строка прижата к следующей (под обложкой): между ними — обычный зазор чипсов.
+          beside.style.marginTop = `${under + Math.floor(shift / 2) * 2}px`;
         } else {
           beside.classList.add('is-under');
         }

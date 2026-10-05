@@ -672,7 +672,8 @@ const { caption, alt } = Astro.props;
       scale 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
   }
 
-  .dr-fav[aria-pressed='true'] svg {
+  .dr-fav[aria-pressed='true'] svg,
+  .dr-fav svg.dr-fav__base {
     opacity: 1;
     scale: 1;
   }
