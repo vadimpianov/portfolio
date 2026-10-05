@@ -260,7 +260,7 @@ const close = t('case.close');
       const cover = article.querySelector<HTMLElement>('.case__cover');
       const period = article.querySelector<HTMLElement>('.case__period');
       // Первый блок во всю ширину под обложкой: свой (`data-cover-below`) или список задач.
-      const below = article.querySelector<HTMLElement>('[data-cover-below], .case-text-columns');
+      const below = article.querySelector<HTMLElement>('[data-cover-below], .case-text-columns:not(.case-text-columns--wrap)');
       if (!cover || !period || !below) return;
       cover.style.marginTop = '';
       cover.style.marginBottom = '';

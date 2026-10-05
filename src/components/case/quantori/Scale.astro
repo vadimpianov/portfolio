@@ -20,7 +20,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
 const max = Math.max(...scale.map((s) => s.value));
 ---
 
-<div class="q-scale">
+<div class="q-scale" data-cover-below>
   <Block caption={caption} note={note}>
     <ul class="q-scale__list">
       {scale.map((s, i) => (

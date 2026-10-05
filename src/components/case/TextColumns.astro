@@ -7,12 +7,15 @@
 interface Props {
   /** Пункты без <Columns>: текст после вводной строки перетекает в две колонки (как Flow). */
   flow?: boolean;
+  /** Рядом с высокой обложкой: без `clear` — блок встаёт в колонку рядом с обложкой, а не под неё
+      (на широком контейнере `flow` тогда не делит текст на колонки — места хватает только на одну). */
+  wrap?: boolean;
 }
 
-const { flow = false } = Astro.props;
+const { flow = false, wrap = false } = Astro.props;
 ---
 
-<div class:list={['case-text-columns', { 'case-text-columns--flow': flow }]}>
+<div class:list={['case-text-columns', { 'case-text-columns--flow': flow && !wrap, 'case-text-columns--wrap': wrap }]}>
   <slot />
 </div>
 
@@ -27,6 +30,15 @@ const { flow = false } = Astro.props;
 
   .case-text-columns > :global(:first-child) {
     margin-top: 0;
+  }
+
+  .case-text-columns--wrap {
+    clear: none;
+  }
+
+  /* Маркеры списка рядом с обложкой не залезают под неё. */
+  .case-text-columns--wrap > :global(ul) {
+    overflow: hidden;
   }
 
   /* flow: пункты перетекают из левой колонки в правую, колонки — как у <Columns>. */
