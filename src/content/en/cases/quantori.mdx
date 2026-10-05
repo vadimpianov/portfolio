@@ -64,9 +64,10 @@ One system for every table and chart
 
 Instead of redrawing pages one by one, I started with rules. I went through more than 150 reports to find and describe what any report is made of and what each section looks like when it is filled to the maximum. Later I built a design system for each of the reports. Now developers assemble a new section from ready-made components instead of inventing it from scratch.
 
-- One grid: all tables on a page share the same width, row height and font size
-- Numbers are right-aligned in tabular figures, text is left-aligned
+- One grid with generous 120px side margins to create a sense of space in such a dense layout. All table columns are synchronized with each other — and mind you, tables range from 2 to 10 columns. To avoid a jagged “Christmas tree”, I had to design a grid specifically for tables
+- Links stand out clearly: we aggregate data from third-party sources and have to prove it
 - Section tabs stay visible while scrolling, sections collapse
+- You can share a link to a specific section — very handy when collaborating with colleagues
 - FDA and EMA are a switch in every section, with the same columns in the same order
 - Every chart has a table view, every table has sorting and filters
 - Empty, loading and error states live inside each section instead of a blank page
