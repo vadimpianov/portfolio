@@ -4,7 +4,6 @@
  * или раскрывающийся раздел/группа (шапка + тело). Рекурсивный.
  */
 import { asset } from '../../../utils/asset';
-import data from './drug-report.json';
 import { typograph } from '../../../i18n/typograph';
 
 type Piece = { s: number; y0: number; y1: number };
@@ -12,24 +11,34 @@ type Node =
   | (Piece & { k: 'img' })
   | { k: 'sec'; grp?: boolean; head: Piece; body: Node[] }
   | { k: 'nav'; h: number }
-  | { k: 'anchor'; n: number };
+  | { k: 'anchor'; n: number }
+  | { k: 'live'; n: number };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Item = Record<string, any>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Data = Record<string, any>;
 
 interface Props {
   node: Node;
   head?: boolean;
+  /** Данные отчёта (drug-report.json / company-report.json). */
+  data: Data;
+  /** Папка кусков: /images/cases/quantori/<dir>/sNN.webp. */
+  dir: string;
+  /** Есть ли каркас (вайрфрейм) — куски `<dir>/wf/sNN.webp`. */
+  wireframe: boolean;
 }
 
-const { node, head = false } = Astro.props;
+const { node, head = false, data, dir, wireframe } = Astro.props;
 const byslice = new Map<number, Item[]>();
 for (const it of data.items as Item[]) {
   const list = byslice.get(it.s) ?? [];
   list.push(it);
   byslice.set(it.s, list);
 }
-const src = (n: number) => asset(`/images/cases/quantori/report/s${String(n).padStart(2, '0')}.webp`);
-const wf = (n: number) => asset(`/images/cases/quantori/report/wf/s${String(n).padStart(2, '0')}.webp`);
+const src = (n: number) => asset(`/images/cases/quantori/${dir}/s${String(n).padStart(2, '0')}.webp`);
+const wf = (n: number) => asset(`/images/cases/quantori/${dir}/wf/s${String(n).padStart(2, '0')}.webp`);
 const box = (it: Item) => `left: ${it.x}px; top: ${it.y}px; width: ${it.w}px; height: ${it.h}px`;
 const tip = (t: unknown) => (t ? JSON.stringify(t) : undefined);
 const chev = data.chev;
@@ -63,7 +72,7 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
   piece ? (
     <div class:list={['dr-s', { 'dr-head': head }]} style={`height: ${piece.y1 - piece.y0}px`}>
       <img src={src(piece.s)} width="1440" height={piece.y1 - piece.y0} alt="" decoding="async" draggable="false" />
-      <img
+      {wireframe && (<img
         class="dr-wf"
         src={wf(piece.s)}
         width="1440"
@@ -72,13 +81,13 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
         aria-hidden="true"
         decoding="async"
         draggable="false"
-      />
+      />)}
       {head && <button class="dr-head__btn" type="button" aria-expanded="true" data-dr-toggle aria-label="Toggle section" />}
       {(byslice.get(piece.s) ?? []).map((it) =>
         it.k === 'row' ? (
           <span class="dr-row" style={box(it)} />
         ) : it.k === 'a' ? (
-          <span class:list={['dr-a', { 'dr-a--multi': it.multi }]} style={box(it)} data-tip={tip(it.tip)} />
+          <span class:list={['dr-a', { 'dr-a--multi': it.multi, 'dr-a--plain': it.plain }]} style={box(it)} data-tip={tip(it.tip)} />
         ) : it.k === 'chev' ? (
           <span class="dr-chev" style={box(it)} aria-hidden="true">
             <svg
@@ -112,7 +121,7 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
             ))}
           </div>
         ) : it.k === 'subtabs' ? (
-          <div class="dr-sub" style={box(it)} role="tablist">
+          <div class:list={['dr-sub', { 'dr-sub--big': it.big }]} style={box(it)} role="tablist">
             {it.items.map((t: { x: number; label: string }, n: number) => (
               <button
                 type="button"
@@ -147,6 +156,16 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
                   Select All
                 </button>
               </div>
+            ) : it.menu === 'plain' ? (
+              <ul class="dr-menu__list" role="menu" hidden>
+                {it.options.map((o: string, n: number) => (
+                  <li>
+                    <button type="button" role="menuitem" class:list={{ 'is-active': n === 0 }}>
+                      {o}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <ul class="dr-menu__list" role="menu" hidden>
                 {it.options.map((o: string) => (
@@ -236,6 +255,7 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
     </div>
   ) : node.k === 'nav' ? (
     <div class="dr-nav" style={`height: ${node.h}px; padding: ${data.navPad}px 120px`} data-dr-nav>
+      {wireframe && (
       <div class="dr-nav__wf" style={`inset: ${data.navPad}px 120px`} aria-hidden="true">
         {data.tabs.map((l: string, n: number) => (
           <span class:list={{ 'is-active': n === 0 }}>
@@ -243,6 +263,7 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
           </span>
         ))}
       </div>
+      )}
       <div class="dr-tabs" role="tablist">
         {data.tabs.map((l: string, n: number) => (
           <button
@@ -257,15 +278,17 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
         ))}
       </div>
     </div>
+  ) : node.k === 'live' ? (
+    <div class="dr-live" data-dr-live={node.n} />
   ) : node.k === 'anchor' ? (
     <span class="dr-anchor" data-dr-anchor={node.n} />
   ) : node.k === 'sec' ? (
     <div class:list={['dr-sec', { 'dr-sec--grp': node.grp }]}>
-      <Astro.self node={{ k: 'img', ...node.head }} head />
+      <Astro.self node={{ k: 'img', ...node.head }} head data={data} dir={dir} wireframe={wireframe} />
       <div class="dr-body">
         <div class="dr-body__in">
           {node.body.map((n) => (
-            <Astro.self node={n} />
+            <Astro.self node={n} data={data} dir={dir} wireframe={wireframe} />
           ))}
         </div>
       </div>

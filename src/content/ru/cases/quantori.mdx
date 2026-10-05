@@ -105,6 +105,12 @@ import Results from '../../../components/case/quantori/Results.astro';
 <div slot="t2"><PatentChart alt="Патенты компании по кварталам: новые, действующие и истёкшие или по типам DS и DP, история и прогноз, фильтры и таблица патентов" /></div>
 </ChartTabs>
 
+<DrugReport report="company" caption="Страница отчёта о компании" alt="Отчёт PharmaKB по компании AbbVie: шапка, вкладки Financial, Commercial и Clinical Trials, графики акций, выручки и патентов, таблицы одобренных препаратов и клинических испытаний">
+<div slot="l0"><StockChart alt="График акций AbbVie" /></div>
+<div slot="l1"><RevenueChart alt="Выручка AbbVie по препаратам" /></div>
+<div slot="l2"><PatentChart table alt="Патенты AbbVie по кварталам и таблица патентов" /></div>
+</DrugReport>
+
 ## Отчёт по препарату: от испытаний до продаж
 
 Исследования, продажи, медицинское использование и безопасность

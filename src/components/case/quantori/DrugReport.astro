@@ -12,14 +12,22 @@ import '@fontsource-variable/roboto/wght.css';
 import { typograph } from '../../../i18n/typograph';
 import { getLocaleFromUrl, useTranslations } from '../../../i18n/utils';
 import DrugReportNode from './DrugReportNode.astro';
-import data from './drug-report.json';
+import drug from './drug-report.json';
+import company from './company-report.json';
 
 interface Props {
   caption?: string;
   alt: string;
+  /** Какой отчёт: по препарату (с каркасом и бегунком) или по компании (живые графики из слотов `l0…l2`). */
+  report?: 'drug' | 'company';
 }
 
-const { caption, alt } = Astro.props;
+const { caption, alt, report = 'drug' } = Astro.props;
+const data = report === 'company' ? company : drug;
+const dir = report === 'company' ? 'company' : 'report';
+const wireframe = report === 'drug';
+// Живые графики (StockChart, RevenueChart, PatentChart) — из слотов; скрипт переносит их на место узлов `live`.
+const live = report === 'company' ? await Promise.all([0, 1, 2].map((n) => Astro.slots.render(`l${n}`))) : [];
 const t = useTranslations(getLocaleFromUrl(Astro.url));
 ---
 
@@ -28,11 +36,12 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
   <div class="dr__window">
     <div class="dr__frame" data-drug-report tabindex="0" aria-label={alt} data-lenis-prevent>
       <div class="dr__page" style={`width: ${data.width}px`}>
-        {data.nodes.map((n) => <DrugReportNode node={n as any} />)}
+        {data.nodes.map((n) => <DrugReportNode node={n as any} data={data} dir={dir} wireframe={wireframe} />)}
+        {live.map((html, n) => <div class="dr-live-src" data-dr-live-src={n} set:html={html} />)}
         <div class="dr__tip" role="tooltip" hidden></div>
       </div>
     </div>
-    <div class="dr-split" data-dr-split>
+    {wireframe && (<div class="dr-split" data-dr-split>
       <button
         type="button"
         class="dr-split__knob"
@@ -47,7 +56,7 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
           <path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
-    </div>
+    </div>)}
     <button type="button" class="dr__top" data-dr-top>Go<br />{typograph('to top')}</button>
   </div>
 </figure>
@@ -108,6 +117,11 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
 
   .dr-s {
     position: relative;
+  }
+
+  /* Кусок с открытым меню — над липкой полосой вкладок (меню «Download Report» иначе уходило под неё) */
+  .dr-s:has(.dr-menu__list:not([hidden])) {
+    z-index: 8;
   }
 
   .dr-s > img {
@@ -208,6 +222,36 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
 
   .dr-a {
     cursor: pointer;
+  }
+
+  /* Ссылки чёрным текстом (меню сайта, хлебные крошки) — подчёркивание цветом текста */
+  .dr-a--plain:hover::after {
+    top: auto !important;
+    bottom: 3px;
+    background: #262626 !important;
+  }
+
+  /* Живые графики в отчёте о компании (Stock Price, Revenue by Drug, Patents) — в полях страницы, как в макете */
+  .dr-live {
+    margin: 0 120px;
+    padding: 8px 0 32px;
+  }
+
+  .dr-live .sc {
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .dr-live-src {
+    display: none;
+  }
+
+  .dr-sub--big .dr-sub__tab {
+    font-size: 17px;
+  }
+
+  .dr-sub--big .dr-sub__tab::after {
+    top: 25px;
   }
 
   .dr-a:not(.dr-a--multi):hover::after {
@@ -602,7 +646,8 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
   /* Вкладки разделов */
   .dr-tabs {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
     border: 1px solid #dfdddf;
     background: #fff;
   }

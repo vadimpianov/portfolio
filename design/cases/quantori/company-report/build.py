@@ -96,7 +96,7 @@ for y in tabbars:
 remove.update(e['i'] for e in within(1200, 6520, 1270, 6595))
 
 # --- Шевроны разделов ---
-chevrons = [e for e in els if e['t'] == 'path' and e['s'] == DARK and e['w'] == 14 and e['h'] < 7]
+chevrons = [e for e in els if e['t'] == 'path' and e['s'] in (DARK,) + BLUE and e['w'] == 14 and e['h'] < 7]
 for e in chevrons:
     remove.add(e['i'])
 

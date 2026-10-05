@@ -55,6 +55,11 @@ const resize =
 
 export function initDrugReports(root: ParentNode) {
   root.querySelectorAll<HTMLElement>('[data-drug-report]').forEach((frame) => {
+    // Живые графики отчёта о компании: из слотов — на место своих узлов в разделах
+    frame.querySelectorAll<HTMLElement>('[data-dr-live-src]').forEach((src) => {
+      const slot = frame.querySelector<HTMLElement>(`[data-dr-live="${src.dataset.drLiveSrc}"]`);
+      if (slot && !slot.childElementCount) while (src.firstElementChild) slot.append(src.firstElementChild);
+    });
     fit(frame);
     frame.scrollTop = 0;
     // Окно уже страницы (телефон) — тоже с левого края: в поле стоит бегунок «вайрфрейм ↔ дизайн».
@@ -162,6 +167,8 @@ type Tip = {
   text?: string;
   ext?: boolean;
   list?: string[];
+  pre?: string[];
+  post?: string[];
   title?: string;
   rows?: [string, string][];
   note?: string;
@@ -185,7 +192,13 @@ const UNITS: Record<string, (v: number) => string> = {
 };
 
 function tipHtml(t: Tip) {
-  if (t.list) return `<ul>${t.list.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`;
+  if (t.list)
+    return (
+      (t.pre ?? []).map((l) => `<div>${esc(l)}</div>`).join('') +
+      (t.title ? `<b class="dr-tip__title">${esc(t.title)}</b>` : '') +
+      `<ul>${t.list.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` +
+      (t.post ?? []).map((l) => `<div>${esc(l)}</div>`).join('')
+    );
   if (t.unit && t.value != null)
     return `<b>${esc(t.title ?? '')}</b><div class="dr-tip__row"><i class="dr-tip__dot"></i>${UNITS[t.unit](t.value)}</div>`;
   if (t.rows)
