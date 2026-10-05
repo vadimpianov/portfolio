@@ -249,6 +249,19 @@ const coverSize = (() => {
     margin-top: 0;
   }
 
+  /* Ссылки в тексте кейса — цветом текста с подчёркиванием, на наведении — акцентным. */
+  .case__body :global(p a) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    transition: color 0.2s;
+  }
+
+  .case__body :global(p a:hover) {
+    color: var(--case-accent);
+  }
+
   /* Выделение в тексте — как обычный текст: без белого цвета и жирности. */
   .case__body :global(strong) {
     color: inherit;
