@@ -31,8 +31,95 @@ export function initDrugReports(root: ParentNode) {
     frame.addEventListener('scroll', () => {
       frame.parentElement?.querySelector('.dr__top')?.classList.toggle('is-shown', frame.scrollTop > 400);
       hideTip();
+      syncNav(frame);
     });
+    syncNav(frame);
   });
+}
+
+/* ---------- Вкладки: одна липкая полоса, активна вкладка раздела под ней ---------- */
+
+function syncNav(frame: HTMLElement) {
+  const nav = frame.querySelector<HTMLElement>('[data-dr-nav]');
+  if (!nav) return;
+  const top = frame.getBoundingClientRect().top;
+  const navBox = nav.getBoundingClientRect();
+  nav.classList.toggle('is-stuck', navBox.top - top < 1 && frame.scrollTop > 0);
+  let active = 0;
+  frame.querySelectorAll<HTMLElement>('[data-dr-anchor]').forEach((a) => {
+    if (a.getBoundingClientRect().top - top <= navBox.height + 24) active = Number(a.dataset.drAnchor);
+  });
+  nav.querySelectorAll<HTMLElement>('[data-dr-goto]').forEach((b, n) => {
+    b.classList.toggle('is-active', n === active);
+    b.setAttribute('aria-selected', String(n === active));
+  });
+}
+
+/* ---------- События таймлайна ---------- */
+
+type EventKind = { name: string; label: string; items: [string, string][] };
+const EVENTS: Record<string, EventKind> = {
+  '#DD4F4F': { name: 'FDA approval date', label: 'Products', items: [
+    ['2017-04-28', 'TYMLOS (ABALOPARATIDE) INJECTION, RADIUS HEALTH INC'],
+    ['2010-11-02', 'OFIRMEV (ACETAMINOPHEN) INJECTION, MALLINCKRODT HOSP'],
+    ['1982-01-01', 'TYLENOL / ACETAMINOPHEN TABLETS, MCNEIL CONSUMER'],
+  ] },
+  '#5284CF': { name: 'EMA approval date', label: 'Products', items: [
+    ['2022-12-12', 'ELADYNOS (ABALOPARATIDE), THERADEX B.V.'],
+    ['2016-05-26', 'PARACETAMOL B. BRAUN 10 MG/ML, B. BRAUN MELSUNGEN'],
+  ] },
+  '#72B123': { name: 'FDA advisory meeting dates', label: 'Committee', items: [
+    ['2016-12-20', 'Endocrinologic and Metabolic Drugs Advisory Committee'],
+    ['2009-06-29', 'Drug Safety and Risk Management Advisory Committee'],
+  ] },
+  '#DC915B': { name: 'Patent expiration date', label: 'Products', items: [
+    ['2016-05-26', 'ABACAVIR SULFATE / DOLUTEGRAVIR SODIUM / LAMIVUDINE, TRIUMEQ PD, VIIV HLTHCARE'],
+    ['2016-05-26', 'ABACAVIR SULFATE / DOLUTEGRAVIR SODIUM / LAMIVUDINE, TRIUMEQ PD, VIIV HLTHCARE'],
+    ['2016-05-26', 'ABACAVIR SULFATE / DOLUTEGRAVIR SODIUM / LAMIVUDINE, TRIUMEQ PD, VIIV HLTHCARE'],
+  ] },
+  '#5FBC50': { name: 'Study first post date', label: 'Trial', items: [
+    ['2023-02-07', 'NCT05718505 — IV vs oral acetaminophen after hip arthroplasty'],
+    ['2023-02-07', 'NCT05719012 — Abaloparatide in men with osteoporosis'],
+  ] },
+  '#3867A0': { name: 'Last update post date', label: 'Trial', items: [
+    ['2023-02-08', 'NCT04123587 — Acetaminophen for fever in ICU patients'],
+    ['2023-02-09', 'NCT03912688 — Abaloparatide transdermal system, phase 3'],
+  ] },
+  '#9D56BF': { name: 'Start date', label: 'Trial', items: [['2023-02-07', 'NCT05697367 — Paracetamol and opioid consumption after cesarean']] },
+  '#C41D63': { name: 'Primary completion date', label: 'Trial', items: [
+    ['2023-02-07', 'NCT04402411 — Acetaminophen dosing in children 2–12 years'],
+    ['2023-02-08', 'NCT03512925 — Abaloparatide vs teriparatide, bone density'],
+  ] },
+  '#8D6A79': { name: 'Results first post date', label: 'Trial', items: [['2023-02-07', 'NCT02984969 — Abaloparatide-SC in postmenopausal women']] },
+  '#6B5454': { name: 'Generic approved', label: 'Generic', items: [
+    ['2023-02-07', 'ACETAMINOPHEN INJECTION 1 G/100 ML, FRESENIUS KABI'],
+    ['2023-02-08', 'ACETAMINOPHEN INJECTION 1 G/100 ML, SANDOZ INC'],
+  ] },
+};
+
+function openEvents(page: HTMLElement, color: string) {
+  const panel = page.querySelector<HTMLElement>('[data-dr-evp]');
+  const kind = EVENTS[color];
+  if (!panel || !kind) return;
+  panel.style.setProperty('--c', color);
+  panel.querySelector('b')!.textContent = kind.name;
+  panel.querySelector('.dr-evp__list')!.innerHTML = kind.items
+    .map(
+      ([date, text]) =>
+        `<div class="dr-evp__item"><div class="dr-evp__date">${date}<a href="#" aria-label="Open source" data-dr-noop>${EXT}</a></div><strong>${kind.label}:</strong> ${esc(text)}</div>`,
+    )
+    .join('');
+  panel.hidden = false;
+  panel.querySelector<HTMLElement>('.dr-evp__list')!.scrollTop = 0;
+}
+
+/** Показать или скрыть тип событий: легенда, квадраты на таймлайне, галочка в меню Events. */
+function setEventKind(page: HTMLElement, color: string, on: boolean) {
+  page.querySelectorAll<HTMLElement>(`[data-dr-leg="${color}"]`).forEach((l) => l.setAttribute('aria-pressed', String(on)));
+  page.querySelectorAll<HTMLElement>(`[data-dr-ev="${color}"]`).forEach((e) => e.classList.toggle('is-off', !on));
+  page.querySelectorAll<HTMLInputElement>(`[data-dr-ev-check="${color}"]`).forEach((c) => (c.checked = on));
+  const panel = page.querySelector<HTMLElement>('[data-dr-evp]');
+  if (!on && panel && panel.style.getPropertyValue('--c') === color) panel.hidden = true;
 }
 
 /* ---------- Тултип ---------- */
@@ -147,6 +234,20 @@ if (typeof document !== 'undefined') {
       return;
     }
 
+    const page = target.closest<HTMLElement>('.dr__page');
+
+    // Внутри меню Events: галочки и «Select All» — меню не закрывается
+    if (target.closest('.dr-ev-menu')) {
+      const all = target.closest('[data-dr-ev-all]');
+      if (all && page) Object.keys(EVENTS).forEach((c) => setEventKind(page, c, true));
+      return;
+    }
+
+    if (target.closest('[data-dr-noop]')) {
+      e.preventDefault();
+      return;
+    }
+
     // Меню
     const menuBtn = target.closest<HTMLButtonElement>('[data-dr-menu]');
     const menuItem = target.closest<HTMLButtonElement>('.dr-menu__list button');
@@ -171,7 +272,11 @@ if (typeof document !== 'undefined') {
     // Раздел / группа
     const toggle = target.closest<HTMLButtonElement>('[data-dr-toggle]');
     if (toggle) {
-      const sec = toggle.closest('.dr-sec')!;
+      const sec = toggle.closest<HTMLElement>('.dr-sec')!;
+      // Пока раздел едет — содержимое обрезается; раскрытый раздел не обрезает меню и тултипы.
+      sec.classList.add('is-anim');
+      window.clearTimeout(Number(sec.dataset.animTimer));
+      sec.dataset.animTimer = String(window.setTimeout(() => sec.classList.remove('is-anim'), 500));
       const closed = sec.classList.toggle('is-closed');
       toggle.setAttribute('aria-expanded', String(!closed));
       hideTip();
@@ -182,10 +287,11 @@ if (typeof document !== 'undefined') {
     const go = target.closest<HTMLElement>('[data-dr-goto]');
     if (go) {
       const frame = go.closest<HTMLElement>('[data-drug-report]')!;
-      const bars = frame.querySelectorAll<HTMLElement>('.dr-tabs');
-      const bar = bars[Number(go.dataset.drGoto)];
-      if (bar) {
-        const top = frame.scrollTop + bar.getBoundingClientRect().top - frame.getBoundingClientRect().top;
+      const bar = frame.querySelector<HTMLElement>(`[data-dr-anchor="${go.dataset.drGoto}"]`);
+      const nav = frame.querySelector<HTMLElement>('[data-dr-nav]');
+      if (bar && nav) {
+        const top =
+          frame.scrollTop + bar.getBoundingClientRect().top - frame.getBoundingClientRect().top - nav.getBoundingClientRect().height - 16 * zoomOf(nav.closest<HTMLElement>('.dr__page')!);
         frame.scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       }
       return;
@@ -222,11 +328,51 @@ if (typeof document !== 'undefined') {
       return;
     }
 
+    // Легенда таймлайна и графиков
+    const leg = target.closest<HTMLElement>('[data-dr-leg]');
+    if (leg && page) {
+      const on = leg.getAttribute('aria-pressed') !== 'true';
+      if (EVENTS[leg.dataset.drLeg!]) setEventKind(page, leg.dataset.drLeg!, on);
+      else leg.setAttribute('aria-pressed', String(on));
+      return;
+    }
+
+    // Квадрат события → панель со списком
+    const ev = target.closest<HTMLElement>('[data-dr-ev]');
+    if (ev && page) {
+      hideTip();
+      openEvents(page, ev.dataset.drEv!);
+      return;
+    }
+    if (target.closest('[data-dr-evp-close]')) {
+      target.closest<HTMLElement>('[data-dr-evp]')!.hidden = true;
+      return;
+    }
+
+    // Иконка-ссылка на раздел
+    const icon = target.closest<HTMLElement>('[data-dr-copied]');
+    if (icon) {
+      showTip(icon, { text: `${icon.dataset.drCopied} ✓`, pos: 'top' });
+      icon.dataset.dragTip = '1';
+      window.clearTimeout(tipTimer);
+      tipTimer = window.setTimeout(() => {
+        delete icon.dataset.dragTip;
+        if (tipAnchor === icon) hideTip();
+      }, 1500);
+      return;
+    }
+
     // Наверх
     const top = target.closest<HTMLElement>('[data-dr-top]');
     if (top) {
       top.parentElement?.querySelector('[data-drug-report]')?.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  });
+
+  document.addEventListener('change', (e) => {
+    const box = (e.target as Element).closest?.<HTMLInputElement>('[data-dr-ev-check]');
+    const page = box?.closest<HTMLElement>('.dr__page');
+    if (box && page) setEventKind(page, box.dataset.drEvCheck!, box.checked);
   });
 
   document.addEventListener('keydown', (e) => {

@@ -6,13 +6,30 @@ interface Props {
   items: string[];
   /** Во всю ширину под обложкой (`clear`), даже если текст выше стоит рядом с ней (`TextColumns wrap`). */
   clear?: boolean;
+  /** С `clear`: первые `split` чипсов — строкой рядом с обложкой (под текстом слева),
+      остальные — во всю ширину сразу под обложкой. */
+  split?: number;
 }
 
-const { items, clear = false } = Astro.props;
+const { items, clear = false, split = 0 } = Astro.props;
+const beside = items.slice(0, split);
+const rest = items.slice(split);
 ---
 
-<ul class:list={['case-chips', { 'case-chips--clear': clear }]} data-cover-below={clear ? '' : undefined}>
-  {items.map((item) => (
+{
+  beside.length > 0 && (
+    <ul class="case-chips case-chips--beside">
+      {beside.map((item) => (
+        <li>{typograph(item)}</li>
+      ))}
+    </ul>
+  )
+}
+<ul
+  class:list={['case-chips', { 'case-chips--clear': clear, 'case-chips--after': beside.length > 0 }]}
+  data-cover-below={clear ? '' : undefined}
+>
+  {rest.map((item) => (
     <li>{typograph(item)}</li>
   ))}
 </ul>
@@ -31,6 +48,21 @@ const { items, clear = false } = Astro.props;
 
   .case-chips--clear {
     clear: both;
+  }
+
+  /* Строка рядом с обложкой — не уходит под неё (свой контекст, ужимается до левой колонки). */
+  .case-chips--beside {
+    overflow: hidden;
+  }
+
+  /* Рядом с обложкой не поместилась (CaseDrawer, centerCover) — под обложкой, как остальные. */
+  .case-chips--beside:global(.is-under) {
+    clear: both;
+  }
+
+  /* Продолжение под обложкой: от строки выше — как между чипсами. */
+  .case-chips--after {
+    margin-top: calc(var(--chip-gap) * 2);
   }
 
   .case-chips li {

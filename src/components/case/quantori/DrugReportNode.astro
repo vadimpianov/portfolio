@@ -8,7 +8,11 @@ import data from './drug-report.json';
 import { typograph } from '../../../i18n/typograph';
 
 type Piece = { s: number; y0: number; y1: number };
-type Node = (Piece & { k: 'img' }) | { k: 'sec'; grp?: boolean; head: Piece; body: Node[] };
+type Node =
+  | (Piece & { k: 'img' })
+  | { k: 'sec'; grp?: boolean; head: Piece; body: Node[] }
+  | { k: 'nav'; h: number }
+  | { k: 'anchor'; n: number };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Item = Record<string, any>;
 
@@ -29,6 +33,29 @@ const box = (it: Item) => `left: ${it.x}px; top: ${it.y}px; width: ${it.w}px; he
 const tip = (t: unknown) => (t ? JSON.stringify(t) : undefined);
 const chev = data.chev;
 const piece = node.k === 'img' ? node : null;
+// Меню «Events»: группы событий таймлайна (цвета — как в легенде)
+const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
+  {
+    title: 'Drug events',
+    items: [
+      ['#DD4F4F', 'FDA approval date'],
+      ['#5284CF', 'EMA approval date'],
+      ['#72B123', 'FDA advisory meeting dates'],
+      ['#DC915B', 'Patent expiration date'],
+    ],
+  },
+  {
+    title: 'Clinical trials',
+    items: [
+      ['#5FBC50', 'Study first post date'],
+      ['#3867A0', 'Last update post date'],
+      ['#9D56BF', 'Start date'],
+      ['#C41D63', 'Primary completion date'],
+      ['#8D6A79', 'Results first post date'],
+    ],
+  },
+  { title: 'Competitor events', items: [['#6B5454', 'Generic approved']] },
+];
 ---
 
 {
@@ -50,20 +77,6 @@ const piece = node.k === 'img' ? node : null;
               set:html={it.svg === 'big' ? chev.big : chev.small}
             />
           </span>
-        ) : it.k === 'tabs' ? (
-          <div class="dr-tabs" style={box(it)} role="tablist">
-            {it.labels.map((l: string, n: number) => (
-              <button
-                type="button"
-                role="tab"
-                class:list={['dr-tabs__tab', { 'is-active': n === it.active }]}
-                aria-selected={n === it.active ? 'true' : 'false'}
-                data-dr-goto={n}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
         ) : it.k === 'chips' ? (
           <div class="dr-chips" style={box(it)}>
             {it.labels.map((l: string) => (
@@ -105,15 +118,42 @@ const piece = node.k === 'img' ? node : null;
         ) : it.k === 'menu' ? (
           <div class:list={['dr-menu', `dr-menu--${it.menu}`]} style={box(it)}>
             <button type="button" class="dr-menu__btn" aria-haspopup="menu" aria-expanded="false" data-dr-menu />
-            <ul class="dr-menu__list" role="menu" hidden>
-              {it.options.map((o: string, n: number) => (
-                <li>
-                  <button type="button" role="menuitem" class:list={{ 'is-active': it.menu === 'events' && n === 0 }}>
-                    {o}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            {it.menu === 'events' ? (
+              <div class="dr-menu__list dr-ev-menu" hidden>
+                {EVENT_GROUPS.map((g) => (
+                  <div class="dr-ev-menu__group">
+                    <b>{g.title}</b>
+                    {g.items.map(([c, name]) => (
+                      <label class="dr-ev-menu__item">
+                        <i style={`background: ${c}`} />
+                        <span>{name}</span>
+                        <input type="checkbox" checked data-dr-ev-check={c} />
+                      </label>
+                    ))}
+                  </div>
+                ))}
+                <button type="button" class="dr-ev-menu__all" data-dr-ev-all>
+                  Select All
+                </button>
+              </div>
+            ) : (
+              <ul class="dr-menu__list" role="menu" hidden>
+                {it.options.map((o: string) => (
+                  <li>
+                    <button type="button" role="menuitem">
+                      <svg viewBox="0 0 14 18" width="14" height="18" aria-hidden="true">
+                        <path d="M1.5 1.5h7l4 4v11h-11z" fill="none" stroke="#383A3E" stroke-width="1.3" stroke-linejoin="round" />
+                        <path d="M8.5 1.5v4h4" fill="none" stroke="#383A3E" stroke-width="1.3" stroke-linejoin="round" />
+                        <text x="7" y="14" text-anchor="middle" font-size="7" font-weight="700" fill="#383A3E">
+                          {o[0]}
+                        </text>
+                      </svg>
+                      {o}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ) : it.k === 'fav' ? (
           <button type="button" class="dr-fav" style={box(it)} aria-pressed="false" data-dr-fav>
@@ -136,6 +176,38 @@ const piece = node.k === 'img' ? node : null;
           <button type="button" class="dr-btn" style={box(it)} />
         ) : it.k === 'info' ? (
           <span class="dr-info" style={`${box(it)}; --c: ${it.color}`} data-tip={tip(it.tip)} />
+        ) : it.k === 'evpanel' ? (
+          <div class="dr-evp" style={box(it)} hidden data-dr-evp>
+            <div class="dr-evp__head">
+              <i />
+              <b />
+              <button type="button" class="dr-evp__close" aria-label="Close" data-dr-evp-close>
+                <svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true">
+                  <path d="M1 1l12 12M13 1 1 13" stroke="#383A3E" stroke-width="1.5" />
+                </svg>
+              </button>
+            </div>
+            <div class="dr-evp__list" />
+          </div>
+        ) : it.k === 'leg' ? (
+          <button
+            type="button"
+            class="dr-leg"
+            style={`${box(it)}; --xx: ${it.xx ?? -100}px`}
+            aria-pressed="true"
+            data-dr-leg={it.c}
+          />
+        ) : it.k === 'ev' ? (
+          <button type="button" class="dr-ev" style={box(it)} data-c={it.c} data-tip={tip(it.tip)} data-dr-ev={it.c} />
+        ) : it.k === 'icon' ? (
+          <button
+            type="button"
+            class="dr-icon"
+            style={box(it)}
+            data-tip={tip(it.tip)}
+            data-dr-copied={it.copied}
+            aria-label={it.tip?.text ?? 'Action'}
+          />
         ) : it.k === 'pt' ? (
           <span class="dr-pt" style={box(it)} data-tip={tip(it.tip)} />
         ) : (
@@ -143,6 +215,24 @@ const piece = node.k === 'img' ? node : null;
         ),
       )}
     </div>
+  ) : node.k === 'nav' ? (
+    <div class="dr-nav" style={`height: ${node.h}px; padding: ${data.navPad}px 120px`} data-dr-nav>
+      <div class="dr-tabs" role="tablist">
+        {data.tabs.map((l: string, n: number) => (
+          <button
+            type="button"
+            role="tab"
+            class:list={['dr-tabs__tab', { 'is-active': n === 0 }]}
+            aria-selected={n === 0 ? 'true' : 'false'}
+            data-dr-goto={n}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+    </div>
+  ) : node.k === 'anchor' ? (
+    <span class="dr-anchor" data-dr-anchor={node.n} />
   ) : node.k === 'sec' ? (
     <div class:list={['dr-sec', { 'dr-sec--grp': node.grp }]}>
       <Astro.self node={{ k: 'img', ...node.head }} head />

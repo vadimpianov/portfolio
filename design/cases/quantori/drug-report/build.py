@@ -163,11 +163,36 @@ def piece(y0, y1):
     return {'s': len(slices) - 1, 'y0': y0, 'y1': y1}
 
 
+# Панели вкладок: первая — липкая полоса (HTML, 12px белого сверху и снизу), остальные вырезаны вместе
+# с отступом под ними (92px); на их месте — якоря разделов для прокрутки и подсветки вкладки.
+NAV_PAD = 12
+CUTS = [(tabbars[0] - NAV_PAD, tabbars[0] + 52 + NAV_PAD, 'nav', 0)] + \
+       [(t, t + 92, 'anchor', n) for n, t in enumerate(tabbars) if n > 0]
+
+
+def static(y0, y1):
+    out = []
+    for c0, c1, kind, n in CUTS:
+        if y0 <= c0 < y1:
+            assert c1 <= y1, (c0, c1, y1)
+            if c0 > y0:
+                out.append({'k': 'img', **piece(y0, c0)})
+            if kind == 'nav':
+                out.append({'k': 'nav', 'h': c1 - c0})
+                out.append({'k': 'anchor', 'n': 0})
+            else:
+                out.append({'k': 'anchor', 'n': n})
+            y0 = c1
+    if y1 > y0:
+        out.append({'k': 'img', **piece(y0, y1)})
+    return out
+
+
 nodes = []
 cursor = 0
 for b in bars:
     if b > cursor:
-        nodes.append({'k': 'img', **piece(cursor, b)})
+        nodes.extend(static(cursor, b))
     nxt = next(v for v in bounds if v > b)
     end = H - 24 if nxt == H else nxt - 32
     body = []
@@ -183,7 +208,7 @@ for b in bars:
         body.append({'k': 'img', **piece(c, end)})
     nodes.append({'k': 'sec', 'head': piece(b, b + 52), 'body': body})
     cursor = end
-nodes.append({'k': 'img', **piece(cursor, H)})
+nodes.extend(static(cursor, H))
 
 # --- Интерактивные зоны ---
 items = []
@@ -201,8 +226,6 @@ for e in GROUP_CHEV:
 
 # Вкладки
 TABS = ['Events Timeline', 'Commercial', 'Clinical', 'Drug', 'Target', 'Variants', 'Financial', 'Trends', 'Safety']
-for n, y in enumerate(tabbars):
-    add('tabs', 120, y, 1200, 52, active=n, labels=TABS)
 
 # Чипсы в шапке
 add('chips', 120, 328, 800, 36, labels=['BMS', 'COVID-19', 'Top 200 Pharmaceuticals by Retail Sales', 'Top Sellings Pharmaceuticals'])
@@ -220,8 +243,7 @@ items.extend(subtabs)
 for e in els:
     if e['t'] == 'rect' and e['s'] in BLUE and e['h'] >= 30 and e['i'] not in remove:
         if e['y'] < 200:
-            add('menu', e['x'], e['y'], e['w'], e['h'], menu='download',
-                options=['PDF', 'Excel (XLSX)', 'PowerPoint (PPTX)', 'CSV', 'JSON'])
+            add('menu', e['x'], e['y'], e['w'], e['h'], menu='download', options=['CSV', 'JSON', 'XLSX', 'PPTX'], files=True)
         else:
             add('btn', e['x'], e['y'], e['w'], e['h'])
 # «Events ▾»
@@ -332,6 +354,37 @@ add('zone', 1254, 10951, 24, 24, tip={'title': '2019-Q1', 'rows': [['#000', 'Glo
 add('zone', 1186, 11306, 24, 24, tip={'title': '2020-Q1', 'rows': [['#000', 'Global Sales: $19,832.2 M'], ['#0077BB', 'US: $16,112.5 M'],
                                                                     ['#AAAAAA', 'Rest of World: $3,720.5 M']], 'pos': 'left'})
 
+# Значок-ссылка у заголовка раздела: копирует ссылку на раздел
+for e in els:
+    if e['f'] == '#8A8D93' and round(e['w']) == 17 and round(e['h']) == 16:
+        add('icon', e['x'] - 5, e['y'] - 4, e['w'] + 10, e['h'] + 8, tip={'text': 'Copy link to section', 'pos': 'top'},
+            copied='Link copied')
+
+# Легенда таймлайна (квадрат + подпись + ×) и события того же цвета
+LEGEND = {'#DD4F4F': 'FDA approval date', '#5284CF': 'EMA approval date', '#72B123': 'FDA advisory meeting dates',
+          '#DC915B': 'Patent expiration date', '#5FBC50': 'Study first post date', '#3867A0': 'Last update post date',
+          '#9D56BF': 'Start date', '#C41D63': 'Primary completion date', '#8D6A79': 'Results first post date',
+          '#6B5454': 'Competitor approved'}
+for k, e in enumerate(els):
+    if e['t'] == 'rect' and e['f'] in LEGEND and round(e['w']) == 12 and e['y'] < 760:
+        cross = els[k + 2] if els[k + 2]['f'] == '#606165' else els[k + 3]
+        items.append({'k': 'leg', 'x': r1(e['x'] - 4), 'y': r1(e['y'] - 4), 'w': r1(cross['x'] + cross['w'] - e['x'] + 8),
+                      'h': 20, 'c': e['f'], 'xx': r1(cross['x'] - e['x'] + 4)})
+    if e['t'] == 'rect' and e['f'] in LEGEND and round(e['w']) == 23:
+        add('ev', e['x'], e['y'], e['w'], e['h'], c=e['f'], tip={'text': LEGEND[e['f']], 'pos': 'top'})
+# Легенды графиков выручки (квадрат + подпись): включить/выключить серию
+for k, e in enumerate(els):
+    if e['t'] == 'path' and e['f'] in ('#265989', '#0A9E21', '#498ABA', '#C8C9E9', '#863875') and round(e['w']) == 12:
+        lab = els[k + 1]
+        add('leg', e['x'] - 4, e['y'] - 4, lab['x'] + lab['w'] - e['x'] + 8, 20, c=e['f'])
+# Панель событий (по клику на квадрат таймлайна) — слева внутри рамки графика
+add('evpanel', 121, 769, 360, 244)
+# Прочие иконки
+add('icon', 594, 8262, 28, 28, tip={'text': 'Classification differs between FDA and EMA', 'pos': 'top'})
+for k in (734, 910, 968, 989):
+    e = els[k]
+    add('icon', e['x'] - 5, e['y'] - 5, e['w'] + 10, e['h'] + 10)
+
 # Каждую зону — в кусок, где её верх
 def leaf_of(y):
     for n, (a, b) in enumerate(slices):
@@ -345,8 +398,7 @@ for it in items:
     it['s'] = s
     it['y'] = r1(it['y'] - slices[s][0])
 
-data = {'width': 1440, 'height': H, 'slices': slices, 'nodes': nodes, 'items': items,
-        'tabTops': tabbars, 'chev': {'big': chev_big, 'small': chev_small,
+data = {'width': 1440, 'slices': slices, 'nodes': nodes, 'items': items, 'tabs': TABS, 'navPad': NAV_PAD, 'chev': {'big': chev_big, 'small': chev_small,
                                      'bigBox': [chevrons[0]['x'], chevrons[0]['y'], chevrons[0]['w'], chevrons[0]['h']],
                                      'smallBox': [GROUP_CHEV[0]['x'], GROUP_CHEV[0]['y'], GROUP_CHEV[0]['w'], GROUP_CHEV[0]['h']]}}
 json.dump(data, open(OUT_JSON, 'w'), ensure_ascii=False, separators=(',', ':'))

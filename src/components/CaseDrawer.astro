@@ -266,6 +266,10 @@ const close = t('case.close');
       cover.style.marginTop = '';
       cover.style.marginBottom = '';
       cover.style.shapeOutside = '';
+      // Строка чипсов рядом с обложкой (`Chips split`): в расчёт центровки не входит, встаёт под текст слева.
+      const prev = below.previousElementSibling as HTMLElement | null;
+      const beside = prev?.classList.contains('case-chips--beside') ? prev : null;
+      beside?.classList.remove('is-under');
       if (getComputedStyle(cover).float === 'none') return;
       const gap = parseFloat(getComputedStyle(below).marginTop);
       // Первая строка заголовка шире левой колонки (неразрывная цепочка) — обложка начинается ниже неё.
@@ -280,7 +284,7 @@ const close = t('case.close');
       cover.style.marginBottom = `${gap}px`;
       for (let i = 0; i < 6; i++) {
         const top = period.getBoundingClientRect().top;
-        const textEnd = (below.previousElementSibling ?? below).getBoundingClientRect().bottom + gap;
+        const textEnd = ((beside ? beside.previousElementSibling : prev) ?? below).getBoundingClientRect().bottom + gap;
         const next = Math.max(minTop, Math.round((textEnd - top - cover.offsetHeight) / 4) * 2); // до чётных px
         if (next === margin) break;
         margin = next;
@@ -288,7 +292,19 @@ const close = t('case.close');
         // Отступ сверху не отнимает место у текста: обтекание начинается с самой картинки.
         cover.style.shapeOutside = `inset(${margin}px 0 0 0)`;
         // Снизу — столько же: блок под обложкой (clear) встаёт ровно на это расстояние.
+        // (Если обложку держит ниже заголовка `minTop`, а не центровка, — снизу обычный отступ блока.)
         cover.style.marginBottom = `${Math.max(margin, gap)}px`;
+      }
+      if (beside) {
+        // Помещается одной строкой рядом с обложкой — остальные чипсы сразу под ней (отступ --case-chips-gap),
+        // иначе строка уходит под обложку вместе с остальными.
+        const items = beside.children;
+        const oneRow = items[0]?.getBoundingClientRect().top === items[items.length - 1]?.getBoundingClientRect().top;
+        if (oneRow && beside.getBoundingClientRect().bottom <= cover.getBoundingClientRect().bottom) {
+          cover.style.marginBottom = getComputedStyle(beside).marginTop;
+        } else {
+          beside.classList.add('is-under');
+        }
       }
     });
   }

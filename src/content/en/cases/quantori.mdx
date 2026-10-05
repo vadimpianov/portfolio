@@ -36,7 +36,7 @@ I had one obvious goal:
 
 </TextColumns>
 
-<Chips clear items={['Analyst interviews', 'Contextual observation', 'Product analytics', 'Information architecture', 'Complex B2B interfaces', 'Tables, filters and sorting', 'Data visualization', 'Design system']} />
+<Chips clear split={2} items={['Analyst interviews', 'Product analytics', 'Contextual observation', 'Complex B2B interfaces', 'Design system', 'Information architecture', 'Tables, filters and sorting', 'Data visualization']} />
 
 <CaseTabs>
 
@@ -48,7 +48,7 @@ I started by watching people work
 
 I interviewed 12 analysts from five client companies and watched them prepare real reports. Their work demands keeping everything in mind at once: comparing competing drugs, spotting a patent cliff in time, forecasting revenue and assessing clinical trial risk. Product analytics showed the average uninterrupted session lasted 27 minutes.
 
-The problem wasn't the amount of data but the way it was presented. The company gathers information on 1,700+ companies and 9,770+ drugs from hundreds of sources and updates it every day. All of it went into the report as is. The drug report was a single page more than 16,000 pixels tall: nine sections — commercial, trials, targets, financials, trends, safety — and almost 30 tables and charts. All of it was laid out poorly, with the wrong contrast and hard-to-read fonts. Every table had been built on its own, with its own width, font size, row height and header color, and numbers aligned left in one place and centered in another. The eye had to readjust to every block.
+The problem wasn't the amount of data but the way it was presented. The company gathers information on 1,700+ companies and 9,770+ drugs from hundreds of sources and updates it every day. All of it went into the report as is. The drug report was a single page more than 16,000 pixels tall: nine sections — from sales to safety — and almost 30 tables and charts. All of it was laid out poorly, with the wrong contrast and hard-to-read fonts. Every table had been built on its own, with its own width, font size, row height and header color, and numbers aligned left in one place and centered in another. The eye had to readjust to every block.
 
 To compare two drugs, an analyst scrolled through two such reports and matched the numbers by hand. FDA and EMA data lived in separate tables with different field names, and the revenue, patent and trial charts didn't line up in time. 64% of sessions ended with an export to Excel: analysts assembled their reports where the table columns could at least be lined up.
 
@@ -75,7 +75,7 @@ The report is as detailed as before: we didn't remove a single number. What chan
 
 </Flow>
 
-<DrugReport caption="The whole drug report: nine sections, almost 30 tables and charts. Everything is clickable, just like in the app" alt="PharmaKB drug report: header, section tabs, events timeline, commercial data, clinical trials, targets, financials, trends and safety" />
+<DrugReport alt="PharmaKB drug report: header, section tabs, events timeline, commercial data, clinical trials, targets, financials, trends and safety" />
 
 ## Charts that read at a glance
 
