@@ -1,0 +1,629 @@
+---
+/**
+ * Отчёт по препарату PharmaKB — «живая» страница в окне браузера внутри кейса (из макета пользователя
+ * design/cases/quantori/drug-report/drug-report.svg, сборка — build.py там же).
+ * Страница — картинки-куски в 2x, поверх — интерактив: вкладки ведут к разделам, разделы и группы
+ * сворачиваются, переключатели FDA/EMA и валют, подвкладки, чипсы, меню «Download Report» и «Events»,
+ * избранное, копирование, тултипы как в макете, наведение на ссылки, строки таблиц и точки графиков.
+ * Вся страница — в координатах макета (1440px), под ширину окна её масштабирует `zoom`
+ * (src/scripts/drug-report.ts, запускает CaseDrawer).
+ */
+import '@fontsource-variable/roboto/wght.css';
+import { typograph } from '../../../i18n/typograph';
+import DrugReportNode from './DrugReportNode.astro';
+import data from './drug-report.json';
+
+interface Props {
+  caption?: string;
+  alt: string;
+  url?: string;
+}
+
+const { caption, alt, url = 'app.pharmakb.com/drug-reports/abaloparatide' } = Astro.props;
+---
+
+<figure class="case-figure dr">
+  {caption && <figcaption>{typograph(caption)}</figcaption>}
+  <div class="dr__window">
+    <div class="dr__chrome" aria-hidden="true">
+      <span class="dr__dots"><i></i><i></i><i></i></span>
+      <span class="dr__url">{url}</span>
+    </div>
+    <div class="dr__frame" data-drug-report tabindex="0" aria-label={alt} data-lenis-prevent>
+      <div class="dr__page" style={`width: ${data.width}px`}>
+        {data.nodes.map((n) => <DrugReportNode node={n as any} />)}
+        <div class="dr__tip" role="tooltip" hidden></div>
+      </div>
+    </div>
+    <button type="button" class="dr__top" data-dr-top>Go<br />{typograph('to top')}</button>
+  </div>
+</figure>
+
+<style is:global>
+  .dr {
+    margin-block: var(--case-block-gap);
+  }
+
+  .dr > figcaption {
+    margin-bottom: var(--case-caption-gap);
+    font-size: var(--text-case-body);
+    font-weight: 500;
+    color: var(--case-text);
+  }
+
+  .dr__window {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--tile-radius);
+    background: #fff;
+  }
+
+  .dr__chrome {
+    letter-spacing: normal;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 40px;
+    padding-inline: 16px;
+    background: #ebedf0;
+    color: #595959;
+    font-family: 'Roboto Variable', sans-serif;
+    font-size: 13px;
+  }
+
+  .dr__dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dr__dots i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ccced3;
+  }
+
+  .dr__url {
+    flex: 1;
+    overflow: hidden;
+    max-width: 480px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: #fff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .dr__frame {
+    height: var(--case-figure-box-h);
+    overflow: auto;
+    overscroll-behavior: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c4c6cc transparent;
+    outline: none;
+  }
+
+  .dr__page {
+    position: relative;
+    /* Масштаб до ширины окна ставит скрипт (zoom); до него страница просто шире окна. */
+    font-family: 'Roboto Variable', sans-serif;
+    color: #262626;
+    font-size: 16px;
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .dr__page * {
+    line-height: normal;
+  }
+
+  .dr__page button {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .dr-s {
+    position: relative;
+  }
+
+  .dr-s > img {
+    display: block;
+    width: 1440px;
+    height: 100%;
+    user-select: none;
+  }
+
+  .dr-s > :not(img) {
+    position: absolute;
+    z-index: 1;
+  }
+
+  /* Раскрывающиеся разделы и группы */
+  .dr-head__btn {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dr-s > .dr-head__btn {
+    z-index: 1;
+  }
+
+  .dr-sec:not(.dr-sec--grp) > .dr-head .dr-head__btn {
+    left: 120px;
+    width: 1200px;
+  }
+
+  .dr-sec:not(.dr-sec--grp) > .dr-head .dr-head__btn:hover {
+    background: rgb(13 105 235 / 0.04);
+  }
+
+  .dr-head .dr-head__btn:focus-visible {
+    outline: 2px solid #0d69eb;
+    outline-offset: -2px;
+  }
+
+  .dr-s > .dr-tabs,
+  .dr-s > .dr-seg,
+  .dr-s > .dr-menu,
+  .dr-s > .dr-fav,
+  .dr-s > .dr-copy,
+  .dr-s > .dr-info,
+  .dr-s > .dr-a,
+  .dr-s > .dr-pt,
+  .dr-s > .dr-zone,
+  .dr-s > .dr-chips,
+  .dr-s > .dr-sub,
+  .dr-s > .dr-btn {
+    z-index: 2;
+  }
+
+  .dr-chev {
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .dr-chev svg {
+    overflow: visible;
+    transition: rotate 0.35s ease;
+  }
+
+  .dr-sec.is-closed > .dr-head .dr-chev svg {
+    rotate: 180deg;
+  }
+
+  .dr-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.45s cubic-bezier(0.3, 0.7, 0.2, 1);
+  }
+
+  .dr-sec.is-closed > .dr-body {
+    grid-template-rows: 0fr;
+  }
+
+  .dr-body__in {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Строки таблиц, ссылки, кнопки */
+  .dr-row {
+    pointer-events: auto;
+    mix-blend-mode: multiply;
+  }
+
+  .dr-row:hover {
+    background: #e9f1fd;
+  }
+
+  .dr-a {
+    cursor: pointer;
+  }
+
+  .dr-a:not(.dr-a--multi):hover::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: #0d69eb;
+  }
+
+  .dr-a--multi:hover {
+    background: rgb(13 105 235 / 0.06);
+    border-radius: 2px;
+  }
+
+  .dr-btn {
+    border-radius: 4px;
+    mix-blend-mode: multiply;
+  }
+
+  .dr-btn:hover {
+    background: #e3eefd;
+  }
+
+  .dr-btn:active {
+    background: #cfe0fb;
+  }
+
+  .dr-info {
+    border-radius: 50%;
+    cursor: help;
+  }
+
+  .dr-info:hover {
+    box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 30px color-mix(in srgb, var(--c) 18%, transparent);
+  }
+
+  .dr-pt,
+  .dr-zone {
+    border-radius: 50%;
+    cursor: crosshair;
+  }
+
+  .dr-pt:hover::after,
+  .dr-zone:hover::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 2px solid #0d69eb;
+    border-radius: 50%;
+    background: rgb(13 105 235 / 0.12);
+  }
+
+  /* Вкладки разделов */
+  .dr-tabs {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    border: 1px solid #dfdddf;
+    background: #fff;
+  }
+
+  .dr-tabs__tab {
+    color: #595959;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .dr-tabs__tab + .dr-tabs__tab {
+    border-left: 1px solid #dfdddf !important;
+  }
+
+  .dr-tabs__tab:hover {
+    background: #f5f5f6 !important;
+    color: #262626 !important;
+  }
+
+  .dr-tabs__tab.is-active,
+  .dr-tabs__tab.is-active:hover {
+    background: #0d69eb !important;
+    color: #fff !important;
+  }
+
+  /* Чипсы в шапке */
+  .dr-chips {
+    display: flex;
+    gap: 13px;
+  }
+
+  .dr-chips__chip {
+    height: 36px;
+    padding-inline: 16px !important;
+    border: 1px solid #dfdddf !important;
+    border-radius: 2px;
+    background: #f5f5f6 !important;
+    color: #0d69eb !important;
+    white-space: nowrap;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .dr-chips__chip:hover {
+    border-color: #0d69eb !important;
+    background: #0d69eb !important;
+    color: #fff !important;
+  }
+
+  /* Переключатели FDA / EMA и валют */
+  .dr-seg {
+    display: flex;
+    padding: 1px;
+    background: #fff;
+  }
+
+  .dr-seg__item {
+    flex: 1;
+    font-size: 15px;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .dr-seg__item:hover {
+    color: #0d69eb !important;
+  }
+
+  .dr-seg__item.is-active,
+  .dr-seg__item.is-active:hover {
+    background: #0d69eb !important;
+    color: #fff !important;
+  }
+
+  /* Подвкладки с подчёркиванием */
+  .dr-sub__tab {
+    position: absolute;
+    top: 3px;
+    color: #595959 !important;
+    font-size: 16px;
+    line-height: 20px !important;
+    white-space: nowrap;
+  }
+
+  .dr-sub__tab::after {
+    content: '';
+    position: absolute;
+    top: 27px;
+    right: -1px;
+    left: -1px;
+    height: 2px;
+    background: #0d69eb;
+    scale: 0 1;
+    transition: scale 0.25s ease;
+  }
+
+  .dr-sub__tab:hover {
+    color: #262626 !important;
+  }
+
+  .dr-sub__tab.is-active {
+    color: #262626 !important;
+    font-weight: 500 !important;
+  }
+
+  .dr-sub__tab.is-active::after {
+    scale: 1 1;
+  }
+
+  /* Меню */
+  .dr-menu__btn {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+  }
+
+  .dr-menu--download .dr-menu__btn:hover,
+  .dr-menu--download .dr-menu__btn[aria-expanded='true'] {
+    background: rgb(13 105 235 / 0.08) !important;
+  }
+
+  .dr-menu--events .dr-menu__btn:hover {
+    text-decoration: underline;
+  }
+
+  .dr-menu__list {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    z-index: 5;
+    min-width: 100%;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    border: 1px solid #dfdddf;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  }
+
+  .dr-menu--events .dr-menu__list {
+    min-width: 180px;
+  }
+
+  .dr-menu__list button {
+    display: block;
+    width: 100%;
+    padding: 8px 16px !important;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 15px;
+  }
+
+  .dr-menu__list button:hover {
+    background: #f5f5f6 !important;
+    color: #0d69eb !important;
+  }
+
+  .dr-menu__list button.is-active {
+    color: #0d69eb !important;
+    font-weight: 500 !important;
+  }
+
+  /* Избранное, коллекция, оповещения */
+  .dr-fav svg {
+    position: absolute;
+    overflow: visible;
+    opacity: 0;
+    scale: 0.4;
+    transition:
+      opacity 0.2s,
+      scale 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .dr-fav[aria-pressed='true'] svg {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .dr-fav:hover {
+    text-decoration: underline;
+  }
+
+  .dr-copy {
+    border-radius: 4px;
+  }
+
+  .dr-copy:hover {
+    background: rgb(13 105 235 / 0.1) !important;
+  }
+
+  /* Тултип — как в макете */
+  .dr__tip {
+    position: absolute;
+    z-index: 10;
+    max-width: 400px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #383a3e;
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: dr-tip 0.15s ease;
+  }
+
+  .dr__tip * {
+    line-height: 20px !important;
+  }
+
+  .dr__tip::after {
+    content: '';
+    position: absolute;
+    left: var(--ax, 50%);
+    width: 12px;
+    height: 7px;
+    margin-left: -6px;
+    background: #383a3e;
+  }
+
+  .dr__tip[data-pos='top']::after {
+    top: 100%;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+
+  .dr__tip[data-pos='bottom']::after {
+    bottom: 100%;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  .dr__tip[data-pos='left']::after {
+    top: var(--ay, 50%);
+    left: 100%;
+    width: 7px;
+    height: 12px;
+    margin: -6px 0 0;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .dr__tip ul {
+    margin: 0;
+    padding: 0 0 0 14px;
+  }
+
+  .dr__tip li,
+  .dr__tip .dr-tip__note {
+    white-space: normal;
+  }
+
+  .dr__tip li + li {
+    margin-top: 12px;
+  }
+
+  .dr__tip b {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .dr__tip .dr-tip__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .dr__tip .dr-tip__sq {
+    width: 11px;
+    height: 11px;
+    border: 1px solid #fff;
+  }
+
+  .dr__tip .dr-tip__dot {
+    width: 12px;
+    height: 12px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: #9b9b9b;
+  }
+
+  .dr__tip .dr-tip__note {
+    max-width: 200px;
+  }
+
+  .dr__tip svg {
+    margin-left: 8px;
+    vertical-align: -2px;
+  }
+
+  @keyframes dr-tip {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Кнопка «наверх» — по нижнему правому углу окна, когда страницу пролистали */
+  .dr__top {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 3;
+    width: 56px;
+    height: 56px;
+    border: 1px solid #1e9af1;
+    border-radius: 50%;
+    background: #fff;
+    color: #262626;
+    font-family: 'Roboto Variable', sans-serif;
+    font-size: 12px;
+    line-height: 14px;
+    cursor: pointer;
+    opacity: 0;
+    translate: 0 8px;
+    pointer-events: none;
+    transition:
+      opacity 0.25s,
+      translate 0.25s,
+      background 0.2s;
+  }
+
+  .dr__top.is-shown {
+    opacity: 1;
+    translate: 0 0;
+    pointer-events: auto;
+  }
+
+  .dr__top:hover {
+    background: #e9f1fd;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dr-body,
+    .dr-chev svg,
+    .dr-sub__tab::after,
+    .dr-fav svg {
+      transition: none;
+    }
+  }
+</style>

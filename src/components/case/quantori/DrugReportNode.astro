@@ -1,0 +1,158 @@
+---
+/**
+ * Узел дерева интерактивного отчёта (DrugReport): кусок картинки с зонами поверх
+ * или раскрывающийся раздел/группа (шапка + тело). Рекурсивный.
+ */
+import { asset } from '../../../utils/asset';
+import data from './drug-report.json';
+import { typograph } from '../../../i18n/typograph';
+
+type Piece = { s: number; y0: number; y1: number };
+type Node = (Piece & { k: 'img' }) | { k: 'sec'; grp?: boolean; head: Piece; body: Node[] };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Item = Record<string, any>;
+
+interface Props {
+  node: Node;
+  head?: boolean;
+}
+
+const { node, head = false } = Astro.props;
+const byslice = new Map<number, Item[]>();
+for (const it of data.items as Item[]) {
+  const list = byslice.get(it.s) ?? [];
+  list.push(it);
+  byslice.set(it.s, list);
+}
+const src = (n: number) => asset(`/images/cases/quantori/report/s${String(n).padStart(2, '0')}.webp`);
+const box = (it: Item) => `left: ${it.x}px; top: ${it.y}px; width: ${it.w}px; height: ${it.h}px`;
+const tip = (t: unknown) => (t ? JSON.stringify(t) : undefined);
+const chev = data.chev;
+const piece = node.k === 'img' ? node : null;
+---
+
+{
+  piece ? (
+    <div class:list={['dr-s', { 'dr-head': head }]} style={`height: ${piece.y1 - piece.y0}px`}>
+      <img src={src(piece.s)} width="1440" height={piece.y1 - piece.y0} alt="" decoding="async" draggable="false" />
+      {head && <button class="dr-head__btn" type="button" aria-expanded="true" data-dr-toggle aria-label="Toggle section" />}
+      {(byslice.get(piece.s) ?? []).map((it) =>
+        it.k === 'row' ? (
+          <span class="dr-row" style={box(it)} />
+        ) : it.k === 'a' ? (
+          <span class:list={['dr-a', { 'dr-a--multi': it.multi }]} style={box(it)} data-tip={tip(it.tip)} />
+        ) : it.k === 'chev' ? (
+          <span class="dr-chev" style={box(it)} aria-hidden="true">
+            <svg
+              fill="none"
+              viewBox={(it.svg === 'big' ? chev.bigBox : chev.smallBox).join(' ')}
+              style={`width: ${(it.svg === 'big' ? chev.bigBox : chev.smallBox)[2]}px`}
+              set:html={it.svg === 'big' ? chev.big : chev.small}
+            />
+          </span>
+        ) : it.k === 'tabs' ? (
+          <div class="dr-tabs" style={box(it)} role="tablist">
+            {it.labels.map((l: string, n: number) => (
+              <button
+                type="button"
+                role="tab"
+                class:list={['dr-tabs__tab', { 'is-active': n === it.active }]}
+                aria-selected={n === it.active ? 'true' : 'false'}
+                data-dr-goto={n}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+        ) : it.k === 'chips' ? (
+          <div class="dr-chips" style={box(it)}>
+            {it.labels.map((l: string) => (
+              <button type="button" class="dr-chips__chip">
+                {typograph(l)}
+              </button>
+            ))}
+          </div>
+        ) : it.k === 'seg' ? (
+          <div class="dr-seg" style={box(it)} role="radiogroup">
+            {it.labels.map((l: string, n: number) => (
+              <button
+                type="button"
+                role="radio"
+                class:list={['dr-seg__item', { 'is-active': n === 0 }]}
+                aria-checked={n === 0 ? 'true' : 'false'}
+                data-tip={it.tips ? tip({ text: it.tips[n], pos: 'bottom' }) : undefined}
+                data-dr-seg
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+        ) : it.k === 'subtabs' ? (
+          <div class="dr-sub" style={box(it)} role="tablist">
+            {it.items.map((t: { x: number; label: string }, n: number) => (
+              <button
+                type="button"
+                role="tab"
+                class:list={['dr-sub__tab', { 'is-active': n === 0 }]}
+                aria-selected={n === 0 ? 'true' : 'false'}
+                style={`left: ${t.x - it.x}px`}
+                data-dr-sub
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        ) : it.k === 'menu' ? (
+          <div class:list={['dr-menu', `dr-menu--${it.menu}`]} style={box(it)}>
+            <button type="button" class="dr-menu__btn" aria-haspopup="menu" aria-expanded="false" data-dr-menu />
+            <ul class="dr-menu__list" role="menu" hidden>
+              {it.options.map((o: string, n: number) => (
+                <li>
+                  <button type="button" role="menuitem" class:list={{ 'is-active': it.menu === 'events' && n === 0 }}>
+                    {o}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : it.k === 'fav' ? (
+          <button type="button" class="dr-fav" style={box(it)} aria-pressed="false" data-dr-fav>
+            <svg
+              viewBox={it.icon.includes('M6 0a') ? '0 0 12 12' : '0 0 12 11.5'}
+              style={`left: ${it.ix - it.x}px; top: ${it.iy - (it.y + data.slices[it.s][0])}px; width: ${it.iw}px; height: ${it.ih}px`}
+              set:html={it.icon}
+            />
+          </button>
+        ) : it.k === 'copy' ? (
+          <button
+            type="button"
+            class="dr-copy"
+            style={box(it)}
+            aria-label="Copy"
+            data-tip={tip({ text: 'Copy', pos: 'bottom' })}
+            data-dr-copy
+          />
+        ) : it.k === 'btn' ? (
+          <button type="button" class="dr-btn" style={box(it)} />
+        ) : it.k === 'info' ? (
+          <span class="dr-info" style={`${box(it)}; --c: ${it.color}`} data-tip={tip(it.tip)} />
+        ) : it.k === 'pt' ? (
+          <span class="dr-pt" style={box(it)} data-tip={tip(it.tip)} />
+        ) : (
+          <span class="dr-zone" style={box(it)} data-tip={tip(it.tip)} />
+        ),
+      )}
+    </div>
+  ) : node.k === 'sec' ? (
+    <div class:list={['dr-sec', { 'dr-sec--grp': node.grp }]}>
+      <Astro.self node={{ k: 'img', ...node.head }} head />
+      <div class="dr-body">
+        <div class="dr-body__in">
+          {node.body.map((n) => (
+            <Astro.self node={n} />
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : null
+}

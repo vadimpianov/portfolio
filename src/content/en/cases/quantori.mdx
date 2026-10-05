@@ -14,6 +14,7 @@ import TextColumns from '../../../components/case/TextColumns.astro';
 import Flow from '../../../components/case/Flow.astro';
 import Figure from '../../../components/case/Figure.astro';
 import Scale from '../../../components/case/quantori/Scale.astro';
+import DrugReport from '../../../components/case/quantori/DrugReport.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
 <div class="case-lead">
@@ -74,7 +75,7 @@ The report is as detailed as before: we didn't remove a single number. What chan
 
 </Flow>
 
-<Figure box="1440 / 15900" tiles={2048} focus="0 0" src="/images/cases/quantori/drug-report" width={2880} height={31800} caption="The whole drug report: nine sections, almost 30 tables and charts" alt="PharmaKB drug report: header, section tabs, events timeline, commercial data, clinical trials, targets, financials, trends and safety" />
+<DrugReport caption="The whole drug report: nine sections, almost 30 tables and charts. Everything is clickable, just like in the app" alt="PharmaKB drug report: header, section tabs, events timeline, commercial data, clinical trials, targets, financials, trends and safety" />
 
 ## Charts that read at a glance
 

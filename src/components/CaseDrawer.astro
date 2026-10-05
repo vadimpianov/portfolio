@@ -194,6 +194,7 @@ const close = t('case.close');
   import { getLenis } from '../scripts/motion';
   import { initCoverSliders } from '../scripts/cover-slider';
   import { watchCaseData } from '../scripts/case-data';
+  import { initDrugReports } from '../scripts/drug-report';
 
   initCoverSliders();
 
@@ -511,6 +512,7 @@ const close = t('case.close');
     initLoops(body);
     initMetrics(body);
     watchCaseData(body);
+    initDrugReports(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
@@ -574,6 +576,7 @@ const close = t('case.close');
     initLoops(body);
     initMetrics(body);
     watchCaseData(body);
+    initDrugReports(body);
     covers.observe(body);
     document.fonts?.ready.then(() => layout(body));
     document.documentElement.classList.add('case-open');

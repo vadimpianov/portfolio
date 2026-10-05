@@ -17,6 +17,9 @@ importers:
       '@fontsource-variable/onest':
         specifier: ^5.3.1
         version: 5.3.1
+      '@fontsource-variable/roboto':
+        specifier: ^5.3.0
+        version: 5.3.0
       astro:
         specifier: ^7.3.5
         version: 7.3.5(@types/node@24.13.6)(yaml@2.9.1)
@@ -596,6 +599,9 @@ packages:
 
   '@fontsource-variable/onest@5.3.1':
     resolution: {integrity: sha512-xaaw6G4HDB2/RczsWLD/2bnib4ykmQlTlBUN3GOEOiyErilZukQWVJG95h9zwAy0i8KY+QzDa+COPfqhI72Acw==}
+
+  '@fontsource-variable/roboto@5.3.0':
+    resolution: {integrity: sha512-BoaaZiQf8fgtxv07KXkTwx1bKz/EoqIlTXq2OOKKXINxp6qXWdnlChqV+hSaDANS49yyUASFl3OVBMMDTCIHFA==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2542,6 +2548,8 @@ snapshots:
     optional: true
 
   '@fontsource-variable/onest@5.3.1': {}
+
+  '@fontsource-variable/roboto@5.3.0': {}
 
   '@img/colour@1.1.0':
     optional: true
