@@ -88,3 +88,22 @@ export const results = [
     to: 81,
   },
 ];
+
+/** Масштаб базы — из презентации PharmaKB («Introducing PharmaKB», pharmakb.com). */
+export const scale = [
+  {
+    value: 9770,
+    label: { ru: 'Препаратов', en: 'Drugs' },
+    sub: { ru: 'одобренные FDA и EMA и в исследованиях', en: 'approved by FDA and EMA and in trials' },
+  },
+  {
+    value: 1700,
+    label: { ru: 'Компаний', en: 'Companies' },
+    sub: { ru: 'около 600 торгуются на бирже', en: 'about 600 publicly traded' },
+  },
+  {
+    value: 1300,
+    label: { ru: 'Заболеваний', en: 'Diseases' },
+    sub: { ru: 'конкурентные рынки', en: 'competitive markets' },
+  },
+];

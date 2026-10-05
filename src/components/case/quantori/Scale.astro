@@ -1,0 +1,133 @@
+---
+/**
+ * Масштаб PharmaKB: полоски по числу препаратов, компаний и заболеваний (доля от наибольшего),
+ * при прокрутке полоски вырастают, числа досчитывают (`data-reveal`, `data-count` — `src/scripts/case-data.ts`).
+ * Стоит под вводным текстом, ниже обложки (`clear`); обложка центрируется по высоте до этого блока (`data-cover-below`).
+ */
+import { typograph } from '../../../i18n/typograph';
+import { getLocaleFromUrl } from '../../../i18n/utils';
+import Block from './Block.astro';
+import { scale } from './data';
+
+interface Props {
+  caption: string;
+  note?: string;
+}
+
+const { caption, note } = Astro.props;
+const lang = getLocaleFromUrl(Astro.url);
+const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
+const max = Math.max(...scale.map((s) => s.value));
+---
+
+<div class="q-scale" data-cover-below>
+  <Block caption={caption} note={note}>
+    <ul class="q-scale__list">
+      {scale.map((s, i) => (
+        <li class="q-scale__row" style={`--i: ${i}; --share: ${s.value / max}`}>
+          <p class="q-scale__value">
+            <span data-count={s.value} data-count-from="0" data-decimals="0">
+              {s.value.toLocaleString(locale)}
+            </span>
+            +
+          </p>
+          <div class="q-scale__chart">
+            <p class="q-scale__label">
+              {typograph(s.label[lang])}
+              <span class="q-scale__sub">{typograph(s.sub[lang])}</span>
+            </p>
+            <div class="q-scale__track" aria-hidden="true">
+              <span class="q-scale__bar" />
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Block>
+</div>
+
+<style>
+  .q-scale {
+    clear: both;
+    margin-top: var(--case-lead-gap);
+  }
+
+  .q-scale :global(.q-block) {
+    margin-block: 0;
+  }
+
+  .q-scale__list {
+    display: grid;
+    gap: 24px;
+    margin: 0;
+    padding: 0 !important;
+    list-style: none;
+    overflow: visible !important;
+  }
+
+  .q-scale__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: 20px;
+    align-items: end;
+  }
+
+  .q-scale__value {
+    color: var(--case-accent);
+    font-size: round(calc(var(--case-metric-size) * 1.5), 1px);
+    font-weight: var(--weight-heavy);
+    --lh: var(--leading-title);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .q-scale__label {
+    margin-bottom: 12px;
+    color: var(--case-text);
+  }
+
+  .q-scale__sub {
+    margin-left: 12px;
+    color: var(--case-muted);
+  }
+
+  .q-scale__track {
+    height: 12px;
+    border-radius: 6px;
+    background: var(--case-tabs-border);
+    overflow: hidden;
+  }
+
+  .q-scale__bar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    background: var(--case-accent);
+    transform-origin: left;
+    scale: var(--share) 1;
+    transition: scale 1.4s var(--case-slide-ease) calc(var(--i) * 140ms);
+  }
+
+  :global([data-reveal='pending']) .q-scale__bar {
+    scale: 0 1;
+  }
+
+  @container case (max-width: 599px) {
+    .q-scale__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .q-scale__sub {
+      display: block;
+      margin-left: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .q-scale__bar {
+      transition: none;
+    }
+  }
+</style>

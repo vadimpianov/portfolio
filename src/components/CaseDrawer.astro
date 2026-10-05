@@ -259,7 +259,8 @@ const close = t('case.close');
     root.querySelectorAll<HTMLElement>('article.case').forEach((article) => {
       const cover = article.querySelector<HTMLElement>('.case__cover');
       const period = article.querySelector<HTMLElement>('.case__period');
-      const below = article.querySelector<HTMLElement>('.case-text-columns');
+      // Первый блок во всю ширину под обложкой: свой (`data-cover-below`) или список задач.
+      const below = article.querySelector<HTMLElement>('[data-cover-below], .case-text-columns');
       if (!cover || !period || !below) return;
       cover.style.marginTop = '';
       cover.style.marginBottom = '';
