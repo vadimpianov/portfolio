@@ -29,6 +29,12 @@
     }
 
     /* Списки внутри тоже переносятся в следующую колонку (overflow у списков рядом с обложкой здесь не нужен). */
+    /* Принудительный перенос во вторую колонку — продолжение абзаца, без красной строки. */
+    .case-flow > :global(.case-flow__next) {
+      break-before: column;
+      text-indent: 0 !important;
+    }
+
     .case-flow :global(ul) {
       overflow: visible !important;
     }

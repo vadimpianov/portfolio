@@ -196,6 +196,7 @@ const close = t('case.close');
   import { watchCaseData } from '../scripts/case-data';
   import { initDrugReports } from '../scripts/drug-report';
   import { initStockCharts } from '../scripts/stock-chart';
+  import { initRevenueCharts } from '../scripts/revenue-chart';
 
   initCoverSliders();
 
@@ -538,6 +539,7 @@ const close = t('case.close');
     watchCaseData(body);
     initDrugReports(body);
     initStockCharts(body);
+    initRevenueCharts(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
@@ -603,6 +605,7 @@ const close = t('case.close');
     watchCaseData(body);
     initDrugReports(body);
     initStockCharts(body);
+    initRevenueCharts(body);
     covers.observe(body);
     document.fonts?.ready.then(() => layout(body));
     document.documentElement.classList.add('case-open');

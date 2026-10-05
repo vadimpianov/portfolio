@@ -1,0 +1,176 @@
+---
+/**
+ * Рабочий график «Revenue by Drug» — по макетам пользователя (design/cases/quantori/revenue/*.svg).
+ * Разметку и поведение строит `src/scripts/revenue-chart.ts` (`initRevenueCharts` в CaseDrawer);
+ * общие стили меню, поиска и подсказок — из `StockChart.astro` (классы `sc__…`), здесь — свои.
+ * Свёрстан в ширину 1120px и масштабируется под колонку (`zoom`, на телефоне не уже 760px — листается вбок).
+ */
+import '@fontsource-variable/roboto/wght.css';
+
+interface Props {
+  alt: string;
+}
+
+const { alt } = Astro.props;
+---
+
+<div class="sc" data-revenue-chart role="figure" aria-label={alt}></div>
+
+<style is:global>
+  .rc__top,
+  .rc__bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .rc__bar {
+    margin-top: 24px;
+    font-size: 15px;
+  }
+
+  .rc__modes {
+    display: flex;
+    gap: 32px;
+    font-size: 17px;
+  }
+
+  .rc__modes button {
+    position: relative;
+    color: #595959 !important;
+  }
+
+  .rc__modes button:hover {
+    color: #262626 !important;
+  }
+
+  .rc__modes button.is-active {
+    color: #262626 !important;
+    font-weight: 600 !important;
+  }
+
+  .rc__modes button::after {
+    content: '';
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: #0d69eb;
+    scale: 0 1;
+    transition: scale 0.2s;
+  }
+
+  .rc__modes button.is-active::after {
+    scale: 1 1;
+  }
+
+  .rc__unit {
+    margin-left: auto;
+    color: #595959;
+    font-size: 14px;
+  }
+
+  .rc__legend {
+    display: flex;
+    gap: 20px;
+  }
+
+  .rc__legend button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #262626 !important;
+    font-size: 16px;
+  }
+
+  .rc__legend i {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+
+  .rc__legend button[aria-pressed='false'] {
+    color: #b6b8bb !important;
+  }
+
+  .rc__legend button[aria-pressed='false'] i {
+    background: #c7c9cd !important;
+  }
+
+  .rc__clear.is-off {
+    color: #b6b8bb !important;
+    pointer-events: none;
+  }
+
+  .rc__menu {
+    width: 260px;
+    padding: 12px 0 8px;
+  }
+
+  .rc__menu .sc__search {
+    margin: 0 16px 8px;
+  }
+
+  .rc__menu--q {
+    width: 140px;
+  }
+
+  .rc__list {
+    max-height: 280px;
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+
+  .rc__list label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    color: #383a3e;
+    cursor: pointer;
+  }
+
+  .rc__list label:hover {
+    background: #f0f5fb;
+  }
+
+  .rc__list label[hidden] {
+    display: none;
+  }
+
+  .rc__list i {
+    width: 12px;
+    height: 12px;
+    flex: none;
+  }
+
+  .rc__list span {
+    flex: 1;
+  }
+
+  .rc__plot {
+    position: relative;
+    margin-top: 16px;
+  }
+
+  .rc__total {
+    fill: #262626;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .rc__lab {
+    font-size: 13px;
+  }
+
+  .rc [data-seg] {
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .rc [data-region-bar] {
+    cursor: help;
+  }
+</style>

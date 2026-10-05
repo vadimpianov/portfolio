@@ -17,6 +17,7 @@ import Scale from '../../../components/case/quantori/Scale.astro';
 import DrugReport from '../../../components/case/quantori/DrugReport.astro';
 import ChartTabs from '../../../components/case/ChartTabs.astro';
 import StockChart from '../../../components/case/quantori/StockChart.astro';
+import RevenueChart from '../../../components/case/quantori/RevenueChart.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
 <div class="case-lead">
@@ -51,7 +52,7 @@ I interviewed 12 analysts from five client companies and watched them prepare re
 
 The problem wasn't the amount of data but the way it was presented. The company gathers information on 1,700+ companies and 9,770+ drugs from hundreds of sources and updates it every day. All of it went into the report as is. The drug report was a single page more than 16,000 pixels tall: nine sections — from sales to safety — and almost 30 tables and charts. All of it was laid out poorly, with the wrong contrast and hard-to-read fonts. Every table had been built on its own, with its own width, font size, row height and header color, and numbers aligned left in one place and centered in another. The eye had to readjust to every block.
 
-To compare two drugs, an analyst scrolled through two such reports and matched the numbers by hand. FDA and EMA data lived in separate tables with different field names, and the revenue, patent and trial charts didn't line up in time. 64% of sessions ended with an export to Excel: analysts assembled their reports where the table columns could at least be lined up.
+To compare two drugs, an analyst scrolled through two such reports and matched the numbers by hand. FDA and EMA data lived in separate tables with different field names, and the revenue, patent and trial charts didn't line up in time. 64% of sessions ended with an export to Excel: analysts assembled their reports where the table columns could at least be lined up
 
 </Flow>
 
@@ -77,7 +78,9 @@ Since we had only just joined the project, nobody knew what the report sections 
 
 <Flow>
 
-“So what? That's basic hygiene,” you might say. Yes, that's right: I simply brought the user experience up to a basic level of usability. The report is as detailed as before — I didn't remove a single number. What changed is how the eye moves through it.
+“So what? That's basic hygiene,” you might say. Yes, that's right: I simply brought the user experience up to a basic level of usability.
+
+<p class="case-flow__next">The report is as detailed as before — I didn't remove a single number. What changed is how the eye moves through it</p>
 
 </Flow>
 
@@ -89,13 +92,15 @@ One visual language for financials, patents and research
 
 <Flow>
 
-The company report consisted mostly of charts. Each of them has its own unique and rather tricky settings, as well as helper tools. All of them were designed based on user feedback and on data from analysing the most advanced products in the financial sector.
+The company report consisted mostly of charts. Each of them has its own unique and rather tricky settings, as well as helper tools.
+
+<p class="case-flow__next">All of them were designed based on user feedback and on data from analysing the most advanced products in the financial sector</p>
 
 </Flow>
 
 <ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents']}>
 <div slot="t0"><StockChart alt="AbbVie share price over the full period compared with the SPY and XBI indices, trading volume, period and ticker selection" /></div>
-<div slot="t1"><Figure src="/images/cases/quantori/revenue-by-drug.webp" width={2440} height={2500} alt="Stacked bar chart of revenue by drug per quarter with a year filter, plus six small charts of sales for each drug" /></div>
+<div slot="t1"><RevenueChart alt="Revenue by drug per quarter and year: columns for Global, US and Rest of World, filters by drug, year and quarter" /></div>
 <div slot="t2"><Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} alt="Patent chart by quarter: new, active and expired, the line between history and forecast, and the patent table" /></div>
 </ChartTabs>
 
@@ -107,7 +112,7 @@ Research, sales, medical usage and safety
 
 In the drug report, charts follow the order in which an analyst makes a decision. First come 30 years of clinical trials by phase, showing when interest in the molecule grew and when it faded. Then sales by market with a forecast, US medical usage data, PubMed publications and adverse events from FDA reports.
 
-All small charts in a section share one grid and one scale, so they can be compared without reading the axes. Long series of values open in a table view right from the chart.
+All small charts in a section share one grid and one scale, so they can be compared without reading the axes. Long series of values open in a table view right from the chart
 
 </Flow>
 
@@ -129,7 +134,7 @@ A source switch instead of two different tables
 
 American and European statistics are structured differently: the FDA has NDA and BLA applications, the EMA has the centralised procedure and its own statuses, and dates, phase names and formats differ. Together with a data analyst we built a mapping dictionary and brought both sources to a common form. Now the source switches with one click in any report section, while columns and row order stay put.
 
-What matters most to an analyst is the probability of success at each stage. It used to be calculated by hand in Excel; now it is right in the disease report: on the competitive landscape map when hovering over any disease, and in the trials section as a chain from phase 1 to approval.
+What matters most to an analyst is the probability of success at each stage. It used to be calculated by hand in Excel; now it is right in the disease report: on the competitive landscape map when hovering over any disease, and in the trials section as a chain from phase 1 to approval
 
 </Flow>
 
@@ -143,7 +148,7 @@ Sorting and filters instead of scrolling and Ctrl+F
 
 <Flow>
 
-Analysts used to find the row they needed by scrolling and using the browser search. We added sorting by any column, filters by therapeutic area, phase and status, tooltips on headers and pagination instead of an endless sheet. Companies and drugs in the tables link to their reports, so you can jump from a row straight to the details.
+Analysts used to find the row they needed by scrolling and using the browser search. We added sorting by any column, filters by therapeutic area, phase and status, tooltips on headers and pagination instead of an endless sheet. Companies and drugs in the tables link to their reports, so you can jump from a row straight to the details
 
 </Flow>
 
@@ -166,7 +171,7 @@ In six months we moved all three report types — drug, disease and company — 
 - Excel exports dropped almost threefold
 - The SUS usability score rose from 52 to 81
 
-The main result is that analysts stopped fighting the interface and went back to working with data. The design system for data lives separately from the reports: new sections ship faster and look just like the old ones.
+The main result is that analysts stopped fighting the interface and went back to working with data. The design system for data lives separately from the reports: new sections ship faster and look just like the old ones
 
 </Flow>
 
