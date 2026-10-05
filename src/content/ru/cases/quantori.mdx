@@ -15,6 +15,8 @@ import Flow from '../../../components/case/Flow.astro';
 import Figure from '../../../components/case/Figure.astro';
 import Scale from '../../../components/case/quantori/Scale.astro';
 import DrugReport from '../../../components/case/quantori/DrugReport.astro';
+import ChartTabs from '../../../components/case/ChartTabs.astro';
+import StockChart from '../../../components/case/quantori/StockChart.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
 <div class="case-lead">
@@ -94,13 +96,14 @@ import Results from '../../../components/case/quantori/Results.astro';
 
 </Flow>
 
-<Figure src="/images/cases/quantori/stock.webp" width={2441} height={2016} caption="Курс акций компании в сравнении с индексами SPY и XBI" alt="График акций AbbVie за всё время в сравнении с индексами SPY и XBI, объём торгов, выбор периода и тикеров" />
+<ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents']}>
+<div slot="t0"><StockChart alt="График акций AbbVie за всё время в сравнении с индексами SPY и XBI, объём торгов, выбор периода и тикеров" /></div>
+<div slot="t1"><Figure src="/images/cases/quantori/revenue-by-drug.webp" width={2440} height={2500} alt="Столбчатая диаграмма выручки по препаратам по кварталам с фильтром по годам и шесть малых графиков продаж по каждому препарату" /></div>
+<div slot="t2"><Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} alt="Диаграмма патентов по кварталам: новые, действующие и истёкшие, граница между историей и прогнозом, таблица патентов" /></div>
+</ChartTabs>
 
 <Figure src="/images/cases/quantori/company-revenue.webp" width={2440} height={1400} caption="Выручка компании по кварталам с подсказкой" alt="Линейный график квартальной выручки компании с подсказкой значения за 2018-Q1" />
 
-<Figure src="/images/cases/quantori/revenue-by-drug.webp" width={2440} height={2500} caption="Выручка по препаратам: общая картина и малые графики по каждому" alt="Столбчатая диаграмма выручки по препаратам по кварталам с фильтром по годам и шесть малых графиков продаж по каждому препарату" />
-
-<Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} caption="Патенты: что уже истекло и что ещё защищено" alt="Диаграмма патентов по кварталам: новые, действующие и истёкшие, граница между историей и прогнозом, таблица патентов" />
 
 
 ## Отчёт по препарату: от испытаний до продаж

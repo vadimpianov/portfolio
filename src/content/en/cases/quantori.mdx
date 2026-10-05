@@ -15,6 +15,8 @@ import Flow from '../../../components/case/Flow.astro';
 import Figure from '../../../components/case/Figure.astro';
 import Scale from '../../../components/case/quantori/Scale.astro';
 import DrugReport from '../../../components/case/quantori/DrugReport.astro';
+import ChartTabs from '../../../components/case/ChartTabs.astro';
+import StockChart from '../../../components/case/quantori/StockChart.astro';
 import Results from '../../../components/case/quantori/Results.astro';
 
 <div class="case-lead">
@@ -94,13 +96,14 @@ A company report starts with financials: the share price can be compared with in
 
 </Flow>
 
-<Figure src="/images/cases/quantori/stock.webp" width={2441} height={2016} caption="Company share price compared with the SPY and XBI indices" alt="AbbVie share price over the full period compared with the SPY and XBI indices, trading volume, period and ticker selection" />
+<ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents']}>
+<div slot="t0"><StockChart alt="AbbVie share price over the full period compared with the SPY and XBI indices, trading volume, period and ticker selection" /></div>
+<div slot="t1"><Figure src="/images/cases/quantori/revenue-by-drug.webp" width={2440} height={2500} alt="Stacked bar chart of revenue by drug per quarter with a year filter, plus six small charts of sales for each drug" /></div>
+<div slot="t2"><Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} alt="Patent chart by quarter: new, active and expired, the line between history and forecast, and the patent table" /></div>
+</ChartTabs>
 
 <Figure src="/images/cases/quantori/company-revenue.webp" width={2440} height={1400} caption="Quarterly company revenue with a tooltip" alt="Line chart of quarterly company revenue with a tooltip for 2018-Q1" />
 
-<Figure src="/images/cases/quantori/revenue-by-drug.webp" width={2440} height={2500} caption="Revenue by drug: the overall picture and small multiples for each" alt="Stacked bar chart of revenue by drug per quarter with a year filter, plus six small charts of sales for each drug" />
-
-<Figure src="/images/cases/quantori/patents.webp" width={2440} height={1720} caption="Patents: what has expired and what is still protected" alt="Patent chart by quarter: new, active and expired, the line between history and forecast, and the patent table" />
 
 
 ## The drug report: from trials to sales

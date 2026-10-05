@@ -1,0 +1,114 @@
+---
+/**
+ * Селектор графиков — вкладки в стиле селектора сценариев Betting (`CaseTabs`): в ряд, выбранная — жёлтая.
+ * Содержимое вкладок — в именованных слотах `t0`, `t1`, … (в MDX: `<div slot="t0">…</div>`).
+ * Переключение без JS (радиокнопки + :has) — работает и в модалке.
+ */
+import { typograph } from '../../i18n/typograph';
+
+interface Props {
+  items: string[];
+  /** Имя группы радиокнопок (уникальное на странице). */
+  name: string;
+  label?: string;
+}
+
+const { items, name, label } = Astro.props;
+const panels = await Promise.all(items.map((_, i) => Astro.slots.render(`t${i}`)));
+---
+
+<div class="chart-tabs">
+  <div class="chart-tabs__list" role="radiogroup" aria-label={label}>
+    {
+      items.map((item, i) => (
+        <label class="chart-tabs__tab">
+          <input type="radio" name={name} value={i} checked={i === 0} />
+          <span>{typograph(item)}</span>
+        </label>
+      ))
+    }
+  </div>
+  {
+    panels.map((html, i) => (
+      <div class="chart-tabs__panel" data-i={i}>
+        <Fragment set:html={html} />
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .chart-tabs {
+    margin-block: var(--case-block-gap);
+  }
+
+  .chart-tabs__list {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    margin-bottom: var(--case-tabs-label-gap);
+    border: 1px solid var(--case-tabs-border);
+    border-radius: var(--case-tabs-radius);
+    overflow: hidden;
+  }
+
+  .chart-tabs__tab {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: var(--case-tabs-h);
+    padding: 8px 12px;
+    color: var(--case-muted);
+    font-size: var(--case-label-size);
+    font-weight: 500;
+    --lh: var(--leading-tight);
+    letter-spacing: var(--tracking-label);
+    text-align: center;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  .chart-tabs__tab + .chart-tabs__tab {
+    border-left: 1px solid var(--case-tabs-border);
+  }
+
+  .chart-tabs__tab:hover {
+    color: var(--case-text);
+  }
+
+  .chart-tabs__tab:has(input:checked) {
+    background: var(--case-accent);
+    color: var(--case-tabs-active-text);
+  }
+
+  .chart-tabs__tab:has(input:focus-visible) {
+    outline: 2px solid var(--case-accent);
+    outline-offset: -4px;
+  }
+
+  .chart-tabs__tab input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Показана панель выбранной вкладки. */
+  .chart-tabs__panel {
+    display: none;
+  }
+
+  .chart-tabs:has(.chart-tabs__tab:nth-child(1) input:checked) .chart-tabs__panel[data-i='0'],
+  .chart-tabs:has(.chart-tabs__tab:nth-child(2) input:checked) .chart-tabs__panel[data-i='1'],
+  .chart-tabs:has(.chart-tabs__tab:nth-child(3) input:checked) .chart-tabs__panel[data-i='2'],
+  .chart-tabs:has(.chart-tabs__tab:nth-child(4) input:checked) .chart-tabs__panel[data-i='3'] {
+    display: block;
+  }
+
+  /* Картинки внутри вкладок — без своих отступов (отступы задаёт селектор). */
+  .chart-tabs__panel > :global(*) {
+    margin-block: 0;
+  }
+</style>
