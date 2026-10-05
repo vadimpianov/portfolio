@@ -282,7 +282,7 @@ const { alt } = Astro.props;
   }
 
   .sc__menu--tickers {
-    width: 420px;
+    width: 480px;
     padding: 12px 0 8px;
   }
 
@@ -297,10 +297,10 @@ const { alt } = Astro.props;
     flex: 1;
   }
 
+  /* Быстрые тикеры — одной строкой. */
   .sc__quick {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     padding: 12px 16px;
   }
 
@@ -476,7 +476,7 @@ const { alt } = Astro.props;
   /* График */
   .sc__plot-wrap {
     position: relative;
-    margin-top: 16px;
+    margin-top: 8px;
   }
 
   .sc__svg {
@@ -523,7 +523,7 @@ const { alt } = Astro.props;
 
   .sc__expand {
     position: absolute;
-    top: 24px;
+    top: 16px;
     left: 8px;
     display: grid;
     place-items: center;

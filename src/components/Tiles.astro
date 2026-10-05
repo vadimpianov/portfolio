@@ -83,8 +83,65 @@ const TILE_LEADS: Partial<Record<string, UIKey>> = {
   'tiles.4.title': 'tiles.4.lead',
 };
 
-// Подпись заглушки для плиток, у которых кейс ещё не готов (нет картинки).
+// Подпись заглушки для плиток, у которых кейс ещё не готов (нет картинки), и метки «Кейс в разработке».
 const soon = t('case.soon');
+// Кейсы, которые ещё дописываются: поверх картинки плитки — метка «Кейс в разработке».
+const TILE_IN_PROGRESS = new Set<string>(['tiles.3.title']);
+
+/** Заглушка: три экрана-заготовки (координаты экрана — 375 × 812, как у макетов Betting). */
+let delay = 0;
+const blk = (shape: string) => {
+  const d = (delay = (delay + 0.12) % 2.4).toFixed(2);
+  return shape.replace(/^<(\w+)/, `<$1 class="b" style="animation-delay:${d}s"`);
+};
+const r = (x: number, y: number, w: number, h: number, rx = h / 2, extra = '') =>
+  blk(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"${extra}/>`);
+const c = (x: number, y: number, rr: number) => blk(`<circle cx="${x}" cy="${y}" r="${rr}"/>`);
+const keypad = (y: number) =>
+  Array.from({ length: 12 }, (_, i) => r(10 + (i % 3) * 120, y + Math.floor(i / 3) * 62, 112, 52, 8)).join('');
+const screenLeft = () =>
+  [
+    r(28, 92, 22, 4),
+    r(28, 128, 210, 40, 12),
+    ...[0, 1, 2, 3, 4].flatMap((k) => [r(36, 196 + k * 84, 92, 12), r(36, 218 + k * 84, 180, 9), c(44, 244 + k * 84, 8), r(58, 239 + k * 84, 110, 9)]),
+    r(0, 640, 375, 172, 0),
+  ].join('');
+const screenCenter = () =>
+  [
+    r(110, 90, 156, 14),
+    r(330, 88, 18, 18, 4),
+    r(24, 176, 327, 70, 14, ' class="frame"'),
+    r(24, 266, 230, 10),
+    r(170, 304, 36, 10),
+    r(24, 340, 155, 54, 12),
+    r(196, 340, 155, 54, 12),
+    r(24, 430, 327, 8),
+    r(24, 448, 300, 8),
+    r(24, 466, 250, 8),
+    r(28, 504, 319, 50, 12, ' class="cta"'),
+    keypad(580),
+  ].join('');
+const screenRight = () =>
+  [
+    r(28, 92, 120, 12),
+    r(330, 88, 18, 18, 4),
+    r(24, 128, 150, 120, 14, ' class="card"'),
+    r(186, 128, 150, 120, 14),
+    r(24, 268, 327, 70, 14, ' class="frame"'),
+    r(24, 360, 96, 36, 10),
+    r(130, 360, 96, 36, 10),
+    r(236, 360, 96, 36, 10),
+    r(24, 418, 327, 50, 12, ' class="cta"'),
+    keypad(500),
+  ].join('');
+const screen = (x: number, y: number, w: number, content: string, side = true) => {
+  const k = w / 375;
+  return `<g transform="translate(${x} ${y}) scale(${k.toFixed(4)})" filter="url(#soon-shadow)"><rect class="body${side ? ' body--side' : ''}" width="375" height="812" rx="44"/><rect class="notch" x="118" y="10" width="140" height="30" rx="15"/>${content}</g>`;
+};
+// Обводки нет — экраны отделяет друг от друга мягкая тень.
+const SOON_ART =
+  '<defs><filter id="soon-shadow" x="-20%" y="-10%" width="140%" height="130%"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#141414" flood-opacity="0.2"/></filter></defs>' +
+  screen(90, 120, 459, screenLeft()) + screen(651, 120, 459, screenRight()) + screen(320, 0, 560, screenCenter(), false);
 const tiles = (
   [
     ['tiles.1.title', '2024–2026'],
@@ -98,6 +155,7 @@ const tiles = (
   lead: t(TILE_LEADS[key] ?? 'tiles.placeholder.lead'),
   image: TILE_IMAGES[key],
   href: TILE_CASES[key] && localePath(locale, `cases/${TILE_CASES[key]}`),
+  inProgress: TILE_IN_PROGRESS.has(key),
 }));
 // Карточки ниже основных плиток: без картинки, 3 в ряд (на планшете 2, на мобиле 1).
 const more = (
@@ -113,7 +171,7 @@ const more = (
 ---
 
 <section class="tiles" data-tiles>
-  {tiles.map(({ year, title, lead, image, href }, i) => (
+  {tiles.map(({ year, title, lead, image, href, inProgress }, i) => (
     <>
       {i === MARQUEE_AFTER && (
         <div class="tiles__marquee" data-bleed>
@@ -170,6 +228,12 @@ const more = (
           <p class="tiles__lead">{lead}</p>
           {image ? (
             <div class="tiles__image tiles__image--shot">
+              {inProgress && (
+                <span class="tiles__soon-badge" aria-hidden="true">
+                  <i />
+                  {soon}
+                </span>
+              )}
               <img
                 src={asset(`/images/cases/${image}-600.webp`)}
                 srcset={`${asset(`/images/cases/${image}-600.webp`)} 600w, ${asset(`/images/cases/${image}-1200.webp`)} 1200w`}
@@ -180,31 +244,14 @@ const more = (
               />
             </div>
           ) : (
-            // Кейс ещё не готов: экран-заготовка, блоки которого мягко проявляются по очереди (как загрузка),
-            // и метка «Кейс в разработке».
-            <div class="tiles__image tiles__soon" aria-label={soon} role="img">
+            // Кейс ещё не готов: три экрана-заготовки в композиции плитки Betting (центральный 560px на холсте
+            // 1200 × 1632, боковые 82% позади), блоки мягко проявляются по очереди; метка «Кейс в разработке».
+            <div class="tiles__image tiles__image--shot tiles__soon" aria-label={soon} role="img">
+              <svg viewBox="0 0 1200 1632" preserveAspectRatio="xMidYMin slice" aria-hidden="true" set:html={SOON_ART} />
               <span class="tiles__soon-badge" aria-hidden="true">
                 <i />
                 {soon}
               </span>
-              <svg class="tiles__soon-phone" viewBox="0 0 240 420" aria-hidden="true">
-                <rect class="tiles__soon-body" x="20.5" y="10.5" width="199" height="399" rx="34" />
-                <rect class="tiles__soon-notch" x="95" y="22" width="50" height="8" rx="4" />
-                <rect class="tiles__soon-b b1" x="40" y="48" width="90" height="10" rx="5" />
-                <circle class="tiles__soon-b b2" cx="190" cy="53" r="9" />
-                <rect class="tiles__soon-b tiles__soon-card b3" x="40" y="76" width="160" height="96" rx="16" />
-                <g class="tiles__soon-b b4">
-                  <circle cx="54" cy="208" r="12" />
-                  <rect x="76" y="200" width="96" height="8" rx="4" />
-                  <rect x="76" y="213" width="60" height="6" rx="3" />
-                </g>
-                <g class="tiles__soon-b b5">
-                  <circle cx="54" cy="252" r="12" />
-                  <rect x="76" y="244" width="110" height="8" rx="4" />
-                  <rect x="76" y="257" width="72" height="6" rx="3" />
-                </g>
-                <rect class="tiles__soon-b b6" x="40" y="344" width="160" height="36" rx="18" />
-              </svg>
             </div>
           )}
         </div>
@@ -511,27 +558,72 @@ const more = (
     object-position: top center;
   }
 
-  /* Заглушка «Кейс в разработке» (у плитки нет картинки): светлая подложка, тонкий контур телефона,
-     блоки-заготовки мягко проявляются по очереди (2.4с по кругу), карта — едва заметного фирменного оттенка;
-     в углу — метка с пульсирующей точкой. При reduced motion всё стоит. */
-  .tiles__soon {
-    position: relative;
-    overflow: hidden;
-    place-items: start center;
-    background: rgb(255 255 255 / 0.4);
+  /* Заглушка «Кейс в разработке» (у плитки нет картинки): три экрана-заготовки в композиции плитки Betting
+     (холст 1200 × 1632 как у картинок плиток, `slice` — как object-fit: cover сверху по центру), без обводки и
+     подложки; блоки мягко проявляются по очереди (2.4с). Метка с пульсирующей точкой — и у кейсов «в работе»
+     поверх картинки (`TILE_IN_PROGRESS`). При reduced motion всё стоит. */
+  .tiles__soon svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .tiles__soon :global(.body) {
+    fill: #fdfcfa;
+  }
+
+  /* Боковые экраны чуть темнее центрального — так они отделяются без обводки. */
+  .tiles__soon :global(.body--side) {
+    fill: #f1eee9;
+  }
+
+  .tiles__soon :global(.notch),
+  .tiles__soon :global(.b) {
+    fill: rgb(20 20 20 / 0.07);
+  }
+
+  .tiles__soon :global(.b.frame) {
+    fill: none;
+    stroke: rgb(20 20 20 / 0.12);
+    stroke-width: 2;
+  }
+
+  .tiles__soon :global(.b.card) {
+    fill: rgb(239 49 36 / 0.12);
+  }
+
+  .tiles__soon :global(.b.cta) {
+    fill: rgb(20 20 20 / 0.14);
+  }
+
+  .tiles__soon :global(.b) {
+    animation: tiles-soon-load 2.4s ease-in-out infinite;
+  }
+
+  @keyframes tiles-soon-load {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
   }
 
   .tiles__soon-badge {
     position: absolute;
-    top: 24px;
-    left: 24px;
+    top: 16px;
+    left: 16px;
     z-index: 1;
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 6px 12px;
     border-radius: 100px;
-    background: rgb(255 255 255 / 0.85);
+    background: rgb(255 255 255 / 0.9);
+    box-shadow: 0 2px 8px rgb(20 20 20 / 0.08);
     color: var(--color-text);
     font-size: var(--text-chip);
     --lh: var(--leading-tight);
@@ -551,68 +643,13 @@ const more = (
     }
   }
 
-  /* Телефон с отступом сверху, низ уходит под край плитки — как экраны в других плитках. */
-  .tiles__soon-phone {
-    width: min(64%, 300px);
-    height: auto;
-    margin-top: 72px;
-  }
-
-  .tiles__soon-body {
-    fill: #fbfaf8;
-    stroke: rgb(20 20 20 / 0.12);
-  }
-
-  .tiles__soon-notch,
-  .tiles__soon-b {
-    fill: rgb(20 20 20 / 0.08);
-  }
-
-  .tiles__soon-card {
-    fill: rgb(239 49 36 / 0.12);
-  }
-
-  .tiles__soon-b {
-    animation: tiles-soon-load 2.4s ease-in-out infinite;
-  }
-
-  .tiles__soon-b.b2 {
-    animation-delay: 0.15s;
-  }
-
-  .tiles__soon-b.b3 {
-    animation-delay: 0.3s;
-  }
-
-  .tiles__soon-b.b4 {
-    animation-delay: 0.45s;
-  }
-
-  .tiles__soon-b.b5 {
-    animation-delay: 0.6s;
-  }
-
-  .tiles__soon-b.b6 {
-    animation-delay: 0.75s;
-  }
-
-  @keyframes tiles-soon-load {
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0.4;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .tiles__soon-b,
+    .tiles__soon :global(.b),
     .tiles__soon-badge i {
       animation: none;
     }
   }
+}
 }
 
   /* Наведение (только у мыши): плитка приподнимается, заливка плотнее, листья медленно

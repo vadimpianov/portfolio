@@ -174,6 +174,13 @@ function events(intra: boolean) {
     const i = Math.floor(r() * times.length);
     list.push({ t: times[i], kind, i });
   }
+  // Последние полгода — гуще (там чаще всего смотрят, как на макете)
+  if (!intra)
+    for (let k = 0; k < 70; k++) {
+      const kind = EVENT_KINDS[Math.floor(r() * EVENT_KINDS.length)];
+      const i = times.length - 1 - Math.floor(r() * 126);
+      list.push({ t: times[i], kind, i });
+    }
   return list.sort((a, b) => a.t - b.t);
 }
 
@@ -227,12 +234,13 @@ function niceTicks(min: number, max: number, count = 6) {
 
 function mount(root: HTMLElement) {
   const st: State = {
-    period: 'Max',
-    range: periodRange('Max'),
+    // По умолчанию — как на макете пользователя: 3M, сравнение с MRK, JNJ, VRTX, все события, выручка Global.
+    period: '3M',
+    range: periodRange('3M'),
     type: 'Line',
-    tickers: ['SPY', 'XBI'],
-    events: new Set(),
-    revenue: new Set(),
+    tickers: ['MRK', 'JNJ', 'VRTX'],
+    events: new Set(EVENT_KINDS.map((k) => k.key)),
+    revenue: new Set(DRUGS.map((_, i) => `${i}:0`)),
     hover: null,
     tall: false,
     panel: null,
@@ -326,6 +334,7 @@ function mount(root: HTMLElement) {
     </div>`;
 
   const svg = root.querySelector<SVGSVGElement>('[data-svg]')!;
+  const clipId = `sc-clip-${Math.random().toString(36).slice(2, 8)}`;
   const q = <T extends Element>(s: string) => root.querySelector<T>(s)!;
 
   // Геометрия по состоянию
@@ -335,12 +344,13 @@ function mount(root: HTMLElement) {
     const x0 = hasRev ? AXIS_L : 0;
     const x1 = IW - AXIS_R;
     const plotH = st.tall ? 520 : 360;
-    const top = 16;
+    const top = 8;
     const xLab = top + plotH + 8;
-    const evTop = xLab + 32;
-    const evH = hasEv ? 50 : 0;
-    const volTop = evTop + evH;
-    const volH = 72;
+    // События лежат на шкале времени — в зоне объёмов, над столбиками (зона выше, когда они включены)
+    const volTop = xLab + 32;
+    const volH = hasEv ? 104 : 72;
+    const evTop = volTop + 6;
+    const evH = 0;
     const navTop = volTop + volH + 12;
     const navH = 36;
     return { x0, x1, top, plotH, xLab, evTop, evH, volTop, volH, navTop, navH, height: navTop + navH + 4, hasRev, hasEv };
@@ -409,26 +419,31 @@ function mount(root: HTMLElement) {
     if (g.hasRev) {
       const t0 = main[0].t;
       const t1 = main[n - 1].t;
-      const sets = [...st.revenue].map((k) => k.split(':').map(Number)).map(([d, r]) => ({ d, r, pts: revenue(d, r).filter((p) => p.t >= t0 && p.t <= t1) }));
+      // Кварталы периода и по одному соседнему за краями — линия входит в график с края (обрезка по полю графика)
+      const Q = 92 * DAY;
+      const sets = [...st.revenue].map((k) => k.split(':').map(Number)).map(([d, r]) => ({ d, r, pts: revenue(d, r).filter((p) => p.t >= t0 - Q && p.t <= t1 + Q) }));
       let rmax = 0;
       for (const set of sets) for (const p of set.pts) rmax = Math.max(rmax, p.v);
-      const rt = niceTicks(0, rmax * 1.1 || 1000, 6).ticks;
-      const rtop = rt[rt.length - 1] || 1;
+      const { step: rstep } = niceTicks(0, rmax * 1.05 || 1000, 6);
+      const rtop = Math.ceil((rmax * 1.05 || 1000) / rstep) * rstep; // верх оси — не ниже самой большой точки
+      const rt = Array.from({ length: Math.round(rtop / rstep) + 1 }, (_, k) => k * rstep);
       const RY = (v: number) => g.top + g.plotH - (v / rtop) * g.plotH;
       const tx = (t: number) => g.x0 + ((t - t0) / (t1 - t0 || 1)) * (g.x1 - g.x0);
       if (rmax > 0) {
         for (const t of rt) s += `<text x="${g.x0 - 10}" y="${RY(t) + 4}" text-anchor="end" class="sc__ax">${fmt(t, 0)}</text>`;
         s += `<text transform="translate(14 ${g.top + g.plotH / 2}) rotate(-90)" text-anchor="middle" class="sc__ax sc__ax--small">Quarterly sales USD (in millions)</text>`;
       }
+      s += `<clipPath id="${clipId}"><rect x="${g.x0}" y="${g.top - 6}" width="${g.x1 - g.x0}" height="${g.plotH + 12}"/></clipPath><g clip-path="url(#${clipId})">`;
       for (const set of sets) {
         const drug = DRUGS[set.d];
         const pts = set.pts.map((p) => ({ x: tx(p.t), y: RY(p.v), q: p.q, v: p.v }));
-        revLines.push({ label: drug.name, region: REGIONS[set.r], color: drug.color, pts });
+        revLines.push({ label: drug.name, region: REGIONS[set.r], color: drug.color, pts: pts.filter((p) => p.x >= g.x0 && p.x <= g.x1) });
         if (pts.length > 1)
           s += `<polyline points="${pts.map((p) => `${p.x},${p.y}`).join(' ')}" fill="none" stroke="${drug.color}" stroke-width="1.6" stroke-dasharray="${REGION_DASH[set.r]}" opacity="0.9"/>`;
         for (const p of pts) s += `<rect x="${p.x - 3}" y="${p.y - 3}" width="6" height="6" fill="${drug.color}"/>`;
       }
-      if (!sets.some((x) => x.pts.length))
+      s += '</g>';
+      if (!sets.some((x) => x.pts.some((p) => p.t >= t0 && p.t <= t1) || x.pts.length > 1))
         s += `<text x="${(g.x0 + g.x1) / 2}" y="${g.top + 24}" text-anchor="middle" class="sc__ax">No quarterly revenue in this period — choose a longer one</text>`;
     }
 
@@ -461,21 +476,20 @@ function mount(root: HTMLElement) {
       const t0 = main[0].t;
       const t1 = main[n - 1].t;
       const list = events(intra).filter((e) => st.events.has(e.kind.key) && e.t >= t0 && e.t <= t1);
-      const colW = 120;
+      // Кучка событий начинается в точке своей даты: следующее событие, попавшее под уже стоящие квадраты, — в ту же кучку
       for (const e of list) {
         const x = g.x0 + ((e.t - t0) / (t1 - t0 || 1)) * (g.x1 - g.x0);
-        const col = Math.floor((x - g.x0) / colW);
-        let c = evCols.find((cc) => Math.floor((cc.x - g.x0) / colW) === col);
-        if (!c) evCols.push((c = { x: g.x0 + col * colW + colW / 2, items: [] }));
-        c.items.push({ kind: e.kind, t: e.t });
+        const c = evCols[evCols.length - 1];
+        const kinds = c ? new Set(c.items.map((it) => it.kind)).size : 0;
+        if (c && x <= c.x + Math.min(kinds, 5) * 22 + 4) c.items.push({ kind: e.kind, t: e.t });
+        else evCols.push({ x, items: [{ kind: e.kind, t: e.t }] });
       }
       for (const c of evCols) {
         const kinds = EVENT_KINDS.filter((k) => c.items.some((it) => it.kind === k));
         const perRow = 5;
         kinds.forEach((k, j) => {
           const row = Math.floor(j / perRow);
-          const inRow = Math.min(perRow, kinds.length - row * perRow);
-          const x = c.x - (inRow * 22) / 2 + (j % perRow) * 22;
+          const x = Math.min(g.x1 - 18, c.x - 9 + (j % perRow) * 22);
           const y = g.evTop + 2 + row * 22;
           const count = c.items.filter((it) => it.kind === k).length;
           s += `<g class="sc__ev" data-ev-col="${evCols.indexOf(c)}" data-ev-kind="${k.key}" tabindex="0" role="button" aria-label="${esc(k.name)}: ${count}"><rect x="${x}" y="${y}" width="18" height="18" rx="3" fill="${k.color}"/><text x="${x + 9}" y="${y + 13}" text-anchor="middle" class="sc__ev-n">${count}</text></g>`;
