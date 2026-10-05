@@ -3,6 +3,8 @@ import type { HeroPreset } from '../scripts/hero-gradient';
 
 interface Props {
   title: string;
+  /** Слова, на которые по очереди меняется (переворачивается) первое слово заголовка. */
+  flip?: string[];
   lead?: string;
   /** Чипсы под подписью — ключевые направления работы. */
   chips?: string[];
@@ -12,7 +14,11 @@ interface Props {
   preset?: HeroPreset;
 }
 
-const { title, lead, chips = [], portraitAlt, preset = 'soft' } = Astro.props;
+const { title, flip = [], lead, chips = [], portraitAlt, preset = 'soft' } = Astro.props;
+// Первое слово заголовка — перекидное: оно и слова из `flip` по кругу.
+const space = title.search(/\s/);
+const first = flip.length && space > 0 ? title.slice(0, space) : '';
+const rest = first ? title.slice(space) : title;
 const portraitSrcset = '/images/portrait-600.webp 600w, /images/portrait-860.webp 860w';
 // Кадр с подмигиванием — показывается на мгновение при наведении на портрет.
 const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-860.webp 860w';
@@ -28,7 +34,22 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   </div>
   <div class="hero__intro">
     <div class="hero__content">
-      <h1 class="hero__title">{title}</h1>
+      <h1 class="hero__title">
+        {
+          first && (
+            <>
+              <span class="hero__flip" data-flip aria-hidden="true">
+                {[first, ...flip].map((w, i) => (
+                  <span class="hero__flip-word" data-state={i === 0 ? 'in' : undefined}>
+                    {w}
+                  </span>
+                ))}
+              </span>
+              <span class="hero__flip-sr">{first}</span>
+            </>
+          )
+        }{rest}
+      </h1>
       {lead && <p class="hero__lead">{lead}</p>}
       {chips.length > 0 && (
         <ul class="hero__chips">
@@ -326,6 +347,50 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
     letter-spacing: var(--tracking-display);
   }
 
+  /* Перекидное первое слово: слова стоят в одной ячейке, текущее повёрнуто к нам, следующее ждёт снизу
+     (грань куба), уходящее уезжает вверх. Ширину под текущее слово и высоту заголовка ставит скрипт. */
+  .hero__flip {
+    display: inline-grid;
+    perspective: 1200px;
+    transition: width 0.7s cubic-bezier(0.6, 0, 0.2, 1);
+  }
+
+  .hero__flip-word {
+    grid-area: 1 / 1;
+    justify-self: start;
+    white-space: nowrap;
+    backface-visibility: hidden;
+    transform-origin: 50% 50% -0.4em;
+    transform: rotateX(-90deg);
+    opacity: 0;
+    transition:
+      transform 0.7s cubic-bezier(0.6, 0, 0.2, 1),
+      opacity 0.5s ease;
+  }
+
+  .hero__flip-word[data-state='in'] {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+
+  .hero__flip-word[data-state='out'] {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+
+  .hero__flip-word[data-state='reset'] {
+    transition: none;
+  }
+
+  .hero__flip-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   .hero__lead {
     max-width: 760px;
     margin-top: round(clamp(20px, 16px + 1vw, 32px), 2px);
@@ -382,6 +447,55 @@ const winkSrcset = '/images/portrait-wink-600.webp 600w, /images/portrait-wink-8
   document.addEventListener('astro:before-swap', () => {
     const bg = document.querySelector<HTMLElement>('[data-hero-bg]');
     if (bg && keptBgFilter) bg.style.filter = keptBgFilter;
+  });
+
+  // Перекидное первое слово заголовка: каждые FLIP_EVERY мс текущее уходит вверх, следующее приходит снизу.
+  const FLIP_EVERY = 2600;
+  onPage(({ reducedMotion }) => {
+    const flip = document.querySelector<HTMLElement>('[data-flip]');
+    // Настройка страницы может вызваться повторно — второй таймер путал порядок слов.
+    if (!flip || reducedMotion || flip.dataset.flipping) return;
+    flip.dataset.flipping = '';
+    const words = [...flip.children] as HTMLElement[];
+    const title = flip.closest<HTMLElement>('.hero__title')!;
+    let current = 0;
+    // Высота заголовка — по самому длинному варианту (слово длиннее может перенести строку): текст ниже не прыгает.
+    const measure = () => {
+      title.style.minHeight = '';
+      let max = 0;
+      for (const w of words) {
+        flip.style.transition = 'none';
+        flip.style.width = `${w.offsetWidth}px`;
+        max = Math.max(max, title.offsetHeight);
+      }
+      flip.style.width = `${words[current].offsetWidth}px`;
+      void flip.offsetWidth;
+      flip.style.transition = '';
+      title.style.minHeight = `${max}px`;
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    const resize = new ResizeObserver(measure);
+    resize.observe(title.parentElement!);
+    const timer = window.setInterval(() => {
+      if (document.hidden) return;
+      const prev = words[current];
+      current = (current + 1) % words.length;
+      const next = words[current];
+      next.dataset.state = 'reset';
+      void next.offsetWidth;
+      prev.dataset.state = 'out';
+      next.dataset.state = 'in';
+      flip.style.width = `${next.offsetWidth}px`;
+      window.setTimeout(() => {
+        if (prev.dataset.state === 'out') delete prev.dataset.state;
+      }, 800);
+    }, FLIP_EVERY);
+    return () => {
+      window.clearInterval(timer);
+      resize.disconnect();
+      delete flip.dataset.flipping;
+    };
   });
 
   onPage(({ reducedMotion }) => {

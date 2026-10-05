@@ -15,6 +15,8 @@ export const ui = {
     'lang.switch': 'Язык',
     'home.heading': 'Вадим Пьянов',
     'home.intro.title': 'Продуктовый дизайнер и многое другое',
+    // Первое слово заголовка по очереди переворачивается и меняется на эти (через «|»).
+    'home.intro.flip': 'Senior UI/UX|Ведущий|Lead|Senior Product',
     'home.intro.lead':
       'Проектирую архитектуру и ежедневно работаю над продуктовыми задачами, выстраиваю дизайн-процессы, принимаю участие в формировании фич и довожу решения до реализации. Использую ИИ как полноценный рабочий инструмент на всём пути — от идеи и исследования до дизайна, прототипирования и кода.',
     'home.intro.chip.1': 'Продуктовый дизайн',
@@ -75,6 +77,7 @@ export const ui = {
     'lang.switch': 'Language',
     'home.heading': 'Vadim Pianov',
     'home.intro.title': 'Product designer and much more',
+    'home.intro.flip': 'Senior UI/UX|Lead|Senior Product',
     'home.intro.lead':
       'I design architecture and work on product tasks every day, build design processes, help shape features and see solutions through to implementation. I use AI as a full-fledged working tool along the whole way — from idea and research to design, prototyping and code.',
     'home.intro.chip.1': 'Product design',
