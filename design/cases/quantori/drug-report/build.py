@@ -12,6 +12,7 @@
    public/images/cases/quantori/report/s{N}.webp.
 
 Запуск: node measure.mjs && python3 build.py && node render.mjs && python3 build.py --webp
+(вайрфрейм: python3 wireframe.py && node render.mjs wf.svg png-wf && python3 build.py --webp-wf)
 """
 import json
 import os
@@ -28,16 +29,19 @@ NS = 'http://www.w3.org/2000/svg'
 ET.register_namespace('', NS)
 ET.register_namespace('xlink', 'http://www.w3.org/1999/xlink')
 
-if '--webp' in sys.argv:
+if '--webp' in sys.argv or '--webp-wf' in sys.argv:
     from PIL import Image
 
-    os.makedirs(OUT_IMG, exist_ok=True)
-    for f in os.listdir(OUT_IMG):
-        os.remove(os.path.join(OUT_IMG, f))
-    for f in sorted(os.listdir(PNG_DIR)):
-        im = Image.open(os.path.join(PNG_DIR, f)).convert('RGB')
-        im.save(os.path.join(OUT_IMG, f.replace('.png', '.webp')), 'WEBP', quality=86, method=6)
-    print('webp:', len(os.listdir(OUT_IMG)))
+    wf = '--webp-wf' in sys.argv  # вайрфрейм (wireframe.py) → report/wf/
+    src, dst = (os.path.join(HERE, 'png-wf'), os.path.join(OUT_IMG, 'wf')) if wf else (PNG_DIR, OUT_IMG)
+    os.makedirs(dst, exist_ok=True)
+    for f in os.listdir(dst):
+        if f.endswith('.webp'):
+            os.remove(os.path.join(dst, f))
+    for f in sorted(os.listdir(src)):
+        im = Image.open(os.path.join(src, f)).convert('RGB')
+        im.save(os.path.join(dst, f.replace('.png', '.webp')), 'WEBP', quality=86, method=6)
+    print('webp:', len(os.listdir(dst)))
     sys.exit()
 
 els = json.load(open(os.path.join(HERE, 'els.json')))
@@ -71,6 +75,7 @@ def r1(v):
 
 
 remove = set()
+ui = set()  # убрано из картинки, потому что сделано HTML-элементами (в вайрфрейме остаётся)
 
 # --- Тултипы (тёмные плашки) — на сайте HTML ---
 for k, e in enumerate(els):
@@ -101,6 +106,7 @@ for y in tabbars:
 
 # --- Чипсы в шапке ---
 remove.update(e['i'] for e in within(118, 326, 890, 366))
+ui.update(e['i'] for e in within(118, 326, 890, 366))
 
 # --- Переключатели FDA/EMA и валют ---
 segs = []
@@ -108,6 +114,7 @@ for e in els:
     if e['t'] == 'rect' and e['f'] == 'white' and e['h'] == 28 and e['w'] > 100:
         x0, y0, x1, y1 = box(e)
         remove.update(i['i'] for i in within(x0 - 1, y0 - 1, x1 + 1, y1 + 1))
+        ui.update(i['i'] for i in within(x0 - 1, y0 - 1, x1 + 1, y1 + 1))
         segs.append((x0, y0, e['w']))
 
 # --- Строки вкладок с подчёркиванием (периоды, NDA/ANDA, мишени) ---
@@ -123,6 +130,7 @@ for uy, labels in SUBTABS.items():
     texts = sorted([e for e in row if e['t'] == 'path'], key=lambda e: e['x'])
     assert len(texts) == len(labels), (uy, len(texts))
     remove.update(e['i'] for e in row)
+    ui.update(e['i'] for e in row)
     subtabs.append({'k': 'subtabs', 'y': uy - 30, 'h': 32, 'x': 120, 'w': 900,
                     'items': [{'x': r1(t['x'] - 1), 'label': l} for t, l in zip(texts, labels)]})
 
@@ -259,6 +267,7 @@ FOLDER_LINE = f'<path d="{FOLDER}" fill="none" stroke="#0D69EB" stroke-width="1.
 FOLDER_FULL = f'<path d="{FOLDER}" fill="#0D69EB" stroke="#0D69EB" stroke-width="1.2" stroke-linejoin="round"/>' \
               '<path d="M4.3 6.6l1.2 1.2 2.3-2.4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'
 remove.add(17)
+ui.add(17)
 for icon, label_end, shape, base in ((15, 249, STAR, None), (17, 393, FOLDER_FULL, FOLDER_LINE), (19, 491, BELL, None)):
     e = els[icon]
     add('fav', e['x'] - 2, 284, label_end - e['x'] + 4, 24, ix=r1(e['x']), iy=r1(e['y']), iw=r1(e['w']), ih=r1(e['h']),
@@ -415,5 +424,6 @@ for k in sorted(remove, reverse=True):
     svg.remove(children[k])
 tree.write(os.path.join(HERE, 'base.svg'))
 json.dump(slices, open(os.path.join(HERE, 'slices.json'), 'w'))
+json.dump(sorted(remove - ui), open(os.path.join(HERE, 'removed.json'), 'w'))
 from collections import Counter
 print('removed', len(remove), 'slices', len(slices), 'items', Counter(i['k'] for i in items), 'points', npoints)

@@ -14,6 +14,24 @@ function fit(frame: HTMLElement) {
   const page = frame.querySelector<HTMLElement>('.dr__page');
   if (!page) return;
   page.style.zoom = String(Math.max(frame.clientWidth, MIN_W) / PAGE_W);
+  setSplit(frame);
+}
+
+/* ---------- Бегунок «вайрфрейм ↔ дизайн» ---------- */
+
+/** Положение бегунка (доля ширины окна) → линия и граница каркаса (`--split` в px страницы). */
+function setSplit(frame: HTMLElement, pos?: number) {
+  const win = frame.parentElement!;
+  const page = frame.querySelector<HTMLElement>('.dr__page');
+  const split = win.querySelector<HTMLElement>('[data-dr-split]');
+  if (!page || !split) return;
+  const p = Math.min(1, Math.max(0, pos ?? Number(win.dataset.split ?? 0.5)));
+  win.dataset.split = String(p);
+  split.style.setProperty('--pos', `${p * 100}%`);
+  split.querySelector('[data-dr-knob]')?.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+  const wr = win.getBoundingClientRect();
+  const pr = page.getBoundingClientRect();
+  page.style.setProperty('--split', `${Math.round((wr.left + p * wr.width - pr.left) / zoomOf(page))}px`);
 }
 
 const resize =
@@ -32,6 +50,7 @@ export function initDrugReports(root: ParentNode) {
       frame.parentElement?.querySelector('.dr__top')?.classList.toggle('is-shown', frame.scrollTop > 400);
       hideTip();
       syncNav(frame);
+      setSplit(frame);
     });
     syncNav(frame);
   });
@@ -367,6 +386,39 @@ if (typeof document !== 'undefined') {
     if (top) {
       top.parentElement?.querySelector('[data-drug-report]')?.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  });
+
+  document.addEventListener('pointerdown', (e) => {
+    const split = (e.target as Element).closest?.<HTMLElement>('[data-dr-split]');
+    if (!split) return;
+    e.preventDefault();
+    const win = split.parentElement!;
+    const frame = win.querySelector<HTMLElement>('[data-drug-report]')!;
+    const move = (ev: PointerEvent) => {
+      const r = win.getBoundingClientRect();
+      setSplit(frame, (ev.clientX - r.left) / r.width);
+    };
+    split.classList.add('is-dragging');
+    split.setPointerCapture(e.pointerId);
+    move(e);
+    split.addEventListener('pointermove', move);
+    split.addEventListener(
+      'lostpointercapture',
+      () => {
+        split.classList.remove('is-dragging');
+        split.removeEventListener('pointermove', move);
+      },
+      { once: true },
+    );
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const knob = (e.target as Element).closest?.<HTMLElement>('[data-dr-knob]');
+    if (!knob || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+    e.preventDefault();
+    const win = knob.closest<HTMLElement>('.dr__window')!;
+    const step = e.key === 'ArrowLeft' ? -0.05 : 0.05;
+    setSplit(win.querySelector<HTMLElement>('[data-drug-report]')!, Number(win.dataset.split ?? 0.5) + step);
   });
 
   document.addEventListener('change', (e) => {

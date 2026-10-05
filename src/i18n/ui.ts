@@ -28,6 +28,9 @@ export const ui = {
     'case.slider.show': 'Показать экран',
     'case.tabs': 'Сценарии',
     'case.soon': 'Кейс в разработке',
+    'case.wireframe': 'Вайрфрейм',
+    'case.design': 'Дизайн',
+    'case.compare': 'Сравнить вайрфрейм и дизайн',
     'tiles.1.title': 'Альфа Банк',
     'tiles.2.title': 'Betting app',
     'tiles.2.lead':
@@ -85,6 +88,9 @@ export const ui = {
     'case.slider.show': 'Show screen',
     'case.tabs': 'Scenarios',
     'case.soon': 'Case in progress',
+    'case.wireframe': 'Wireframe',
+    'case.design': 'Design',
+    'case.compare': 'Compare wireframe and design',
     'tiles.1.title': 'Alfa-Bank',
     'tiles.2.title': 'Betting app',
     'tiles.2.lead':

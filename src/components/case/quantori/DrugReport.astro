@@ -10,6 +10,7 @@
  */
 import '@fontsource-variable/roboto/wght.css';
 import { typograph } from '../../../i18n/typograph';
+import { getLocaleFromUrl, useTranslations } from '../../../i18n/utils';
 import DrugReportNode from './DrugReportNode.astro';
 import data from './drug-report.json';
 
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const { caption, alt } = Astro.props;
+const t = useTranslations(getLocaleFromUrl(Astro.url));
 ---
 
 <figure class="case-figure dr">
@@ -29,6 +31,24 @@ const { caption, alt } = Astro.props;
         {data.nodes.map((n) => <DrugReportNode node={n as any} />)}
         <div class="dr__tip" role="tooltip" hidden></div>
       </div>
+    </div>
+    <div class="dr-split" data-dr-split>
+      <span class="dr-split__label dr-split__label--left" aria-hidden="true">{t('case.wireframe')}</span>
+      <button
+        type="button"
+        class="dr-split__knob"
+        role="slider"
+        aria-label={t('case.compare')}
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="50"
+        data-dr-knob
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <span class="dr-split__label dr-split__label--right" aria-hidden="true">{t('case.design')}</span>
     </div>
     <button type="button" class="dr__top" data-dr-top>Go<br />{typograph('to top')}</button>
   </div>
@@ -245,11 +265,127 @@ const { caption, alt } = Astro.props;
     background: rgb(13 105 235 / 0.12);
   }
 
+  /* Вайрфрейм ↔ дизайн: каркас поверх страницы, виден слева от бегунка (--split — в px страницы) */
+  .dr-s > .dr-wf {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    width: 1440px;
+    height: 100%;
+    clip-path: inset(0 calc(100% - var(--split, 720px)) 0 0);
+    user-select: none;
+  }
+
+  .dr-nav__wf {
+    position: absolute;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    border: 1px solid #d9dce1;
+    background: #fff;
+    clip-path: inset(-12px calc(100% - var(--split, 720px) + 120px) -12px -120px);
+  }
+
+  .dr-nav__wf span {
+    display: grid;
+    place-items: center;
+  }
+
+  .dr-nav__wf span + span {
+    border-left: 1px solid #d9dce1;
+  }
+
+  .dr-nav__wf span.is-active {
+    background: #9fa6b0;
+  }
+
+  .dr-nav__wf i {
+    height: 10px;
+    border-radius: 5px;
+    background: #c4c9d0;
+  }
+
+  .dr-nav__wf .is-active i {
+    background: #fff;
+  }
+
+  .dr-split {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos, 50%);
+    z-index: 8; /* выше липкой полосы вкладок */
+    width: 2px;
+    margin-left: -1px;
+    background: #fcd537;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+    cursor: ew-resize;
+    touch-action: none;
+  }
+
+  .dr-split::before {
+    content: '';
+    position: absolute;
+    inset: 0 -12px;
+  }
+
+  .dr-split__knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: #fcd537;
+    color: #141414;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.25);
+    translate: -50% -50%;
+    cursor: ew-resize;
+    touch-action: none;
+    transition: scale 0.2s;
+  }
+
+  .dr-split__knob:hover,
+  .dr-split.is-dragging .dr-split__knob {
+    scale: 1.08;
+  }
+
+  .dr-split__knob:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .dr-split__label {
+    position: absolute;
+    top: 50%;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgb(20 20 20 / 0.72);
+    color: #fff;
+    font-family: 'Roboto Variable', sans-serif;
+    font-size: 13px;
+    letter-spacing: normal;
+    white-space: nowrap;
+    translate: 0 -50%;
+    pointer-events: none;
+  }
+
+  .dr-split__label--left {
+    right: 36px;
+  }
+
+  .dr-split__label--right {
+    left: 36px;
+  }
+
   /* Вкладки разделов — одна полоса, прилипает к верху окна */
   .dr-nav {
     position: sticky;
     top: 0;
-    z-index: 4;
+    z-index: 7; /* выше каркаса кусков (5) */
     box-sizing: border-box;
     background: #fff;
   }

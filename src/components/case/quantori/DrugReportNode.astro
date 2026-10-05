@@ -29,6 +29,7 @@ for (const it of data.items as Item[]) {
   byslice.set(it.s, list);
 }
 const src = (n: number) => asset(`/images/cases/quantori/report/s${String(n).padStart(2, '0')}.webp`);
+const wf = (n: number) => asset(`/images/cases/quantori/report/wf/s${String(n).padStart(2, '0')}.webp`);
 const box = (it: Item) => `left: ${it.x}px; top: ${it.y}px; width: ${it.w}px; height: ${it.h}px`;
 const tip = (t: unknown) => (t ? JSON.stringify(t) : undefined);
 const chev = data.chev;
@@ -62,6 +63,16 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
   piece ? (
     <div class:list={['dr-s', { 'dr-head': head }]} style={`height: ${piece.y1 - piece.y0}px`}>
       <img src={src(piece.s)} width="1440" height={piece.y1 - piece.y0} alt="" decoding="async" draggable="false" />
+      <img
+        class="dr-wf"
+        src={wf(piece.s)}
+        width="1440"
+        height={piece.y1 - piece.y0}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        draggable="false"
+      />
       {head && <button class="dr-head__btn" type="button" aria-expanded="true" data-dr-toggle aria-label="Toggle section" />}
       {(byslice.get(piece.s) ?? []).map((it) =>
         it.k === 'row' ? (
@@ -225,6 +236,13 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
     </div>
   ) : node.k === 'nav' ? (
     <div class="dr-nav" style={`height: ${node.h}px; padding: ${data.navPad}px 120px`} data-dr-nav>
+      <div class="dr-nav__wf" style={`inset: ${data.navPad}px 120px`} aria-hidden="true">
+        {data.tabs.map((l: string, n: number) => (
+          <span class:list={{ 'is-active': n === 0 }}>
+            <i style={`width: ${l.length * 8}px`} />
+          </span>
+        ))}
+      </div>
       <div class="dr-tabs" role="tablist">
         {data.tabs.map((l: string, n: number) => (
           <button
