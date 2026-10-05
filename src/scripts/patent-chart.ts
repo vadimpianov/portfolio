@@ -14,6 +14,7 @@ const PAD = 40;
 const IW = W - PAD * 2;
 const VISIBLE = 11;
 const DIV = 64; // место под линию «Historical | Future»
+const PLOT_H_TABS = 609; // во вкладках графиков — выше: виджет 857px, как Stock Price
 
 type Type = 'DS' | 'DP' | 'DS, DP' | 'Other';
 const TYPES: Type[] = ['DS', 'DP', 'DS, DP', 'Other'];
@@ -63,6 +64,7 @@ const PER_PAGE = 8;
 type Seg = { x: number; y: number; w: number; h: number; i: number; key: string; label: string; color: string; ids: number[] };
 
 function mount(root: HTMLElement) {
+  const hasTable = !!root.dataset.table;
   const st = {
     view: 'state' as 'state' | 'type',
     states: new Set([0, 1, 2]),
@@ -130,7 +132,7 @@ function mount(root: HTMLElement) {
       </div>
       <div class="pc__plot"><svg class="sc__svg" data-svg></svg><div class="sc__tip" data-tip hidden></div></div>
       <div class="pc__pick" data-pick hidden></div>
-      <div class="pc__table" role="table">
+      <div class="pc__table" role="table"${root.dataset.table ? '' : ' hidden'}>
         <div class="pc__row pc__row--head" role="row">
           <span>Patent</span><span>Published</span><span>Expiration</span>
           <span class="pc__type-h">Type <button type="button" class="pc__info" aria-label="Patent types">${info}</button><span class="sc__qtip pc__info-tip">DS — Drug Substance<br/>DP — Drug Product</span></span>
@@ -174,7 +176,7 @@ function mount(root: HTMLElement) {
     const groupW = (IW - (hasDiv ? DIV : 0)) / n;
     const gx = (k: number) => k * groupW + (hasDiv && k >= split ? DIV : 0);
     const top = 40;
-    const plotH = 400;
+    const plotH = hasTable ? 400 : PLOT_H_TABS;
     const base = top + plotH;
     const byType = st.view === 'type';
     const groups = (['a', 'e'] as const).filter((g) => (g === 'a' ? st.act.size : st.exp.size));
@@ -321,7 +323,8 @@ function mount(root: HTMLElement) {
   }
 
   /* ---------- Мышь ---------- */
-  const zoom = () => Number(root.querySelector<HTMLElement>('.sc__page')!.style.zoom) || 1;
+  // Итоговый масштаб (свой zoom × zoom страниц-родителей, напр. отчёта о компании)
+  const zoom = () => root.querySelector<HTMLElement>('.sc__page')!.getBoundingClientRect().width / W || 1;
   const localX = (e: PointerEvent) => (e.clientX - svg.getBoundingClientRect().left) / zoom();
   svg.addEventListener('pointermove', (e) => {
     if (drag) return;
@@ -341,7 +344,7 @@ function mount(root: HTMLElement) {
       render();
     }
     const { y, q } = QUARTERS[g.i];
-    tip.innerHTML = `<b>${y} - Q${q}${g.i > TODAY ? ' (forecast)' : ''}</b><span class="sc__tip-row"><i style="background:${g.color}"></i>${g.label}: ${g.ids.length} patent${g.ids.length === 1 ? '' : 's'}</span><span>Click to filter the table</span>`;
+    tip.innerHTML = `<b>${y} - Q${q}${g.i > TODAY ? ' (forecast)' : ''}</b><span class="sc__tip-row"><i style="background:${g.color}"></i>${g.label}: ${g.ids.length} patent${g.ids.length === 1 ? '' : 's'}</span>${hasTable ? '<span>Click to filter the table</span>' : ''}`;
     tip.hidden = false;
     tip.style.left = `${Math.max(0, Math.min(IW - tip.offsetWidth, g.x + g.w / 2 - tip.offsetWidth / 2))}px`;
     tip.style.top = `${Math.max(0, g.y - tip.offsetHeight - 10)}px`;
@@ -355,7 +358,7 @@ function mount(root: HTMLElement) {
   });
   svg.addEventListener('click', (e) => {
     const t = (e.target as Element).closest<SVGElement>('[data-seg]');
-    if (!t) return;
+    if (!t || !hasTable) return;
     const g = segs[Number(t.dataset.seg)];
     const key = `${g.i}|${g.key}`;
     const { y, q } = QUARTERS[g.i];

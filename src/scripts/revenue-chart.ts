@@ -62,15 +62,20 @@ const VALUES: number[][][] = QUARTERS.map((_, qi) => {
   });
 });
 
+const DEFAULT_DRUGS = [0, 1, 3, 5, 7, 9, 11, 15];
+const DEFAULT_YEARS = [2021, 2022, 2023];
+const DEFAULT_QUARTERS = [1, 2, 3];
+
 type Period = { label: string; values: number[][] }; // values[drug][region]
 
 function mount(root: HTMLElement) {
   const st = {
     mode: 'q' as 'q' | 'y',
     regions: new Set([0, 1, 2]),
-    drugs: new Set(DRUGS.map((_, i) => i)),
-    years: new Set(QUARTERS.map((p) => p.y)),
-    quarters: new Set([1, 2, 3, 4]),
+    // По умолчанию — как на скриншоте пользователя: 8 препаратов, 2021–2023, кварталы Q1–Q3
+    drugs: new Set(DEFAULT_DRUGS),
+    years: new Set(DEFAULT_YEARS),
+    quarters: new Set(DEFAULT_QUARTERS),
     start: 0,
     hover: null as { d: number } | null,
   };
@@ -132,7 +137,10 @@ function mount(root: HTMLElement) {
     return [...by.entries()].sort((a, b) => a[0] - b[0]).map(([y, values]) => ({ label: String(y), values }));
   }
 
-  let ctx: { segs: { x: number; y: number; w: number; h: number; d: number; r: number; p: Period; v: number }[] } = { segs: [] };
+  let ctx: {
+    segs: { x: number; y: number; w: number; h: number; d: number; r: number; p: Period; v: number }[];
+    cols: { p: Period; r: number; total: number }[];
+  } = { segs: [], cols: [] };
 
   function render() {
     const all = periods();
@@ -142,7 +150,7 @@ function mount(root: HTMLElement) {
     const regs = [...st.regions].sort();
     const drugs = DRUGS.map((_, i) => i).filter((i) => st.drugs.has(i));
     const top = 48;
-    const plotH = 400;
+    const plotH = 561; // вся страница виджета — 857px, как у Stock Price (вкладки одной высоты)
     const base = top + plotH;
     const labY = base + 40;
     const navY = labY + 24;
@@ -157,7 +165,7 @@ function mount(root: HTMLElement) {
     const gap = 6;
     const colW = Math.min(56, (groupW - 28 - gap * (regs.length - 1)) / Math.max(1, regs.length));
     let s = '';
-    ctx = { segs: [] };
+    ctx = { segs: [], cols: [] };
     list.forEach((p, gi) => {
       const gx = gi * groupW + (groupW - (colW * regs.length + gap * (regs.length - 1))) / 2;
       regs.forEach((r, ci) => {
@@ -167,17 +175,15 @@ function mount(root: HTMLElement) {
         for (const d of drugs) {
           const v = p.values[d][r];
           const h = Math.max(2, v * k);
-          const hl = st.hover?.d === d;
-          const dim = st.hover && !hl;
-          s += `<rect x="${x}" y="${y - h + 1}" width="${colW}" height="${h - 2}" rx="${Math.min(6, (h - 2) / 2)}" fill="${hl ? '#3a82d0' : DRUGS[d].color}" opacity="${dim ? 0.28 : 1}" data-seg="${ctx.segs.length}"/>`;
+          s += `<rect x="${x}" y="${y - h + 1}" width="${colW}" height="${h - 2}" rx="${Math.min(6, (h - 2) / 2)}" fill="${DRUGS[d].color}" data-seg="${ctx.segs.length}" data-d="${d}"/>`;
           ctx.segs.push({ x, y: y - h + 1, w: colW, h: h - 2, d, r, p, v });
           y -= h;
         }
-        // Сумма над колонкой; при наведении — значение препарата и его доля
-        const label = st.hover
-          ? `<tspan x="${x + colW / 2}">${fmt(p.values[st.hover.d][r])}</tspan><tspan x="${x + colW / 2}" dy="16">(${fmt((p.values[st.hover.d][r] / (total || 1)) * 100)}%)</tspan>`
-          : fmt(total);
-        s += `<text x="${x + colW / 2}" y="${y - (st.hover ? 26 : 8)}" text-anchor="middle" class="rc__total">${label}</text>`;
+        // Сумма над колонкой; при наведении на препарат плавно сменяется его значением и долей (rc__hv)
+        const cx = x + colW / 2;
+        s += `<text x="${cx}" y="${y - 8}" text-anchor="middle" class="rc__total rc__sum">${fmt(total)}</text>`;
+        s += `<text x="${cx}" y="${y - 26}" text-anchor="middle" class="rc__total rc__hv" data-hv="${ctx.cols.length}"><tspan x="${cx}"></tspan><tspan x="${cx}" dy="16"></tspan></text>`;
+        ctx.cols.push({ p, r, total });
         s += `<rect x="${x}" y="${base + 6}" width="${colW}" height="14" fill="${REGIONS[r].color}" data-region-bar="${r}"/>`;
       });
       s += `<text x="${gi * groupW + groupW / 2}" y="${labY}" text-anchor="middle" class="sc__ax rc__lab">${p.label}</text>`;
@@ -193,6 +199,7 @@ function mount(root: HTMLElement) {
     }
     svg.innerHTML = s;
     Object.assign(ctx, { all, n, navY });
+    if (st.hover) highlight(st.hover.d);
 
     // Состояние элементов управления
     root.querySelectorAll<HTMLElement>('[data-mode]').forEach((b) => b.classList.toggle('is-active', b.dataset.mode === st.mode));
@@ -215,10 +222,30 @@ function mount(root: HTMLElement) {
   }
 
   /* ---------- Мышь ---------- */
-  const zoom = () => Number(root.querySelector<HTMLElement>('.sc__page')!.style.zoom) || 1;
+  // Итоговый масштаб (свой zoom × zoom страниц-родителей, напр. отчёта о компании)
+  const zoom = () => root.querySelector<HTMLElement>('.sc__page')!.getBoundingClientRect().width / W || 1;
   const local = (e: PointerEvent) => {
     const r = svg.getBoundingClientRect();
     return { x: (e.clientX - r.left) / zoom(), y: (e.clientY - r.top) / zoom() };
+  };
+  /** Подсветка препарата без перерисовки: классы + CSS-переходы (цвет, прозрачность, подписи). */
+  function highlight(d: number | null) {
+    svg.classList.toggle('is-hover', d != null);
+    svg.querySelectorAll<SVGElement>('[data-seg]').forEach((el) => el.classList.toggle('is-hl', d != null && Number(el.dataset.d) === d));
+    if (d == null) return;
+    svg.querySelectorAll<SVGTextElement>('[data-hv]').forEach((t) => {
+      const c = ctx.cols[Number(t.dataset.hv)];
+      const v = c.p.values[d][c.r];
+      const [a, b] = t.querySelectorAll('tspan');
+      a.textContent = fmt(v);
+      b.textContent = `(${fmt((v / (c.total || 1)) * 100)}%)`;
+    });
+  }
+  let leaveTimer = 0;
+  const clearHover = () => {
+    st.hover = null;
+    tip.hidden = true;
+    highlight(null);
   };
   svg.addEventListener('pointermove', (e) => {
     if (drag) return;
@@ -232,39 +259,27 @@ function mount(root: HTMLElement) {
       rtip.style.top = `${Number(rb.getAttribute('y')) + 26}px`;
     }
     if (!t) {
-      if (st.hover) {
-        st.hover = null;
-        tip.hidden = true;
-        render();
-      }
+      // Между блоками зазор 2px: подсветку снимаем с задержкой, чтобы она не мигала
+      if (st.hover && !leaveTimer) leaveTimer = window.setTimeout(() => ((leaveTimer = 0), clearHover()), 120);
       return;
     }
+    window.clearTimeout(leaveTimer);
+    leaveTimer = 0;
     const seg = ctx.segs[Number(t.dataset.seg)];
     if (st.hover?.d !== seg.d) {
       st.hover = { d: seg.d };
-      render();
+      highlight(seg.d);
     }
-    // Обводка у блока под курсором и подсказка над ним
-    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    Object.entries({ x: seg.x - 1, y: seg.y - 1, width: seg.w + 2, height: seg.h + 2, rx: 6, fill: 'none', stroke: '#0d69eb', 'stroke-width': 2 }).forEach(([k, v]) =>
-      ring.setAttribute(k, String(v)),
-    );
-    svg.querySelector('[data-ring]')?.remove();
-    ring.setAttribute('data-ring', '');
-    ring.style.pointerEvents = 'none';
-    svg.append(ring);
     tip.innerHTML = `<b>${seg.p.label}</b><span>${REGIONS[seg.r].name}</span><b>${DRUGS[seg.d].name}</b><span class="sc__tip-row"><i style="background:${DRUGS[seg.d].color}"></i>$${fmt(seg.v, 1)} M</span>`;
     tip.hidden = false;
     tip.style.left = `${seg.x + seg.w / 2 - tip.offsetWidth / 2}px`;
     tip.style.top = `${seg.y - tip.offsetHeight - 10}px`;
   });
   svg.addEventListener('pointerleave', () => {
-    tip.hidden = true;
+    window.clearTimeout(leaveTimer);
+    leaveTimer = 0;
     rtip.hidden = true;
-    if (st.hover) {
-      st.hover = null;
-      render();
-    }
+    clearHover();
   });
 
   let drag: { x: number; start: number } | null = null;

@@ -165,9 +165,36 @@ const { alt } = Astro.props;
     font-size: 13px;
   }
 
+  /* Наведение на препарат: он синий во всех колонках, остальные бледнеют, над колонками — его значение.
+     Без обводки; всё меняется плавно (CSS-переходы, без перерисовки). */
   .rc [data-seg] {
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition:
+      fill 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  .rc svg.is-hover [data-seg] {
+    opacity: 0.28;
+  }
+
+  .rc svg.is-hover [data-seg].is-hl {
+    opacity: 1;
+    fill: #3a82d0;
+  }
+
+  .rc__sum,
+  .rc__hv {
+    transition: opacity 0.3s ease;
+  }
+
+  .rc__hv,
+  .rc svg.is-hover .rc__sum {
+    opacity: 0;
+  }
+
+  .rc svg.is-hover .rc__hv {
+    opacity: 1;
   }
 
   .rc [data-region-bar] {

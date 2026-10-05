@@ -9,12 +9,14 @@ import '@fontsource-variable/roboto/wght.css';
 
 interface Props {
   alt: string;
+  /** Таблица патентов под графиком (в отчёте о компании — есть, во вкладках графиков — нет). */
+  table?: boolean;
 }
 
-const { alt } = Astro.props;
+const { alt, table = false } = Astro.props;
 ---
 
-<div class="sc" data-patent-chart role="figure" aria-label={alt}></div>
+<div class="sc" data-patent-chart data-table={table ? '1' : undefined} role="figure" aria-label={alt}></div>
 
 <style is:global>
   .pc__bar {
@@ -216,8 +218,12 @@ const { alt } = Astro.props;
   }
 
   .pc [data-seg] {
-    cursor: pointer;
+    cursor: default;
     transition: opacity 0.15s;
+  }
+
+  [data-table] .pc [data-seg] {
+    cursor: pointer;
   }
 
   .pc__pick {
@@ -232,6 +238,11 @@ const { alt } = Astro.props;
 
   .pc__pick .sc__link {
     margin-left: 12px;
+  }
+
+  .pc__table[hidden],
+  .pc__pick[hidden] {
+    display: none;
   }
 
   .pc__table {

@@ -639,7 +639,8 @@ function mount(root: HTMLElement) {
   const hideTip = () => (tipBox.hidden = true);
 
   /* ---------- События мыши ---------- */
-  const zoom = () => Number((root.querySelector('.sc__page') as HTMLElement).style.zoom) || 1;
+  // Итоговый масштаб (свой zoom × zoom страниц-родителей, напр. отчёта о компании)
+  const zoom = () => root.querySelector<HTMLElement>('.sc__page')!.getBoundingClientRect().width / W || 1;
   const local = (e: PointerEvent | MouseEvent) => {
     const r = svg.getBoundingClientRect();
     const z = zoom();
