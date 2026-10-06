@@ -155,6 +155,95 @@ Analysts used to find the row they needed by scrolling and using the browser sea
 
 <Figure scroll loop src="/images/cases/quantori/screens.webp" width={10464} height={834} caption="PharmaKB screens: search, disease and company reports, trials, chart table view, favorites" alt="PharmaKB screens: report search, disease report with a competitive landscape map, company stock comparison, clinical trials by phase, US drug spending table, my reports, report download" />
 
+## Search that thinks like an analyst
+
+Reports, companies, diseases and trials from a single field
+
+<Flow>
+
+Eight out of ten sessions started with search — and it was also the most frustrating part. It only matched the exact drug name, suggested nothing and answered a typo or a synonym with an empty page. Almost every third query led nowhere, and analysts went to Google just to check how a molecule is spelled.
+
+We rebuilt search around how analysts actually think — not by names, but by indications, targets and companies:
+
+- Suggestions appear from the third character: recent queries, popular drugs and exact phrases in quotes
+- Matches are grouped by meaning — indications, targets, trade names — with the matched part highlighted
+- The “75 of 3,271 reports” counter shows at once how narrow the query is and whether it is worth refining
+- From a results row you can add a report to favourites or download it as CSV, JSON, XLSX or PPTX without opening it
+- If a query is shorter than three characters, we say so instead of showing an empty page
+
+</Flow>
+
+<Figure scroll src="/images/cases/quantori/search.webp" width={8880} height={834} caption="Search: suggestions, matches by indication and target, downloads right from the results" alt="PharmaKB search screens: the three-character hint, a dropdown of recent queries, highlighted matches by indication and target, results with the number of reports found, a download menu with CSV, JSON, XLSX and PPTX, the downloading state" />
+
+<Results set="search" caption="Search: before and after" was="was" note="Search analytics for six weeks before and after the release" />
+
+## My Reports instead of browser bookmarks
+
+Favourites people come back to every day
+
+<Flow>
+
+Favourites existed, but hardly anyone used them: only 21% of analysts had added a single report. It was a flat list of links with no context, and the star was hidden inside the report. People kept their reports in browser bookmarks, notes and Excel, and getting back to yesterday’s report took almost a minute.
+
+We made My Reports the analyst’s home page:
+
+- The star is in every search row and in the report header — add a report where you found it
+- Drugs, companies and diseases are grouped separately, and each card already shows the essentials: trade names, “44 marketed · 1 in development”, “89 companies · 120 drugs”
+- Two layouts — cards for an overview and a compact list for those with dozens of reports
+- When adding, you can pick a collection or create a new one right away
+- Removing asks for confirmation, and the empty page explains how to add the first report
+- A guest who taps the star sees the sign-in, and after signing in the report is already in favourites
+
+</Flow>
+
+<Figure scroll src="/images/cases/quantori/favorites.webp" width={7392} height={834} caption="My Reports: cards and list, adding to a collection, removing and the empty state" alt="PharmaKB screens: My Reports with drug, company and disease cards, a compact list, the add-to-favourites dialog with a collection picker, a remove confirmation, empty favourites" />
+
+<Results set="favorites" caption="My Reports: before and after" was="was" note="Product analytics for two months before and after the release" />
+
+## Collections: a set of reports in a couple of clicks
+
+From search, from a report and from favourites
+
+<Flow>
+
+Analysts prepare sets of reports for investment committees: “Pfizer drugs 1999–2022”, “everyone working on Parkinson’s disease”. It used to mean 20–30 one-by-one exports stitched together in Excel — 45 minutes on average before every meeting. The only way to send a set to a colleague was a zip file by email.
+
+Collections turned this routine into a couple of clicks:
+
+- “Save search results as collection” sits right under the search field: the whole result list becomes a set
+- A report goes into a collection when you add it to favourites, with no extra step
+- Collection cards show the number of reports, and inside is a table of reports of different types: drugs and companies together
+- Under a report’s title you can see which collections it is already in
+- A collection is shared with one link and downloaded as a whole
+
+</Flow>
+
+<Figure scroll src="/images/cases/quantori/collections.webp" width={5904} height={834} caption="Collections: saving results, collection cards, a collection page and the label on a report" alt="PharmaKB screens: company search with the Save search results as collection link, collection cards with report counts, the COVID-19 collection page with a table of reports, a disease report with a collection label" />
+
+<Results set="collections" caption="Collections: before and after" was="was" note="Product analytics for two months before and after the release" />
+
+## Alerts: the data comes to the analyst
+
+Approvals, patents and trials without manual checks
+
+<Flow>
+
+New FDA approvals, patents and clinical trials appear every day, but the only way to learn about them was to open the right report. Analysts set calendar reminders and went through a dozen reports by hand once a week — and on average found out about a competitor’s approval nine days late.
+
+We added subscriptions to changes:
+
+- The Get Alerts bell sits in the report header and in the search row, next to the star
+- The first subscription asks only for an email — one field, no form
+- The Alerts tab in My Reports gathers all subscriptions to drugs, companies and diseases
+- The email is a daily digest, not one email per event, so people actually open it
+- You can unsubscribe in one click where you subscribed
+
+</Flow>
+
+<Figure scroll src="/images/cases/quantori/alerts.webp" width={5904} height={834} caption="Alerts: the bell in search and in a report, a one-field email, all subscriptions in My Reports" alt="PharmaKB screens: search results with subscription bells, the email dialog, a disease report with the Get Alerts link, the Alerts tab in My Reports" />
+
+<Results set="alerts" caption="Alerts: before and after" was="was" note="Product analytics for two months before and after the release" />
+
 ## Results
 
 Analysts now work with reports twice as long without a break

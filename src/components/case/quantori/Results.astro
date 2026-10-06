@@ -6,15 +6,18 @@
 import { typograph } from '../../../i18n/typograph';
 import { getLocaleFromUrl } from '../../../i18n/utils';
 import Block from './Block.astro';
-import { results } from './data';
+import { results as main, stories } from './data';
 
 interface Props {
   caption: string;
   note?: string;
   was: string;
+  /** Набор цифр: итоги кейса (по умолчанию) или одна из историй «что мы улучшили». */
+  set?: keyof typeof stories;
 }
 
-const { caption, note, was } = Astro.props;
+const { caption, note, was, set } = Astro.props;
+const results = set ? stories[set] : main;
 const lang = getLocaleFromUrl(Astro.url);
 const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
 const decimals = (v: number) => (Number.isInteger(v) ? 0 : 1);
