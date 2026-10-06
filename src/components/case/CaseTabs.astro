@@ -1,7 +1,8 @@
 ---
 /**
  * Селектор сценариев кейса: вкладки в ряд, выбранная — жёлтая. Содержимое выбранной по умолчанию вкладки —
- * в слоте; у остальных пока заглушка «Кейс в разработке». Переключение — без JS (радиокнопки + :has),
+ * в слоте; у остальных — именованные слоты `t0`, `t1`, … (в MDX: `<div slot="t2">…</div>`), а где слота нет —
+ * заглушка «Кейс в разработке». Переключение — без JS (радиокнопки + :has),
  * поэтому работает и в модалке, куда кейс вставляется готовым HTML.
  * Без `items` (или с пустым списком) селектора нет — только содержимое со стилями сценария
  * (заголовки разделов по центру, отступы); первый заголовок — на --case-tabs-section-gap от чипсов.
@@ -18,6 +19,8 @@ interface Props {
 
 const { items = [], active = 0 } = Astro.props;
 const tabs = items.length > 0;
+// Свои рассказы у остальных вкладок (если есть)
+const alt = await Promise.all(items.map((_, i) => (i !== active && Astro.slots.has(`t${i}`) ? Astro.slots.render(`t${i}`) : null)));
 const t = useTranslations(getLocaleFromUrl(Astro.url));
 const name = 'case-tabs';
 ---
@@ -32,7 +35,7 @@ const name = 'case-tabs';
           name={name}
           value={i}
           checked={i === active}
-          data-tab={i === active ? 'main' : 'soon'}
+          data-tab={i === active || alt[i] != null ? 'main' : 'soon'}
         />
         <span>{typograph(item)}</span>
       </label>
@@ -40,9 +43,11 @@ const name = 'case-tabs';
   </div>
   )}
 
-  <div class="case-tabs__panel case-tabs__panel--main">
+  <div class="case-tabs__panel case-tabs__panel--main" data-i={active}>
     <slot />
   </div>
+
+  {alt.map((html, i) => html != null && <div class="case-tabs__panel case-tabs__panel--main" data-i={i} set:html={html} />)}
 
   {tabs && (
     <div class="case-tabs__panel case-tabs__panel--soon">
@@ -127,10 +132,19 @@ const name = 'case-tabs';
     }
   }
 
-  /* Показана одна панель: основная — у выбранной по умолчанию вкладки, заглушка — у остальных. */
-  .case-tabs:has(input[data-tab='main']:checked) .case-tabs__panel--soon,
-  .case-tabs:has(input[data-tab='soon']:checked) .case-tabs__panel--main {
+  /* Показана одна панель: у вкладки со своим рассказом — он, у остальных — заглушка. */
+  .case-tabs:not(.case-tabs--bare) .case-tabs__panel {
     display: none;
+  }
+
+  .case-tabs:has(input[data-tab='soon']:checked) .case-tabs__panel--soon,
+  .case-tabs:has(.case-tabs__tab:nth-child(1) input:checked) .case-tabs__panel[data-i='0'],
+  .case-tabs:has(.case-tabs__tab:nth-child(2) input:checked) .case-tabs__panel[data-i='1'],
+  .case-tabs:has(.case-tabs__tab:nth-child(3) input:checked) .case-tabs__panel[data-i='2'],
+  .case-tabs:has(.case-tabs__tab:nth-child(4) input:checked) .case-tabs__panel[data-i='3'],
+  .case-tabs:has(.case-tabs__tab:nth-child(5) input:checked) .case-tabs__panel[data-i='4'],
+  .case-tabs:has(.case-tabs__tab:nth-child(6) input:checked) .case-tabs__panel[data-i='5'] {
+    display: block;
   }
 
   /* Между блоками сценария (колонки текста, схемы, картинки) — свой отступ, меньше общего. */
