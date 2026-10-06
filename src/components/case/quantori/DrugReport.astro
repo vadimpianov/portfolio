@@ -25,7 +25,7 @@ interface Props {
 const { caption, alt, report = 'drug' } = Astro.props;
 const data = report === 'company' ? company : drug;
 const dir = report === 'company' ? 'company' : 'report';
-const wireframe = report === 'drug';
+const wireframe = true;
 // Живые графики (StockChart, RevenueChart, PatentChart) — из слотов; скрипт переносит их на место узлов `live`.
 const live = report === 'company' ? await Promise.all([0, 1, 2].map((n) => Astro.slots.render(`l${n}`))) : [];
 const t = useTranslations(getLocaleFromUrl(Astro.url));
@@ -233,8 +233,30 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
 
   /* Живые графики в отчёте о компании (Stock Price, Revenue by Drug, Patents) — в полях страницы, как в макете */
   .dr-live {
+    position: relative;
     margin: 0 120px;
     padding: 8px 0 32px;
+  }
+
+  /* Каркас живого графика — снимок графика в состоянии по умолчанию, переведённый в серые плашки
+     (design/cases/quantori/company-report/live-wireframe.mjs); режется той же линией бегунка */
+  .dr-live > .dr-wf {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -120px;
+    z-index: 5;
+    width: 1440px;
+    background: #fff;
+    clip-path: inset(0 calc(100% - var(--split, 144px)) 0 0);
+    user-select: none;
+  }
+
+  .dr-live > .dr-wf img {
+    display: block;
+    width: 1200px;
+    height: auto;
+    margin-left: 120px;
   }
 
   .dr-live .sc {
@@ -322,7 +344,8 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
     position: absolute;
     z-index: 5;
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
     border: 1px solid #d9dce1;
     background: #fff;
     clip-path: inset(-12px calc(100% - var(--split, 144px) + 120px) -12px -120px);

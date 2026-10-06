@@ -9,6 +9,8 @@
 3. render.mjs рендерит куски base.svg в 2x → PNG, `--webp` жмёт их в public/images/cases/quantori/company/s{N}.webp.
 
 Запуск: node measure.mjs && python3 build.py && node render.mjs && python3 build.py --webp
+Каркас: python3 wireframe.py && node render.mjs wf.svg png-wf && python3 build.py --webp-wf;
+каркас живых графиков — node live-wireframe.mjs (при запущенном pnpm preview).
 """
 import json
 import os
@@ -25,17 +27,19 @@ NS = 'http://www.w3.org/2000/svg'
 ET.register_namespace('', NS)
 ET.register_namespace('xlink', 'http://www.w3.org/1999/xlink')
 
-if '--webp' in sys.argv:
+if '--webp' in sys.argv or '--webp-wf' in sys.argv:
     from PIL import Image
 
-    os.makedirs(OUT_IMG, exist_ok=True)
-    for f in os.listdir(OUT_IMG):
-        if f.endswith('.webp'):
-            os.remove(os.path.join(OUT_IMG, f))
-    for f in sorted(os.listdir(PNG_DIR)):
-        im = Image.open(os.path.join(PNG_DIR, f)).convert('RGB')
-        im.save(os.path.join(OUT_IMG, f.replace('.png', '.webp')), 'WEBP', quality=86, method=6)
-    print('webp:', len(os.listdir(OUT_IMG)))
+    wf = '--webp-wf' in sys.argv  # каркас (wireframe.py) → company/wf/ (live*.webp — от live-wireframe.mjs, не трогаем)
+    src, dst = (os.path.join(HERE, 'png-wf'), os.path.join(OUT_IMG, 'wf')) if wf else (PNG_DIR, OUT_IMG)
+    os.makedirs(dst, exist_ok=True)
+    for f in os.listdir(dst):
+        if f.endswith('.webp') and f.startswith('s'):
+            os.remove(os.path.join(dst, f))
+    for f in sorted(os.listdir(src)):
+        im = Image.open(os.path.join(src, f)).convert('RGB')
+        im.save(os.path.join(dst, f.replace('.png', '.webp')), 'WEBP', quality=86, method=6)
+    print('webp:', len(os.listdir(dst)))
     sys.exit()
 
 els = json.load(open(os.path.join(HERE, 'els.json')))
@@ -101,7 +105,8 @@ for e in chevrons:
     remove.add(e['i'])
 
 # --- Подвкладки Quarterly / Annual у выручки компании ---
-remove.update(e['i'] for e in within(195, 1660, 350, 1696))
+ui = {e['i'] for e in within(195, 1660, 350, 1696)}  # в каркасе остаются (на сайте — HTML)
+remove.update(ui)
 
 
 def snippet(k):
@@ -285,5 +290,6 @@ for k in sorted(remove, reverse=True):
     svg.remove(children[k])
 tree.write(os.path.join(HERE, 'base.svg'))
 json.dump(slices, open(os.path.join(HERE, 'slices.json'), 'w'))
+json.dump(sorted(remove - ui), open(os.path.join(HERE, 'removed.json'), 'w'))
 from collections import Counter
 print('removed', len(remove), 'slices', len(slices), 'items', Counter(i['k'] for i in items))

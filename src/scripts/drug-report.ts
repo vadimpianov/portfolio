@@ -58,7 +58,7 @@ export function initDrugReports(root: ParentNode) {
     // Живые графики отчёта о компании: из слотов — на место своих узлов в разделах
     frame.querySelectorAll<HTMLElement>('[data-dr-live-src]').forEach((src) => {
       const slot = frame.querySelector<HTMLElement>(`[data-dr-live="${src.dataset.drLiveSrc}"]`);
-      if (slot && !slot.childElementCount) while (src.firstElementChild) slot.append(src.firstElementChild);
+      if (slot && !slot.querySelector('.sc')) while (src.firstElementChild) slot.append(src.firstElementChild);
     });
     fit(frame);
     frame.scrollTop = 0;

@@ -2,3 +2,7 @@ png/
 base.svg
 slices.json
 node_modules
+png-wf/
+wf.svg
+removed.json
+png-live/

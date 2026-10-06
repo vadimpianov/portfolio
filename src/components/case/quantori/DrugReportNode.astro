@@ -279,7 +279,13 @@ const EVENT_GROUPS: { title: string; items: [string, string][] }[] = [
       </div>
     </div>
   ) : node.k === 'live' ? (
-    <div class="dr-live" data-dr-live={node.n} />
+    <div class="dr-live" data-dr-live={node.n}>
+      {wireframe && (
+        <div class="dr-wf" aria-hidden="true">
+          <img src={asset(`/images/cases/quantori/${dir}/wf/live${node.n}.webp`)} width="1200" alt="" decoding="async" draggable="false" />
+        </div>
+      )}
+    </div>
   ) : node.k === 'anchor' ? (
     <span class="dr-anchor" data-dr-anchor={node.n} />
   ) : node.k === 'sec' ? (
