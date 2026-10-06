@@ -111,50 +111,6 @@ The company report consisted mostly of charts. Each of them has its own unique a
 <div slot="l2"><PatentChart table alt="AbbVie patents per quarter and patent table" /></div>
 </DrugReport>
 
-## The drug report: from trials to sales
-
-Research, sales, medical usage and safety
-
-<Flow>
-
-In the drug report, charts follow the order in which an analyst makes a decision. First come 30 years of clinical trials by phase, showing when interest in the molecule grew and when it faded. Then sales by market with a forecast, US medical usage data, PubMed publications and adverse events from FDA reports.
-
-All small charts in a section share one grid and one scale, so they can be compared without reading the axes. Long series of values open in a table view right from the chart
-
-</Flow>
-
-<Figure src="/images/cases/quantori/trials-stream.webp" width={2440} height={750} caption="Clinical trials of the drug by phase over 30 years" alt="Streamgraph of the number of clinical trials for the drug by phase from 1990 to 2020" />
-
-## FDA and EMA in one coordinate system
-
-A source switch instead of two different tables
-
-<Flow>
-
-American and European statistics are structured differently: the FDA has NDA and BLA applications, the EMA has the centralised procedure and its own statuses, and dates, phase names and formats differ. Together with a data analyst we built a mapping dictionary and brought both sources to a common form. Now the source switches with one click in any report section, while columns and row order stay put.
-
-What matters most to an analyst is the probability of success at each stage. It used to be calculated by hand in Excel; now it is right in the disease report: on the competitive landscape map when hovering over any disease, and in the trials section as a chain from phase 1 to approval
-
-</Flow>
-
-<Figure src="/images/cases/quantori/landscape.webp" width={2441} height={933} caption="Competitive landscape for a disease: success rate on hover" alt="Map of related diseases around rheumatoid arthritis: number of companies and drugs, a Historical Success Rate tooltip with phase transitions" />
-
-<Figure src="/images/cases/quantori/success-rate.webp" width={2441} height={398} caption="Probability of success from phase 1 to approval" alt="Phase chain: phase 1 — 86%, phase 2 — 91%, phase 3 — 71%, 14 approved, 40% overall success" />
-
-## Tables that answer the question
-
-Sorting and filters instead of scrolling and Ctrl+F
-
-<Flow>
-
-Analysts used to find the row they needed by scrolling and using the browser search. We added sorting by any column, filters by therapeutic area, phase and status, tooltips on headers and pagination instead of an endless sheet. Companies and drugs in the tables link to their reports, so you can jump from a row straight to the details
-
-</Flow>
-
-<Figure src="/images/cases/quantori/commercial.webp" width={2441} height={1855} caption="Commercial data for a disease: companies, drugs, patents, revenue" alt="Table: company, drug, trade name, patent expiry, approval date, revenue and period, with a tooltip and pagination" />
-
-<Figure scroll loop src="/images/cases/quantori/screens.webp" width={10464} height={834} caption="PharmaKB screens: search, disease and company reports, trials, chart table view, favorites" alt="PharmaKB screens: report search, disease report with a competitive landscape map, company stock comparison, clinical trials by phase, US drug spending table, my reports, report download" />
-
 ## Search that thinks like an analyst
 
 Reports, companies, diseases and trials from a single field
