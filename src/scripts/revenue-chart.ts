@@ -150,11 +150,14 @@ function mount(root: HTMLElement) {
     const regs = [...st.regions].sort();
     const drugs = DRUGS.map((_, i) => i).filter((i) => st.drugs.has(i));
     const top = 48;
-    const plotH = 561; // вся страница виджета — 857px, как у Stock Price (вкладки одной высоты)
+    // Навигатор — только когда периодов больше, чем помещается; без него график выше на его место,
+    // вся страница виджета остаётся 857px, как у Stock Price (вкладки одной высоты)
+    const hasNav = all.length > n;
+    const plotH = 561 + (hasNav ? 0 : 48);
     const base = top + plotH;
     const labY = base + 40;
     const navY = labY + 24;
-    const height = navY + 40;
+    const height = hasNav ? navY + 40 : labY + 16;
     svg.setAttribute('viewBox', `0 0 ${IW} ${height}`);
     svg.setAttribute('width', String(IW));
     svg.setAttribute('height', String(height));
@@ -191,8 +194,8 @@ function mount(root: HTMLElement) {
     if (!list.length) s += `<text x="${IW / 2}" y="${top + plotH / 2}" text-anchor="middle" class="sc__ax">Nothing selected — choose drugs, years and quarters</text>`;
     // Навигатор: окно по всем периодам
     const navW = IW;
-    s += `<rect x="0" y="${navY}" width="${navW}" height="22" rx="3" fill="#f5f7fa" stroke="#dfdddf"/>`;
-    if (all.length > n) {
+    if (hasNav) {
+      s += `<rect x="0" y="${navY}" width="${navW}" height="22" rx="3" fill="#f5f7fa" stroke="#dfdddf"/>`;
       const wx = (st.start / all.length) * navW;
       const ww = Math.max(24, (n / all.length) * navW);
       s += `<rect class="sc__nav-win" data-nav x="${wx}" y="${navY}" width="${ww}" height="22" rx="3" fill="rgb(13 105 235 / 0.12)" stroke="#0d69eb"/>`;
