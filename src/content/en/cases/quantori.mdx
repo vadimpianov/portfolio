@@ -99,17 +99,16 @@ The company report consisted mostly of charts. Each of them has its own unique a
 
 </Flow>
 
-<ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents']}>
+<ChartTabs name="quantori-charts" items={['Stock Price', 'Revenue by Drug', 'Patents', 'Company report']}>
 <div slot="t0"><StockChart alt="AbbVie share price over the full period compared with the SPY and XBI indices, trading volume, period and ticker selection" /></div>
 <div slot="t1"><RevenueChart alt="Revenue by drug per quarter and year: columns for Global, US and Rest of World, filters by drug, year and quarter" /></div>
 <div slot="t2"><PatentChart alt="Company patents per quarter: new, active and expired or by DS and DP type, history and forecast, filters and a patent table" /></div>
-</ChartTabs>
-
-<DrugReport report="company" caption="Company report page" alt="PharmaKB company report for AbbVie: header, Financial, Commercial and Clinical Trials tabs, stock, revenue and patent charts, approved drugs and clinical trials tables">
+<div slot="t3"><DrugReport report="company" alt="PharmaKB company report for AbbVie: header, Financial, Commercial and Clinical Trials tabs, stock, revenue and patent charts, approved drugs and clinical trials tables">
 <div slot="l0"><StockChart alt="AbbVie share price chart" /></div>
 <div slot="l1"><RevenueChart alt="AbbVie revenue by drug" /></div>
 <div slot="l2"><PatentChart table alt="AbbVie patents per quarter and patent table" /></div>
-</DrugReport>
+</DrugReport></div>
+</ChartTabs>
 
 ## Search that thinks like an analyst
 
@@ -125,11 +124,10 @@ We rebuilt search around how analysts actually think — not by names, but by in
 - Matches are grouped by meaning — indications, targets, trade names — with the matched part highlighted
 - The “75 of 3,271 reports” counter shows at once how narrow the query is and whether it is worth refining
 - From a results row you can add a report to favourites or download it as CSV, JSON, XLSX or PPTX without opening it
-- If a query is shorter than three characters, we say so instead of showing an empty page
 
 </Flow>
 
-<Figure scroll src="/images/cases/quantori/search.webp" width={8880} height={834} caption="Search: suggestions, matches by indication and target, downloads right from the results" alt="PharmaKB search screens: the three-character hint, a dropdown of recent queries, highlighted matches by indication and target, results with the number of reports found, a download menu with CSV, JSON, XLSX and PPTX, the downloading state" />
+<Figure src="/images/cases/quantori/search-diseases.webp" width={1440} height={1149} caption="Disease search: matches are highlighted right in the MeSH tree, empty branches are hidden" alt="PharmaKB search for Chondromalacia: Hide Empty and Include children checkboxes, the MeSH disease tree with company and drug counts and revenue, matching rows highlighted in yellow" />
 
 <Results set="search" caption="Search: before and after" was="was" note="Search analytics for six weeks before and after the release" />
 
@@ -152,8 +150,6 @@ We made My Reports the analyst’s home page:
 
 </Flow>
 
-<Figure scroll src="/images/cases/quantori/favorites.webp" width={7392} height={834} caption="My Reports: cards and list, adding to a collection, removing and the empty state" alt="PharmaKB screens: My Reports with drug, company and disease cards, a compact list, the add-to-favourites dialog with a collection picker, a remove confirmation, empty favourites" />
-
 <Results set="favorites" caption="My Reports: before and after" was="was" note="Product analytics for two months before and after the release" />
 
 ## Collections: a set of reports in a couple of clicks
@@ -173,8 +169,6 @@ Collections turned this routine into a couple of clicks:
 - A collection is shared with one link and downloaded as a whole
 
 </Flow>
-
-<Figure scroll src="/images/cases/quantori/collections.webp" width={5904} height={834} caption="Collections: saving results, collection cards, a collection page and the label on a report" alt="PharmaKB screens: company search with the Save search results as collection link, collection cards with report counts, the COVID-19 collection page with a table of reports, a disease report with a collection label" />
 
 <Results set="collections" caption="Collections: before and after" was="was" note="Product analytics for two months before and after the release" />
 
@@ -196,8 +190,6 @@ We added subscriptions to changes:
 
 </Flow>
 
-<Figure scroll src="/images/cases/quantori/alerts.webp" width={5904} height={834} caption="Alerts: the bell in search and in a report, a one-field email, all subscriptions in My Reports" alt="PharmaKB screens: search results with subscription bells, the email dialog, a disease report with the Get Alerts link, the Alerts tab in My Reports" />
-
 <Results set="alerts" caption="Alerts: before and after" was="was" note="Product analytics for two months before and after the release" />
 
 ## Results
@@ -211,7 +203,7 @@ Analysts now work with reports twice as long without a break
 In six months we moved all three report types — drug, disease and company — and search onto the new system. We compared results using product analytics for three months before and after the release, and the SUS usability score on the same 12 analysts we started with.
 
 - Uninterrupted work with a report grew from 18 to 41 minutes
-- Analysts find the metric they need three times faster
+- Analysts find the right metric three times faster
 - Excel exports dropped almost threefold
 - The SUS usability score rose from 52 to 81
 

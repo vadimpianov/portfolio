@@ -1,7 +1,8 @@
 ---
 /**
- * Результаты «было → стало»: крупное число «стало» досчитывает при прокрутке (`data-count`,
- * `src/scripts/case-data.ts`), под ним — две полоски для сравнения: было (серая) и стало (жёлтая).
+ * Результаты «было → стало» — в стиле масштаба PharmaKB (`Scale.astro`): слева крупное число «стало»
+ * (досчитывает при прокрутке, `data-count` — `src/scripts/case-data.ts`), справа — название и серая подпись
+ * «было N», под ними полоска: жёлтая — стало, бледная под ней — было (доля от большего из двух).
  */
 import { typograph } from '../../../i18n/typograph';
 import { getLocaleFromUrl } from '../../../i18n/utils';
@@ -30,18 +31,22 @@ const fmt = (v: number, d: number) => v.toLocaleString(locale, { minimumFraction
       const d = Math.max(decimals(item.from), decimals(item.to));
       const max = Math.max(item.from, item.to);
       return (
-        <li class="q-results__item" style={`--i: ${i}`}>
+        <li class="q-results__row" style={`--i: ${i}`}>
           <p class="q-results__value">
             <span data-count={item.to} data-count-from={item.from} data-decimals={d}>
               {fmt(item.to, d)}
             </span>
           </p>
-          <p class="q-results__was">{typograph(`${was} ${fmt(item.from, d)}`)}</p>
-          <div class="q-results__bars" aria-hidden="true">
-            <span class="q-results__bar q-results__bar--from" style={`--share: ${item.from / max}`} />
-            <span class="q-results__bar q-results__bar--to" style={`--share: ${item.to / max}`} />
+          <div class="q-results__chart">
+            <p class="q-results__label">
+              {typograph(item.label[lang])}
+              <span class="q-results__was">{typograph(`${was} ${fmt(item.from, d)}`)}</span>
+            </p>
+            <div class="q-results__track" aria-hidden="true">
+              <span class="q-results__bar q-results__bar--from" style={`--share: ${item.from / max}`} />
+              <span class="q-results__bar q-results__bar--to" style={`--share: ${item.to / max}`} />
+            </div>
           </div>
-          <p class="q-results__label">{typograph(item.label[lang])}</p>
         </li>
       );
     })}
@@ -51,26 +56,18 @@ const fmt = (v: number, d: number) => v.toLocaleString(locale, { minimumFraction
 <style>
   .q-results {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 20px;
+    gap: 24px;
     margin: 0;
-    padding: 0;
+    padding: 0 !important;
     list-style: none;
+    overflow: visible !important;
   }
 
-  @container case (max-width: 899px) {
-    .q-results {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      row-gap: 32px;
-    }
-  }
-
-  .q-results__item {
-    display: flex;
-    flex-direction: column;
-    padding: 24px 20px;
-    border: 1px solid var(--case-tabs-border-strong);
-    border-radius: var(--case-tabs-radius);
+  .q-results__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: 20px;
+    align-items: end;
   }
 
   .q-results__value {
@@ -79,39 +76,60 @@ const fmt = (v: number, d: number) => v.toLocaleString(locale, { minimumFraction
     font-weight: var(--weight-heavy);
     --lh: var(--leading-title);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Название — слева, серое «было» — справа, над концом полоски. */
+  .q-results__label {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    color: var(--case-text);
   }
 
   .q-results__was {
-    margin-top: 4px;
     color: var(--case-muted);
+    text-align: right;
   }
 
-  .q-results__bars {
-    display: grid;
-    gap: 6px;
-    margin: 20px 0;
+  .q-results__track {
+    position: relative;
+    height: 12px;
+    border-radius: 6px;
+    background: var(--case-tabs-border);
+    overflow: hidden;
   }
 
   .q-results__bar {
-    height: 6px;
-    border-radius: 4px;
-    background: var(--case-tabs-border-strong);
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background: var(--case-accent);
     transform-origin: left;
     scale: var(--share) 1;
-    transition: scale 1.2s var(--case-slide-ease) calc(var(--i) * 120ms);
+    transition: scale 1.4s var(--case-slide-ease) calc(var(--i) * 140ms);
   }
 
-  .q-results__bar--to {
-    background: var(--case-accent);
+  /* «Было» — бледная полоска под жёлтой: видна, где было больше, чем стало. */
+  .q-results__bar--from {
+    background: var(--case-tabs-border-strong);
   }
 
   :global([data-reveal='pending']) .q-results__bar {
     scale: 0 1;
   }
 
-  .q-results__label {
-    margin-top: auto;
-    color: var(--case-text);
+  @container case (max-width: 599px) {
+    .q-results__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .q-results__was {
+      text-align: left;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

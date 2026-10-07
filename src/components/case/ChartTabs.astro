@@ -107,6 +107,19 @@ const panels = await Promise.all(items.map((_, i) => Astro.slots.render(`t${i}`)
     display: block;
   }
 
+  /* Окно отчёта во вкладке — той же высоты, что график акций (виджет 1120 × 857, не уже 760px), чтобы вкладки не прыгали. */
+  .chart-tabs__panel {
+    container-type: inline-size;
+  }
+
+  .chart-tabs__panel :global(.dr) {
+    margin-block: 0;
+  }
+
+  .chart-tabs__panel :global(.dr__frame) {
+    height: round(calc(max(100cqi, 760px) * 857 / 1120), 2px);
+  }
+
   /* Картинки внутри вкладок — без своих отступов (отступы задаёт селектор). */
   .chart-tabs__panel > :global(*) {
     margin-block: 0;
