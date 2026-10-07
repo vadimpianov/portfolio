@@ -13,6 +13,8 @@ export const ui = {
     'site.description': 'Портфолио Вадима Пьянова',
     'nav.home': 'Главная',
     'lang.switch': 'Язык',
+    'nav.cv': 'CV',
+    'nav.contacts': 'Контакты',
     'home.heading': 'Вадим Пьянов',
     'home.intro.title': 'Продуктовый дизайнер и многое другое',
     // Первое слово заголовка по очереди переворачивается и меняется на эти (через «|»).
@@ -75,6 +77,8 @@ export const ui = {
     'site.description': 'Portfolio of Vadim Pianov',
     'nav.home': 'Home',
     'lang.switch': 'Language',
+    'nav.cv': 'CV',
+    'nav.contacts': 'Contacts',
     'home.heading': 'Vadim Pianov',
     'home.intro.title': 'Product designer and much more',
     'home.intro.flip': 'Senior UI/UX|Lead|Senior Product',

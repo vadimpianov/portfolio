@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import DevGrid from '../components/DevGrid.astro';
 import Logo from '../components/Logo.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import HeaderNav from '../components/HeaderNav.astro';
 import { DEV_GRID } from '../config/dev';
 import { locales } from '../i18n/ui';
 import { getLocaleFromUrl, switchLocalePath, useTranslations } from '../i18n/utils';
@@ -53,6 +54,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <body>
     <header>
       <Logo />
+      <HeaderNav />
       <LanguageSwitcher />
     </header>
     <main>

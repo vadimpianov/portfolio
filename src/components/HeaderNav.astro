@@ -1,0 +1,152 @@
+---
+/**
+ * Правая часть шапки слева от планеты: «CV» (PDF резюме в новой вкладке) и «Контакты» с шевроном —
+ * выпадающий список: телефон, Telegram, MAX. Список — `<details>`: открывается и без JS,
+ * скрипт закрывает его по клику мимо, по Esc и после перехода на другую страницу.
+ */
+import { asset } from '../utils/asset';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const t = useTranslations(getLocaleFromUrl(Astro.url));
+const CV = asset('/cv/Pianov_Vadim_CV.pdf');
+const CONTACTS = [
+  { text: '+7 916 294-65-26', href: 'tel:+79162946526' },
+  { text: 'Telegram', href: 'https://t.me/V_PIANOV', external: true },
+  { text: 'MAX', href: 'https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA', external: true },
+];
+---
+
+<nav class="hnav" aria-label={t('nav.contacts')}>
+  <a class="hnav__link" href={CV} target="_blank" rel="noopener">{t('nav.cv')}</a>
+  <details class="hnav__menu" data-hnav-menu>
+    <summary class="hnav__link">
+      {t('nav.contacts')}
+      <svg class="hnav__chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+    </summary>
+    <ul class="hnav__list">
+      {
+        CONTACTS.map((c) => (
+          <li>
+            <a href={c.href} {...(c.external ? { target: '_blank', rel: 'noopener' } : {})}>
+              {c.text}
+              {c.external && <span aria-hidden="true">↗</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+</nav>
+
+<style>
+  .hnav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-left: auto;
+    margin-right: 24px;
+  }
+
+  .hnav__link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    --lh: var(--leading-tight);
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .hnav__link::-webkit-details-marker {
+    display: none;
+  }
+
+  .hnav__chevron {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: rotate 0.25s;
+  }
+
+  .hnav__menu[open] .hnav__chevron {
+    rotate: 180deg;
+  }
+
+  .hnav__menu {
+    position: relative;
+  }
+
+  /* Список — тёмная карточка, как контакты на слайде «Обо мне». */
+  .hnav__list {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 220px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    border-radius: 16px;
+    background: rgb(20 20 20 / 0.92);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.24);
+  }
+
+  .hnav__list a {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    --lh: var(--leading-tight);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  .hnav__list a:hover,
+  .hnav__list a:focus-visible {
+    background: rgb(255 255 255 / 0.08);
+    color: var(--case-accent);
+  }
+
+  .hnav__link:focus-visible,
+  .hnav__list a:focus-visible {
+    outline: 2px solid var(--case-accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    .hnav {
+      gap: 16px;
+      margin-right: 16px;
+    }
+  }
+</style>
+
+<script>
+  // Закрыть список по клику мимо, по Esc и после перехода (шапка живёт между страницами).
+  const close = () =>
+    document.querySelectorAll<HTMLDetailsElement>('[data-hnav-menu][open]').forEach((d) => (d.open = false));
+  document.addEventListener('click', (event) => {
+    const menu = (event.target as Element | null)?.closest('[data-hnav-menu]');
+    document.querySelectorAll<HTMLDetailsElement>('[data-hnav-menu][open]').forEach((d) => {
+      if (d !== menu) d.open = false;
+    });
+    // Выбранный пункт — закрыть список
+    if (menu && (event.target as Element).closest('.hnav__list a')) (menu as HTMLDetailsElement).open = false;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') close();
+  });
+  document.addEventListener('astro:after-swap', close);
+</script>
