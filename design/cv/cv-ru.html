@@ -58,11 +58,11 @@
     <div class="card">
       <div class="photo"><img src="../../public/images/portrait-600.webp" alt="" /></div>
       <div class="name">Вадим Пьянов</div>
-      <p class="title"><mark>Senior продуктовый дизайнер и тимлид</mark> — проектирую продукт от идеи до кода и выстраиваю процессы вокруг дизайна</p>
+      <p class="title"><mark>Senior продуктовый дизайнер и тимлид</mark> — проектирую сложные интерфейсы от идеи до кода и выстраиваю процессы вокруг дизайна</p>
       <ul class="facts">
         <li>14 лет в продуктовом дизайне</li>
-        <li>Финтех, беттинг, фарма, недвижимость, мобильность</li>
-        <li>Использую ИИ на всём пути работы</li>
+        <li>Банкинг, биотех, недвижимость, каршеринг, карты, беттинг</li>
+        <li>Использую ИИ на всём пути</li>
       </ul>
     </div>
 
@@ -74,8 +74,7 @@
         <img src="../../public/images/cases/metr-kvadratny-600.webp" alt="" />
       </div>
       <div class="links">
-        <a href="https://vadimpianov.website.yandexcloud.net/ru/">Сайт-портфолио ↗</a>
-        <a href="https://vadimpianov.pages.dev/ru/">Зеркало вне России ↗</a>
+        <a href="https://vadimpianov.website.yandexcloud.net/ru/">Портфолио ↗</a>
       </div>
     </div>
 
@@ -83,10 +82,8 @@
       <h3>Контакты</h3>
       <div class="phone">+7 916 294-65-26</div>
       <div class="links">
-        <a href="mailto:vadimpianof@gmail.com">vadimpianof@gmail.com</a>
         <a href="https://t.me/V_PIANOV">Telegram @V_PIANOV</a>
         <a href="https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA">MAX</a>
-        <a href="https://www.linkedin.com/in/vadimpianov/">LinkedIn</a>
       </div>
     </div>
 
@@ -101,7 +98,7 @@
   <main>
     <div class="about">
       <h2>Обо мне</h2>
-      <p>Продуктовый дизайнер с 14 годами опыта: от агентств и стартапов до лидеров рынка — Альфа-Банка, MAPS.ME, BelkaCar. Проектирую архитектуру и ежедневно работаю над продуктовыми задачами, участвую в формировании фич и довожу решения до реализации. Последние годы веду команды дизайнеров и выстраиваю процессы вокруг дизайна. Не боюсь неполных ТЗ: сам нахожу данные, провожу интервью и тесты, а гипотезы проверяю через MVP.</p>
+      <p>Продуктовый дизайнер с 14 годами опыта: от агентств и стартапов до лидеров рынка — Альфа‑Банка, MAPS.ME, BelkaCar. Проектирую архитектуру и ежедневно работаю над продуктовыми задачами, участвую в формировании фич и довожу решения до реализации. Последние годы веду команды дизайнеров и выстраиваю процессы вокруг дизайна. Не боюсь неполных ТЗ: сам нахожу данные, провожу интервью и тесты, а гипотезы проверяю через MVP.</p>
     </div>
 
     <div class="exp">
@@ -161,8 +158,8 @@
   const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let n = walk.nextNode(); n; n = walk.nextNode()) {
     let t = n.nodeValue;
-    for (let i = 0; i < 2; i++) t = t.replace(SHORT, '$1$2 ');
-    n.nodeValue = t.replace(/ ([—–])/g, ' $1');
+    for (let i = 0; i < 2; i++) t = t.replace(SHORT, '$1$2\u00a0');
+    n.nodeValue = t.replace(/ ([—–])/g, '\u00a0$1');
   }
 </script>
 </body>
