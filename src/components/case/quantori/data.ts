@@ -3,7 +3,7 @@
 export const results = [
   {
     label: { ru: 'Минут непрерывной работы', en: 'Minutes of uninterrupted work' },
-    from: 18,
+    from: 27,
     to: 41,
   },
   {
