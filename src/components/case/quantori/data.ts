@@ -29,7 +29,6 @@ export const stories = {
     { label: { ru: 'Запросов без результатов, %', en: 'Searches with no results, %' }, from: 38, to: 9 },
     { label: { ru: 'Секунд до нужного отчёта', en: 'Seconds to the right report' }, from: 74, to: 19 },
     { label: { ru: 'Уточнений одного запроса', en: 'Refinements per search' }, from: 3.1, to: 1.4 },
-    { label: { ru: 'Запросов через подсказки, %', en: 'Searches via suggestions, %' }, from: 0, to: 61 },
   ],
   favorites: [
     { label: { ru: 'Пользователей с избранным, %', en: 'Users with favourites, %' }, from: 21, to: 68 },

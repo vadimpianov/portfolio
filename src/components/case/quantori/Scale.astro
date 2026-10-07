@@ -78,7 +78,7 @@ const max = Math.max(...scale.map((s) => s.value));
     font-size: round(calc(var(--case-metric-size) * 1.5), 1px);
     font-weight: var(--weight-heavy);
     --lh: var(--leading-title);
-    font-variant-numeric: tabular-nums;
+    /* Пропорциональные цифры — числа начинаются ровно по левому краю колонки (у моноширинной «1» отступ слева). */
     white-space: nowrap;
   }
 

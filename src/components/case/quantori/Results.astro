@@ -10,7 +10,7 @@ import Block from './Block.astro';
 import { results as main, stories } from './data';
 
 interface Props {
-  caption: string;
+  caption?: string;
   note?: string;
   was: string;
   /** Набор цифр: итоги кейса (по умолчанию) или одна из историй «что мы улучшили». */
@@ -75,7 +75,7 @@ const fmt = (v: number, d: number) => v.toLocaleString(locale, { minimumFraction
     font-size: round(calc(var(--case-metric-size) * 1.5), 1px);
     font-weight: var(--weight-heavy);
     --lh: var(--leading-title);
-    font-variant-numeric: tabular-nums;
+    /* Пропорциональные цифры — числа начинаются ровно по левому краю колонки (у моноширинной «1» отступ слева). */
     white-space: nowrap;
   }
 
