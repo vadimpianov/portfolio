@@ -194,15 +194,20 @@ const QR = [
     text-decoration: none;
   }
 
-  /* QR — ровно и без белой подложки (фон картинки прозрачный). Наведение — как у LinkedIn: сдвигается только стрелка. */
+  /* QR — ровно, на белой подложке: на тёмной карточке без неё цветной код (особенно плотный MAX) не считывается.
+     Наведение — как у LinkedIn: сдвигается только стрелка. */
   .about__qr-card {
     display: block;
+    padding: 10px;
+    border-radius: 16px;
+    background: #fff;
   }
 
   .about__qr-card img {
     display: block;
     width: 100%;
     height: auto;
+    border-radius: 8px;
   }
 
   .about__qr-name {
