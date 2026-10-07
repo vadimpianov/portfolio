@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Вадим Пьянов — CV</title>
+<style>
+  @font-face { font-family: Onest; src: url(onest-cyrillic-wght-normal.woff2) format('woff2'); font-weight: 100 900; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: Onest; src: url(onest-latin-wght-normal.woff2) format('woff2'); font-weight: 100 900; }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --y: #f8e84a; --ink: #1c1c1c; --muted: #5a5a5a; --blue: #2f5fe0; }
+  html, body { background: var(--y); }
+  body { font-family: Onest, sans-serif; color: var(--ink); font-size: 8.6pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 10mm 9mm 7mm; display: flex; flex-direction: column; gap: 2.8mm; break-after: page; overflow: hidden; }
+  .page:last-child { break-after: auto; }
+  a { color: var(--blue); }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .top svg { height: 4.2mm; }
+  .links { display: flex; gap: 6mm; font-weight: 600; font-size: 8.4pt; }
+  .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 8mm; margin-top: 3mm; }
+  h1 { font-size: 15.5pt; line-height: 1.35; font-weight: 700; letter-spacing: -0.01em; }
+  h1 mark { background: var(--ink); color: var(--y); padding: 0 1.4mm; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .intro { margin-top: 2.6mm; font-size: 8.6pt; }
+  .chips { display: flex; flex-wrap: wrap; gap: 1.6mm; margin-top: 2.6mm; }
+  .chips span { background: var(--ink); color: var(--y); padding: 0.9mm 2mm; font-size: 7.4pt; white-space: nowrap; }
+  .facts { list-style: none; display: grid; gap: 2.2mm; align-content: start; padding-top: 1mm; }
+  .facts li { position: relative; padding-left: 4mm; font-size: 8.3pt; }
+  .facts li::before { content: ''; position: absolute; left: 0.6mm; top: 1.9mm; width: 1.4mm; height: 1.4mm; border-radius: 50%; background: var(--ink); }
+  .facts b { font-weight: 700; }
+  .card { background: #fff; padding: 4.2mm 5mm 4.4mm; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3.2mm; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.2mm; }
+  .year { font-size: 7.6pt; color: var(--muted); }
+  .card h2 { margin-top: 1.4mm; font-size: 10.2pt; line-height: 1.35; font-weight: 700; }
+  .card h2 em { font-style: normal; color: #8b8b8b; }
+  .role { margin-top: 1.6mm; font-size: 7.8pt; color: var(--muted); }
+  .card p.desc { margin-top: 2mm; }
+  .card ul.did { margin-top: 1.6mm; padding-left: 3.6mm; }
+  .card ul.did li { margin-top: 0.6mm; }
+  .card .chips { margin-top: 2.2mm; }
+  .card .chips span { font-size: 7pt; padding: 0.7mm 1.7mm; }
+  .stats { display: flex; gap: 7mm; margin-top: 2.6mm; }
+  .stats b { display: block; font-size: 11pt; font-weight: 700; line-height: 1.2; }
+  .stats span { font-size: 7.2pt; color: var(--muted); }
+  .small h2 { font-size: 9.2pt; }
+  .foot { margin-top: auto; display: flex; gap: 2.6mm; align-items: center; font-size: 8.4pt; }
+  .foot i { width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--ink); }
+  .sec { font-size: 8pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1mm; }
+</style>
+</head>
+<body>
+<section class="page">
+  <div class="top">
+    <svg viewBox="-1.5 -1.5 569 76" aria-label="PIANOV"><g fill="none" stroke="#1c1c1c" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M4 69V4h24.5a22.5 22.5 0 0 1 0 45H4"/><path d="M107 4v65"/><path d="M162.5 69 193.5 4 224.5 69"/><path d="M276.5 69V4L329 69V4"/><circle cx="422" cy="36.5" r="33"/><path d="M501.5 4 531.5 69 561.5 4"/></g></svg>
+    <div class="links">
+      <a href="https://vadimpianov.website.yandexcloud.net/ru/">Сайт-портфолио</a>
+      <a href="https://www.linkedin.com/in/vadimpianov/">LinkedIn</a>
+      <a href="https://t.me/V_PIANOV">Telegram</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <h1>Привет! Меня зовут Вадим.<br />Я <mark>senior продуктовый дизайнер и тимлид</mark> с 14 годами опыта</h1>
+      <p class="intro">Проектирую архитектуру и ежедневно работаю над продуктовыми задачами, выстраиваю дизайн-процессы, участвую в формировании фич и довожу решения до реализации. Использую ИИ как полноценный рабочий инструмент на всём пути — от идеи и исследования до дизайна, прототипирования и кода.</p>
+      <div class="chips"><span>Продуктовый дизайн</span><span>Дизайн-процессы</span><span>Внедрение ИИ</span><span>Аналитика и конкуренты</span><span>Управление командой</span><span>Дизайн-системы</span></div>
+    </div>
+    <ul class="facts">
+      <li>В беттинге пересобрал регистрацию и первое пополнение — конверсия выросла на <b>48%</b> и <b>44%</b></li>
+      <li>Объединил пять сервисов недвижимости «Метр квадратный» в экосистему и за <b>4 месяца</b> вывел MVP: анкета ипотеки короче на <b>40%</b>, retention <b>+27%</b></li>
+      <li>Привёл к единой системе десятки таблиц и графиков базы знаний о лекарствах PharmaKB — аналитики работают без перерыва <b>41 минуту</b> вместо 18</li>
+      <li>Работал с банками, криптобанком, каршерингом, беттингом, недвижимостью и девелоперами — от стартапов до лидеров рынка</li>
+    </ul>
+  </div>
+
+  <div class="sec">Опыт</div>
+
+  <div class="card">
+    <div class="year">2024 — настоящее время</div>
+    <h2><em>Альфа-Банк.</em> Продуктовый дизайн банковских сервисов</h2>
+    <div class="role">Senior продуктовый дизайнер</div>
+    <p class="desc">Один из крупнейших частных банков России. Подробный кейс готовлю для портфолио.</p>
+    <div class="chips"><span>Финтех</span><span>Продуктовый дизайн</span><span>Дизайн-система</span><span>Аналитика</span></div>
+  </div>
+
+  <div class="card">
+    <div class="year">2023 — 2024</div>
+    <h2><em>Betting app.</em> Выстроил дизайн-процесс и пересобрал ключевые revenue-сценарии</h2>
+    <div class="role">Ведущий продуктовый дизайнер</div>
+    <p class="desc">Мобильное приложение беттинг-компании: объединили регистрацию и идентификацию в один шаг, перевели платформы на единый UI, проработали пополнение и модальные окна на все случаи.</p>
+    <div class="chips"><span>Легаси</span><span>Стейкхолдеры</span><span>Продуктовые сессии</span><span>Аналитика</span><span>Наставничество</span></div>
+    <div class="stats"><div><b>+48%</b><span>завершённая регистрация</span></div><div><b>+44%</b><span>первое пополнение</span></div><div><b>&lt;2 минут</b><span>регистрация вместо 3+</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="year">2022 — 2023</div>
+    <h2><em>Quantori · PharmaKB.</em> Перепроектировал отчёты базы знаний о разработке лекарств</h2>
+    <div class="role">Senior продуктовый дизайнер</div>
+    <p class="desc">Отчёты по препаратам, компаниям и заболеваниям для аналитиков, BD-менеджеров и инвесторов фармкомпаний: 9 770+ препаратов, 1 700+ компаний, данные FDA и EMA. Создал дизайн-систему для данных, переделал графики, таблицы, поиск, избранное, коллекции и оповещения.</p>
+    <div class="chips"><span>Сложные B2B-интерфейсы</span><span>Визуализация данных</span><span>Информационная архитектура</span><span>Интервью с аналитиками</span><span>Дизайн-система</span></div>
+    <div class="stats"><div><b>41 мин</b><span>работы без перерыва, было 18</span></div><div><b>×3</b><span>быстрее находят показатель</span></div><div><b>81</b><span>SUS, было 52</span></div><div><b>9%</b><span>пустых выдач поиска, было 38%</span></div></div>
+  </div>
+
+  <div class="foot"><span>+7 916 294-65-26</span><i></i><a href="mailto:vadimpianof@gmail.com">vadimpianof@gmail.com</a><i></i><a href="https://t.me/V_PIANOV">@V_PIANOV</a></div>
+</section>
+
+<section class="page">
+  <div class="card">
+    <div class="year">2020 — 2022</div>
+    <h2><em>Метр квадратный (М2).</em> Запустил экосистему недвижимости в iOS и Android</h2>
+    <div class="role">Senior продуктовый дизайнер и тимлид команды из 3 дизайнеров</div>
+    <p class="desc">Экосистема, которая решает любые вопросы с недвижимостью: найти и проверить жильё, оформить ипотеку, зарегистрировать сделку и сделать ремонт — в одном приложении. Собрал сквозной путь пользователя, модель коммуникации, проверял гипотезы и планировал роадмап.</p>
+    <div class="chips"><span>Продуктовый дизайн</span><span>Пользовательские тесты</span><span>Аналитика</span><span>Дизайн-система</span><span>Управление командой</span></div>
+    <div class="stats"><div><b>4 мес.</b><span>до MVP</span></div><div><b>−40%</b><span>анкета ипотеки</span></div><div><b>+27%</b><span>retention</span></div><div><b>36 400+</b><span>MAU</span></div><div><b>4,78 / 4,54</b><span>рейтинг iOS / Android</span></div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="year">2019 — 2020</div>
+      <h2><em>MAPS.ME × Parity.</em> Руководил дизайном, запустил сайт и приложения</h2>
+      <div class="role">Senior продуктовый дизайнер и тимлид</div>
+      <p class="desc">Встроил криптосервис Parity в MAPS.ME: сервис помогает людям и компаниям по всему миру безопасно хранить деньги и переводить их в реальном времени. Создал бренд с нуля, проанализировал конкурентов и рынок, чтобы найти слабые места.</p>
+      <div class="chips"><span>Бренд с нуля</span><span>UI-дизайн</span><span>Исследования</span></div>
+      <div class="stats"><div><b>4,7 / 4,4</b><span>рейтинг iOS / Android</span></div></div>
+    </div>
+    <div class="card">
+      <div class="year">2018 — 2019</div>
+      <h2><em>BelkaCar.</em> Переработал сайт и приложения второго по величине каршеринга</h2>
+      <div class="role">Senior продуктовый дизайнер</div>
+      <p class="desc">Сервис аренды машины на любое время — от поездки в магазин до долгого путешествия за город. Редизайн — по отзывам из поддержки и UX-тестам.</p>
+      <div class="chips"><span>Редизайн</span><span>UI-дизайн</span><span>Исследования</span><span>Документация</span></div>
+      <div class="stats"><div><b>4,6 / 4,0</b><span>рейтинг iOS / Android</span></div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card small">
+      <div class="year">2017 — 2018</div>
+      <h2><em>Revo Технологии.</em> Сценарии рассрочки на сайтах партнёров — от выбора товара до оплаты</h2>
+      <div class="role">Продуктовый дизайнер</div>
+      <div class="chips"><span>B2B</span><span>UI-дизайн</span><span>User flow</span></div>
+    </div>
+    <div class="card small">
+      <div class="year">2015 — 2017</div>
+      <h2><em>Hyperboloid Agency.</em> Стратегия и дизайн клиентских продуктов на основе исследований и видения</h2>
+      <div class="role">Продуктовый дизайнер</div>
+      <div class="chips"><span>User stories</span><span>Прототипы</span></div>
+    </div>
+    <div class="card small">
+      <div class="year">2014 — 2015</div>
+      <h2><em>Лига Ставок.</em> Редизайн iOS- и Android-приложений крупного букмекера на основе анализа рынка</h2>
+      <div class="role">Продуктовый дизайнер</div>
+      <div class="chips"><span>Мобильные приложения</span><span>Исследования</span></div>
+    </div>
+    <div class="card small">
+      <div class="year">2012 — 2014</div>
+      <h2><em>LEXION development.</em> Обновил сайты жилого девелопера: изучил конкурентов и улучшил подачу проектов</h2>
+      <div class="role">Продуктовый дизайнер</div>
+      <div class="chips"><span>UI-дизайн</span><span>Анализ конкурентов</span></div>
+    </div>
+  </div>
+
+  <div class="sec">Как я работаю</div>
+  <div class="card">
+    <ul class="did">
+      <li>Сотрудничал с ведущими продуктовыми компаниями, стартапами и агентствами — каршеринг, беттинг, строительные компании, банки и криптобанки, недвижимость</li>
+      <li>Считаю, что дизайнер должен быть командным игроком: много общаюсь с продуктовой командой и помогаю найти лучшее решение задачи</li>
+      <li>Не боюсь неполных ТЗ — у меня хорошие аналитические навыки, и я сам нахожу нужную информацию</li>
+      <li>Использую аналитику и пользовательские тесты, которые провожу сам. Если в компании этих инструментов нет — изучаю лучшие практики рынка, применяю LEAN и запускаю MVP, чтобы проверить гипотезы</li>
+    </ul>
+  </div>
+
+  <div class="foot"><span>+7 916 294-65-26</span><i></i><a href="mailto:vadimpianof@gmail.com">vadimpianof@gmail.com</a><i></i><a href="https://t.me/V_PIANOV">@V_PIANOV</a><i></i><a href="https://vadimpianov.website.yandexcloud.net/ru/">Портфолио</a></div>
+</section>
+<script>
+  // Без висячих предлогов: после слов из 1–2 букв и служебных из 3 — неразрывный пробел, перед тире — тоже
+  const SHORT = /(^|[\s(«])((?:[А-Яа-яЁёA-Za-z]{1,2})|для|без|над|под|при|про|или|что|как|чем|где|это) (?=\S)/g;
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+    let t = n.nodeValue;
+    for (let i = 0; i < 2; i++) t = t.replace(SHORT, '$1$2 ');
+    n.nodeValue = t.replace(/ ([—–])/g, ' $1');
+  }
+</script>
+</body>
+</html>
