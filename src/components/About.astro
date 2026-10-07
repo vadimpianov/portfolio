@@ -1,7 +1,6 @@
 ---
 import type { Locale } from '../i18n/ui';
 import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
-import { typograph } from '../i18n/typograph';
 import { asset } from '../utils/asset';
 
 /** Слайд «Обо мне»: заголовок и четыре абзаца; ключевые фразы — тёмным маркером. */
@@ -15,8 +14,8 @@ const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
 const LINKEDIN = 'https://www.linkedin.com/in/vadimpianov/';
 const PHONE = { href: 'tel:+79162946526', text: '+7 916 294-65-26' };
 const QR = [
-  { name: 'Telegram', href: 'https://t.me/V_PIANOV', src: '/images/contacts/telegram-qr.webp', width: 720, height: 720, tilt: -3 },
-  { name: 'MAX', href: 'https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA', src: '/images/contacts/max-qr.webp', width: 720, height: 720, tilt: 3 },
+  { name: 'Telegram', href: 'https://t.me/V_PIANOV', src: '/images/contacts/telegram-qr.webp', width: 720, height: 720 },
+  { name: 'MAX', href: 'https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA', src: '/images/contacts/max-qr.webp', width: 720, height: 720 },
 ];
 ---
 
@@ -39,7 +38,7 @@ const QR = [
       </a>
       <div class="about__qrs">
         {QR.map((qr) => (
-          <a class="about__qr" href={qr.href} target="_blank" rel="noopener" style={`--tilt: ${qr.tilt}deg`}>
+          <a class="about__qr" href={qr.href} target="_blank" rel="noopener">
             <span class="about__qr-card">
               <img src={asset(qr.src)} width={qr.width} height={qr.height} alt={`QR ${qr.name}`} loading="lazy" decoding="async" />
             </span>
@@ -50,7 +49,6 @@ const QR = [
           </a>
         ))}
       </div>
-      <p class="about__hint">{typograph(t('about.qr.hint'))}</p>
     </aside>
   </div>
 </section>
@@ -196,48 +194,24 @@ const QR = [
     text-decoration: none;
   }
 
+  /* QR — ровно и без белой подложки (фон картинки прозрачный). Наведение — как у LinkedIn: сдвигается только стрелка. */
   .about__qr-card {
     display: block;
-    padding: 10px;
-    border-radius: 16px;
-    background: #fff;
-    rotate: var(--tilt);
-    transition:
-      rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-      translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .about__qr:hover .about__qr-card,
-  .about__qr:focus-visible .about__qr-card {
-    rotate: 0deg;
-    translate: 0 -6px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .about__qr-card {
-      rotate: 0deg;
-    }
   }
 
   .about__qr-card img {
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 8px;
   }
 
   .about__qr-name {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: var(--text-tile-lead);
-    font-weight: 600;
+    /* Как у строки LinkedIn: тот же кегль, обычное начертание. */
+    font-size: var(--text-about);
     --lh: var(--leading-tight);
   }
 
-  .about__hint {
-    color: rgb(255 255 255 / 0.56);
-    font-size: var(--text-tile-lead);
-    --lh: var(--leading-tight);
-  }
 </style>
