@@ -25,12 +25,15 @@
   .title mark { background: var(--ink); color: var(--y); padding: 0 1mm; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
   .facts { list-style: none; margin-top: 2.4mm; display: grid; gap: 1mm; }
   .facts li { position: relative; padding-left: 3.2mm; }
-  .facts li::before { content: ''; position: absolute; left: 0.4mm; top: 1.5mm; width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--ink); }
+  .facts li::before { content: ''; position: absolute; left: 0.4mm; top: calc(0.71em - 0.6mm); width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--ink); }
   .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6mm; margin-bottom: 2mm; }
   .thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: top; background: #f3f1ea; display: block; }
   .links { display: grid; gap: 1mm; }
   .phone { font-size: 9pt; font-weight: 700; margin-bottom: 1mm; }
   .chips { display: flex; flex-wrap: wrap; gap: 1.3mm; }
+  /* Навыки — строками по два чипса, пока помещаются, дальше по одному */
+  .chips--rows { flex-direction: column; align-items: flex-start; }
+  .chips--rows > div { display: flex; gap: 1.3mm; }
   .chips span { background: var(--ink); color: var(--y); padding: 0.6mm 1.7mm; font-size: 6.9pt; white-space: nowrap; }
 
   /* Правая колонка */
@@ -89,8 +92,19 @@
 
     <div class="card" style="flex: 1">
       <h3>Навыки</h3>
-      <div class="chips">
-        <span>Продуктовый дизайн</span><span>UX/UI</span><span>Дизайн-процессы</span><span>Дизайн-системы</span><span>Внедрение ИИ</span><span>Прототипирование</span><span>Аналитика</span><span>Анализ конкурентов</span><span>Интервью</span><span>Юзабилити-тесты</span><span>Гипотезы и MVP</span><span>User flow</span><span>Визуализация данных</span><span>Сложные B2B-интерфейсы</span><span>Мобильные приложения</span><span>Работа с легаси</span><span>Продуктовые сессии</span><span>Стейкхолдеры</span><span>Управление командой</span><span>Наставничество</span><span>Figma</span>
+      <div class="chips chips--rows">
+        <div><span>Продуктовый дизайн</span><span>UX/UI</span></div>
+        <div><span>Дизайн-процессы</span><span>Английский B2</span></div>
+        <div><span>Дизайн-системы</span><span>Гипотезы и MVP</span></div>
+        <div><span>Прототипирование</span><span>Внедрение ИИ</span></div>
+        <div><span>Сложные B2B-интерфейсы</span><span>Figma</span></div>
+        <div><span>Мобильные приложения</span><span>User flow</span></div>
+        <div><span>Визуализация данных</span><span>Аналитика</span></div>
+        <div><span>Юзабилити-тесты</span><span>Работа с легаси</span></div>
+        <div><span>Управление командой</span><span>Интервью</span></div>
+        <div><span>Анализ конкурентов</span></div>
+        <div><span>Продуктовые сессии</span></div>
+        <div><span>Наставничество</span></div>
       </div>
     </div>
   </aside>
