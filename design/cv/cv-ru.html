@@ -37,7 +37,7 @@
   main { display: flex; flex-direction: column; gap: 3mm; }
   .about h2, .exp > h2 { font-size: 12pt; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 1.6mm; }
   .about p { font-size: 8pt; }
-  .exp { background: #fff; padding: 4mm 5mm; flex: 1; display: flex; flex-direction: column; }
+  .exp { background: #fff; padding: 4mm 5mm; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
   .job { padding: 2.3mm 0; border-top: 1px solid var(--line); }
   .job:first-of-type { border-top: 0; padding-top: 0; }
   .head { display: flex; align-items: center; justify-content: space-between; gap: 3mm; }
@@ -48,7 +48,7 @@
   .role { margin-top: 0.8mm; font-size: 8.6pt; font-weight: 700; }
   .job p, .early p { margin-top: 1mm; padding-left: 3mm; }
   .job p b { font-weight: 700; }
-  .early { margin-top: auto; padding-top: 2.6mm; border-top: 1px solid var(--line); }
+  .early { padding-top: 2.3mm; border-top: 1px solid var(--line); }
   .early .role { margin-top: 0; }
 </style>
 </head>
@@ -102,8 +102,6 @@
     </div>
 
     <div class="exp">
-      <h2>Опыт</h2>
-
       <div class="job">
         <div class="head"><div class="co"><img src="../../public/logos/alfa-bank.svg" alt="Альфа-Банк" /></div><span class="date">2024 — настоящее время</span></div>
         <div class="role">Senior продуктовый дизайнер</div>
@@ -118,7 +116,7 @@
       </div>
 
       <div class="job">
-        <div class="head"><div class="co"><img src="../../public/logos/quantori.svg" alt="Quantori" /><b>· PharmaKB</b></div><span class="date">2022 — 2023</span></div>
+        <div class="head"><div class="co"><img src="../../public/logos/quantori.svg" alt="Quantori" /></div><span class="date">2022 — 2023</span></div>
         <div class="role">Senior продуктовый дизайнер</div>
         <p><b>Что делал:</b> перепроектировал отчёты базы знаний о разработке лекарств для аналитиков и инвесторов фармкомпаний — 9 770+ препаратов, 1 700+ компаний, данные FDA и EMA. Провёл интервью с 12 аналитиками, создал дизайн-систему для данных, переделал графики, таблицы, поиск, избранное, коллекции и оповещения.</p>
         <p><b>Что получилось:</b> работа без перерыва — <b>41 минута</b> вместо 18, нужный показатель находят <b>в 3 раза</b> быстрее, SUS вырос с 52 до <b>81</b>, пустых выдач поиска — <b>9%</b> вместо 38%.</p>
