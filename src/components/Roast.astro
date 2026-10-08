@@ -213,6 +213,8 @@ const Title = compact ? 'div' : 'h2';
   }
 
   .roast--compact .roast__list {
+    /* В кейсе на списки действует `.case__body ul { overflow: hidden }` — он срезал тень плиток снизу и в углах. */
+    overflow: visible;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--case-col-gap);
     margin-top: var(--case-tabs-heading-text-gap);
