@@ -109,6 +109,7 @@
 .case .case__body .sky .sky-intro p {
   max-width: 640px;
   margin-top: 16px;
+  font-size: 16px;
   color: var(--muted);
   --lh: 1.55;
 }
@@ -161,7 +162,7 @@
 
 .case .case__body .sky .sky-pr p {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   --lh: 1.45;
 }
 
@@ -259,7 +260,7 @@
 
 .sky .notes .pair {
   margin-bottom: 12px;
-  font-size: 14px;
+  font-size: 16px;
   --lh: 1.45;
 }
 
@@ -283,7 +284,7 @@
   display: inline-block;
   margin-right: 4px;
   color: var(--accent);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
