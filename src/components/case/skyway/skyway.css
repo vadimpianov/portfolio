@@ -1312,6 +1312,13 @@
   padding: 9px 14px;
 }
 
+/* Сохранённый пассажир: бейдж «Из сохранённых» — по середине карточки по высоте. */
+.sky .pcard.saved {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .sky .pcard .hd {
   display: flex;
   align-items: center;

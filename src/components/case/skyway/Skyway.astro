@@ -138,9 +138,12 @@ const back = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 5l-7 
             <div set:html={c.locked} />
             <span class="tm" data-k="timer">18:00</span>
           </div>
-          <div class="pcard slim">
-            <div class="hd">{c.passenger1} <small>{c.saved}</small></div>
-            <div class="sub">{c.passport}</div>
+          <div class="pcard slim saved">
+            <div>
+              <div class="hd">{c.passenger1}</div>
+              <div class="sub">{c.passport}</div>
+            </div>
+            <span class="chip">{c.saved}</span>
           </div>
           <div class="pcard">
             <div class="hd">
