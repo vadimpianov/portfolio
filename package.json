@@ -10,7 +10,8 @@
     "check": "astro check && tsc -p functions",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "deploy:yandex": "node scripts/deploy-yandex.mjs"
+    "deploy:yandex": "node scripts/deploy-yandex.mjs",
+    "check:layout": "node scripts/check-layout.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",
