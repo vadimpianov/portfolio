@@ -106,38 +106,58 @@
   letter-spacing: -0.02em;
 }
 
-.case .case__body .sky .sky-intro p {
-  max-width: 640px;
+.case .case__body .sky .sky-lead {
   margin-top: 16px;
   font-size: 16px;
   color: var(--muted);
-  --lh: 1.55;
+  --lh: 1.6;
 }
 
-.case .case__body .sky .sky-intro ul {
-  max-width: 640px;
-  margin: 8px 0 0;
-  padding-left: 20px;
-  font-size: 16px;
-  color: var(--muted);
-  --lh: 1.55;
+/* Описание — как текст в кейсах (Flow): от 800px контейнера перетекает в две колонки, абзацы без пустой
+   строки — начало абзаца отмечает красная строка; маркер списка — под первой буквой абзаца. */
+@container case (min-width: 800px) {
+  .case .case__body .sky .sky-lead {
+    columns: 2;
+    column-gap: var(--case-col-gap);
+    orphans: 1;
+    widows: 1;
+  }
+
+  /* Вторая колонка — с подводки к списку, а не с хвоста абзаца. */
+  .case .case__body .sky .sky-lead p:last-of-type {
+    break-before: column;
+  }
 }
 
-.case .case__body .sky .sky-intro li + li {
-  margin-top: 4px;
+.case .case__body .sky .sky-lead p {
+  /* Как в Flow: общее правило кейсов ставит пустую строку между абзацами. */
+  margin: 0 !important;
+  text-indent: var(--case-indent);
+}
+
+.case .case__body .sky .sky-lead ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case .case__body .sky .sky-lead li {
+  position: relative;
+  padding-left: calc(var(--case-indent) + var(--case-bullet-gap));
+}
+
+.case .case__body .sky .sky-lead li::before {
+  content: '•';
+  position: absolute;
+  left: var(--case-indent);
 }
 
 .sky-problems {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Не больше трёх в ряд; на узком — сколько поместится, карточки не растягиваются в одну колонку. */
+  grid-template-columns: repeat(auto-fill, minmax(max(220px, calc((100% - 24px) / 3)), 1fr));
   gap: 12px;
   margin-bottom: 64px;
-}
-
-@container case (max-width: 899px) {
-  .sky-problems {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 .sky-pr {
@@ -177,6 +197,27 @@
   color: var(--muted);
   font-size: 15px;
   --lh: 1.45;
+}
+
+/* Телефон — по две карточки в ряд, поля и текст плотнее. */
+@container case (max-width: 599px) {
+  .sky-problems {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .sky-pr {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .sky-pr b {
+    font-size: 15px;
+  }
+
+  .case .case__body .sky .sky-pr p {
+    font-size: 13px;
+  }
 }
 
 .sky-slider {

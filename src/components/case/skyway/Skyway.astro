@@ -20,14 +20,15 @@ const back = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 5l-7 
       <div class="sky-eyebrow">{c.eyebrow}</div>
       <h1 class="sky-h1">{c.title}</h1>
     </div>
-    {c.lead.map((t) => <p>{t}</p>)}
-    <p>{c.leadListTitle}</p>
-    <ul>
-      {c.leadList.map((t) => <li>{t}</li>)}
-    </ul>
+    <div class="sky-lead">
+      {c.lead.map((t) => <p>{t}</p>)}
+      <p>{c.leadListTitle}</p>
+      <ul>
+        {c.leadList.map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
   </div>
 
-  <h2 class="sky-h2">{c.problemsTitle}</h2>
   <div class="sky-problems">
     {
       c.problems.map(([title, text, screens], i) => (
