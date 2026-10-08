@@ -61,6 +61,7 @@ export const ui = {
     'about.title': 'Обо мне',
     'roast.title': 'Отраслевая прожарка',
     'roast.skyway': 'Агрегаторы авиабилетов',
+    'roast.banking': 'Банковские приложения',
     'about.contacts': 'Контакты',
     'about.phone.label': 'Телефон',
     'about.p1':
@@ -126,6 +127,7 @@ export const ui = {
     'about.title': 'About me',
     'roast.title': 'Industry roast',
     'roast.skyway': 'Flight booking aggregators',
+    'roast.banking': 'Banking apps',
     'about.contacts': 'Contacts',
     'about.phone.label': 'Phone',
     'about.p1':

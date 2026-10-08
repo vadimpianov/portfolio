@@ -199,6 +199,7 @@ const close = t('case.close');
   import { initRevenueCharts } from '../scripts/revenue-chart';
   import { initPatentCharts } from '../scripts/patent-chart';
   import { initSkyway } from '../scripts/skyway';
+  import { initBanking } from '../scripts/banking';
 
   initCoverSliders();
 
@@ -544,6 +545,7 @@ const close = t('case.close');
     initRevenueCharts(body);
     initPatentCharts(body);
     initSkyway(body);
+    initBanking(body);
     covers.observe(body);
     document.documentElement.classList.add('case-open');
     getLenis()?.stop();
@@ -612,6 +614,7 @@ const close = t('case.close');
     initRevenueCharts(body);
     initPatentCharts(body);
     initSkyway(body);
+    initBanking(body);
     covers.observe(body);
     document.fonts?.ready.then(() => layout(body));
     document.documentElement.classList.add('case-open');

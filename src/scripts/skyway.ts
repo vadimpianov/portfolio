@@ -4,6 +4,7 @@
  * слайдер экранов. Разметка кейса вставляется в модалку готовой, поэтому всё ищем внутри своего блока.
  */
 import { COPY } from '../components/case/skyway/copy';
+import { initRoastFrame } from './roast-frame';
 
 type FareKey = 'lite' | 'std' | 'flex';
 
@@ -350,115 +351,19 @@ function setup(el: HTMLElement) {
     $('timer').textContent = `${String(Math.floor(left / 60)).padStart(2, '0')}:${String(left % 60).padStart(2, '0')}`;
   }, 1000);
 
-  /* ---------- слайдер ---------- */
-  const track = $('track');
-  const shots = [...track.children] as HTMLElement[];
-  const step = () => shots[1]!.offsetLeft - shots[0]!.offsetLeft;
-  function updateSlider() {
-    $<HTMLButtonElement>('prev').disabled = track.scrollLeft <= 2;
-    $<HTMLButtonElement>('next').disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-  }
-  $('prev').onclick = () => track.scrollBy({ left: -step() });
-  $('next').onclick = () => track.scrollBy({ left: step() });
-  track.addEventListener('scroll', () => requestAnimationFrame(updateSlider));
-  new ResizeObserver(updateSlider).observe(track);
-
-  // Карточка проблемы — к её экрану: панель к слайдеру, слайдер к экрану.
-  el.querySelectorAll<HTMLElement>('[data-go]').forEach(
-    (card) =>
-      (card.onclick = () => {
-        $('bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        const shot = shots[Number(card.dataset.go)];
-        if (shot) track.scrollTo({ left: shot.offsetLeft - shots[0]!.offsetLeft });
-      }),
-  );
-
-  /* ---------- точки на экранах: проблема и решение по наведению ---------- */
-  // Для каждого экрана — пункты описания под ним (по порядку) и элемент экрана, к которому ставим точку.
-  const HOTSPOTS: string[][] = [
-    ['[data-k=bagsw]', '.tag.w', '[data-k=follow]', '.tag.a', '.flight .alert', '.arr-day'],
-    ['[data-k=fares]', '[data-k=ftip]', '[data-k=f-go]'],
-    ['[data-k=together]', '.legend', '.cabin .exit', '.cabin .s.taken'],
-    ['[data-k=timer]', '[data-k=docf]', '.trip', '.fl.contact .chip', '.fine'],
-  ];
-  // Текст подсказки: с заглавной буквы, без точки в конце.
-  const clean = (t: string) => {
-    const x = t.trim().replace(/\.$/, '');
-    const i = x.search(/\p{L}/u);
-    return i < 0 ? x : x.slice(0, i) + x[i]!.toUpperCase() + x.slice(i + 1);
-  };
-  const solutionLabel = c.solution.replace(/[\s·]+$/u, '');
-  // Одна подсказка на весь кейс — внутри .sky, а не в ленте экранов (лента обрезает всё, что за её краем).
-  const tip = document.createElement('div');
-  tip.className = 'hs-tip';
-  tip.setAttribute('role', 'tooltip');
-  tip.hidden = true;
-  el.append(tip);
-  const dots: { shot: HTMLElement; phone: HTMLElement; sel: string; dot: HTMLElement }[] = [];
-  shots.forEach((shot, i) => {
-    const phone = shot.querySelector<HTMLElement>('.sky-phone')!;
-    const layer = document.createElement('div');
-    layer.className = 'hs';
-    shot.append(layer);
-    HOTSPOTS[i]!.forEach((sel, j) => {
-      const pair = c.screens[i]!.pairs[j]!;
-      const dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 'hs-dot';
-      dot.setAttribute('aria-label', `${c.problem}${pair.no}`);
-      const html = `<span class="hs-pb">${c.problem}${pair.no}</span><span class="hs-text">${clean(pair.problem)}</span><span class="hs-sl">${solutionLabel}</span><span class="hs-text">${clean(pair.solution)}</span>`;
-      // Левый верхний угол подсказки — у правого верхнего угла точки. У последнего экрана (справа места нет) —
-      // над точкой: правый нижний угол подсказки — у правого верхнего угла точки.
-      const above = i === shots.length - 1;
-      const show = () => {
-        tip.innerHTML = html;
-        tip.hidden = false;
-        const d = dot.getBoundingClientRect();
-        const box = el.getBoundingClientRect();
-        tip.style.left = `${Math.round(d.right - box.left - (above ? tip.offsetWidth : 0))}px`;
-        tip.style.top = `${Math.round(d.top - box.top - (above ? tip.offsetHeight : 0))}px`;
-      };
-      const hide = () => (tip.hidden = true);
-      dot.addEventListener('pointerenter', show);
-      dot.addEventListener('pointerleave', hide);
-      dot.addEventListener('focus', show);
-      dot.addEventListener('blur', hide);
-      layer.append(dot);
-      dots.push({ shot, phone, sel, dot });
-    });
+  /* ---------- слайдер, карточки, точки-подсказки — общая часть прожарки ---------- */
+  initRoastFrame(el, {
+    problem: c.problem,
+    solution: c.solution,
+    screens: c.screens,
+    // Для каждого экрана — элементы, к которым ставим точки (по порядку пар проблема/решение).
+    hotspots: [
+      ['[data-k=bagsw]', '.tag.w', '[data-k=follow]', '.tag.a', '.flight .alert', '.arr-day'],
+      ['[data-k=fares]', '[data-k=ftip]', '[data-k=f-go]'],
+      ['[data-k=together]', '.legend', '.cabin .exit', '.cabin .s.taken'],
+      ['[data-k=timer]', '[data-k=docf]', '.trip', '.fl.contact .chip', '.fine'],
+    ],
   });
-  track.addEventListener('scroll', () => (tip.hidden = true), { passive: true });
-  // Точка — у правого верхнего угла своего элемента; если элемент сейчас не виден на экране телефона — скрыта.
-  function placeDots() {
-    for (const { shot, phone, sel, dot } of dots) {
-      const target = phone.querySelector<HTMLElement>(sel);
-      const s = shot.getBoundingClientRect();
-      const p = phone.getBoundingClientRect();
-      const r = target?.getBoundingClientRect();
-      const x = r ? r.right - 4 : 0;
-      const y = r ? r.top + 4 : 0;
-      // Внутри листаемой схемы салона — ещё и в видимой части схемы.
-      const clip = target?.closest<HTMLElement>('.cabin')?.getBoundingClientRect();
-      const inside =
-        !!r && r.width > 0 && x > p.left + 12 && x < p.right - 12 && y > p.top + 12 && y < p.bottom - 12 && (!clip || (y > clip.top + 4 && y < clip.bottom - 4));
-      dot.hidden = !inside;
-      if (!inside) continue;
-      dot.style.left = `${Math.round(x - s.left)}px`;
-      dot.style.top = `${Math.round(y - s.top)}px`;
-    }
-  }
-  let placing = 0;
-  const schedule = () => {
-    cancelAnimationFrame(placing);
-    placing = requestAnimationFrame(placeDots);
-  };
-  new MutationObserver(schedule).observe(track, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
-  new ResizeObserver(schedule).observe(track);
-  $('cabin').addEventListener('scroll', () => {
-    tip.hidden = true;
-    schedule();
-  }, { passive: true });
-  document.fonts?.ready.then(schedule);
 
   function renderAll() {
     renderFares();
@@ -467,6 +372,4 @@ function setup(el: HTMLElement) {
   }
   renderFlights();
   renderAll();
-  updateSlider();
-  schedule();
 }

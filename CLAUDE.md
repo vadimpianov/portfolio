@@ -180,14 +180,14 @@ pnpm deploy:yandex
 - `src/components/HomeContent.astro` — главная: `Hero` (WebGL-градиент `src/scripts/hero-gradient.ts`, сцена прокрутки и доводка) → `Tiles` (плитки кейсов, карточки, бегущая строка) → `About` (текст и контакты) → `Roast` («Отраслевая прожарка»)
 - Шапка: `Logo`, `HeaderNav` (CV, Контакты), `LanguageSwitcher`
 - `src/components/CaseDrawer.astro` — модалка кейса и все `init…` скриптов кейсов; `CaseArticle.astro` — кейс (шапка, тело, правила текста)
-- `src/components/case/` — компоненты продуктовых кейсов (+ `betting/`, `metr/`, `quantori/`) и прожарки (`skyway/`); `src/components/roast/` — обложки плиток прожарки
-- `src/content/{ru,en}/cases/*.mdx` — кейсы: `betting`, `metr-kvadratny`, `quantori` (продуктовые), `skyway` (прожарка)
+- `src/components/case/` — компоненты продуктовых кейсов (+ `betting/`, `metr/`, `quantori/`) и прожарки (`banking/`, `skyway/`; общие стили — `skyway/skyway.css`); `src/components/roast/` — обложки плиток прожарки
+- `src/content/{ru,en}/cases/*.mdx` — кейсы: `betting`, `metr-kvadratny`, `quantori` (продуктовые), `banking`, `skyway` (прожарка; общая часть экранов — `src/scripts/roast-frame.ts`)
 - `src/scripts/` — `motion.ts` (Lenis + GSAP, `onPage()`), скрипты кейсов и графиков
 - `src/utils/asset.ts` — ссылки на картинки с меткой версии
 - `design/` — исходники картинок и сборочные скрипты, `design/cv/` — резюме
 - `site` в `astro.config.mjs` — заглушка, заменить на реальный домен
 
-Задеплоено (2026-10-08, последний — «Агрегаторы авиабилетов»: кегли и отступы — как в кейсах портфолио; надпись «Кейс 2»; харнес портфолио — общие правила + разделы «Главная», «Продуктовый», «Прожарка» + журнал `log.md`, проверка `pnpm check:layout` (отступы 2px и поля, `data-edge` / `data-mockup`); + зеркало Яндекс): https://vadimpianov.pages.dev — `/ru/`, `/en/` отдают 200, `/` редиректит (302) по cookie/стране.
+Задеплоено (2026-10-08, последний — кейс прожарки «Банковские приложения» («Кейс 1», плитка 01), общая часть прожарки `roast-frame.ts`; + зеркало Яндекс): https://vadimpianov.pages.dev — `/ru/`, `/en/` отдают 200, `/` редиректит (302) по cookie/стране.
 
 ## Следующий шаг
 

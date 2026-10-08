@@ -27,7 +27,9 @@ const slugs = readdirSync('src/content/ru/cases').map((f) => f.replace(/\.mdx?$/
 const pages = ['ru', 'en'].flatMap((l) => [`/${l}/`, ...slugs.map((s) => `/${l}/cases/${s}/`)]);
 
 // Сокращения, после которых точка в конце законна.
-const ABBR = /(?:пасс|мин|руб|тыс|млн|млрд|т\. ?д|т\. ?п|п\. ?п|ч|etc|pax|min|vs)\.$/i;
+// …и инициалы («Иван К.»).
+const ABBR =
+  /(?:(?:^|[\s ])[A-ZА-ЯЁ]|пасс|мин|мес|руб|тыс|млн|млрд|т\. ?д|т\. ?п|п\. ?п|ч|etc|pax|min|mo|vs)\.$/i;
 
 const audit = (abbrSrc) => {
   const abbr = new RegExp(abbrSrc, 'i');

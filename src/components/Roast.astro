@@ -5,6 +5,7 @@
  */
 import { getLocaleFromUrl, localePath, useTranslations } from '../i18n/utils';
 import SkywayArt from './roast/SkywayArt.astro';
+import BankingArt from './roast/BankingArt.astro';
 
 interface Props {
   /** Блок «Другие кейсы» внизу кейса прожарки: те же плитки в два раза компактнее, без текущего кейса. */
@@ -17,9 +18,9 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 // Плитки по порядку; у готового кейса — название, подпись и ссылка (открывается в модалке, как остальные кейсы).
 // Обложка плитки — постер в общем стиле раздела (см. `roast/SkywayArt.astro`): у каждого кейса своя картинка.
-const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: typeof SkywayArt }[] = [
-  { n: '01' },
-  { n: '02', slug: 'skyway', title: t('roast.skyway'), art: SkywayArt },
+const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: typeof SkywayArt; accent?: string }[] = [
+  { n: '01', slug: 'banking', title: t('roast.banking'), art: BankingArt, accent: '#5b5bd6' },
+  { n: '02', slug: 'skyway', title: t('roast.skyway'), art: SkywayArt, accent: '#ff5b36' },
   { n: '03' },
   { n: '04' },
 ];
@@ -37,7 +38,7 @@ const Title = compact ? 'div' : 'h2';
     {
       items.map((item) =>
         item.slug ? (
-          <li class="roast__item roast__item--case">
+          <li class="roast__item roast__item--case" style={item.accent && `--roast-accent: ${item.accent}`}>
             {item.art && <item.art />}
             <span class="roast__num">{item.n}</span>
             <span class="roast__name">
@@ -124,7 +125,8 @@ const Title = compact ? 'div' : 'h2';
   }
 
   .roast__item--case .roast__num {
-    color: #ff5b36;
+    /* Цвет номера — акцент кейса (ITEMS). */
+    color: var(--roast-accent, #ff5b36);
   }
 
   .roast__name {
@@ -231,8 +233,11 @@ const Title = compact ? 'div' : 'h2';
     font-size: round(clamp(24px, 4cqi, 44px), 1px);
   }
 
+  /* На телефоне плитка около 100px: длинное слово («авиабилетов») — мельче и с переносом. */
   .roast--compact .roast__link {
-    font-size: round(clamp(16px, 2.6cqi, 28px), 1px);
+    font-size: round(clamp(12px, 2.6cqi, 28px), 1px);
+    hyphens: auto;
+    overflow-wrap: break-word;
   }
 
   .roast--compact .roast__soon {

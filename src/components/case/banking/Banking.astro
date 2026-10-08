@@ -1,0 +1,254 @@
+---
+/**
+ * Кейс «Банковские приложения» (прожарка, харнес → roast.md): проблемы мобильных банков в России и решение на
+ * четырёх живых экранах — главная, перевод по телефону, кредит наличными, безопасность.
+ * Общая основа прожарки (шапка кейса, карточки, лента, рамка телефона, подсказки) — классы `.sky` из
+ * `skyway/skyway.css`; своя палитра и элементы экранов — `banking.css` (`.bnk`). Экраны оживляет
+ * `src/scripts/banking.ts` (`initBanking` в CaseDrawer). Тексты — `copy.ts`.
+ */
+import { getLocaleFromUrl } from '../../../i18n/utils';
+import { COPY } from './copy';
+import Roast from '../../Roast.astro';
+import '../skyway/skyway.css';
+import './banking.css';
+
+const lang = getLocaleFromUrl(Astro.url);
+const c = COPY[lang];
+const back = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+const icons = [
+  '<svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  '<svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
+  '<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  '<svg width="22" height="22" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>',
+];
+const status = '<div class="status"><span>9:41</span><span>●●● ▮</span></div>';
+---
+
+<div class="sky bnk" data-banking data-lang={lang}>
+  <div class="sky-intro">
+    <div>
+      <div class="sky-eyebrow">{c.eyebrow}</div>
+      <h1 class="sky-h1">{c.title}</h1>
+    </div>
+    <div class="sky-lead">
+      {c.lead.map((t) => <p>{t}</p>)}
+      <p>{c.leadListTitle}</p>
+      <ul>
+        {c.leadList.map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <div class="sky-problems">
+    {
+      c.problems.map(([title, text, screens], i) => (
+        <button type="button" class="sky-pr" data-go={screens[0]! - 1}>
+          <span class="n">{String(i + 1).padStart(2, '0')}</span>
+          <b>{title}</b>
+          <p>{text}</p>
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="sky-slider" data-k="bar">
+    <div class="sky-screens" data-k="track" data-edge>
+      <!-- 1 · главная -->
+      <div class="sky-shot">
+        <div class="notes"><h3>{c.screens[0]!.title}</h3></div>
+        <div class="sky-phone" data-mockup>
+          <Fragment set:html={status} />
+          <div class="body bk-scroll" data-scroll>
+            <div class="bk-hello">
+              <span class="bk-ava">{c.name[0]}</span>
+              <b>{c.name}</b>
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4" /></svg>
+            </div>
+            <div class="bk-total" data-k="total">
+              <small>{c.totalLabel}</small>
+              <div class="bk-sum">{c.total}</div>
+              {
+                c.accounts.map(([n, v]) => (
+                  <div class="bk-acc">
+                    <span>{n}</span>
+                    <b>{v}</b>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="bk-actions">
+              {
+                c.actions.map((a, i) => (
+                  <button type="button" class="bk-act" data-k={i === 3 ? 'req' : undefined}>
+                    <i set:html={icons[i]} />
+                    {a}
+                  </button>
+                ))
+              }
+            </div>
+            <div class="bk-toast" data-k="toast" hidden>{c.copied}</div>
+            <div class="bk-card" data-k="cb">
+              <div class="bk-card__head"><b>{c.cbTitle}</b></div>
+              <small data-k="cb-sub"></small>
+              <div class="bk-cats">
+                {c.cats.map((cat, i) => <button type="button" class:list={['bk-cat', { on: i < 2 }]}>{cat}</button>)}
+              </div>
+            </div>
+            <div class="bk-card bk-up">
+              <div class="bk-card__head"><b>{c.upTitle}</b></div>
+              <small>{c.upSub}</small>
+              {
+                c.upcoming.map(([d, n, kind, v], i) => (
+                  <div class="bk-up__row">
+                    <span class="bk-up__date">{d}</span>
+                    <span class="bk-up__name">
+                      <b>{n}</b>
+                      <small class:list={{ warn: i === 2 }}>{kind}</small>
+                    </span>
+                    <span class="bk-up__sum">{v}</span>
+                    {i === 2 && (
+                      <button type="button" class="bk-off" data-k="paid" aria-label={c.ariaPaid}>
+                        {c.off}
+                      </button>
+                    )}
+                  </div>
+                ))
+              }
+            </div>
+            <div class="bk-offer" data-k="offer">
+              <span><small>{c.offerLabel}</small>{c.offer}</span>
+              <button type="button" aria-label={c.hideOffer} data-k="offer-x"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 · перевод по телефону -->
+      <div class="sky-shot">
+        <div class="notes"><h3>{c.screens[1]!.title}</h3></div>
+        <div class="sky-phone" data-mockup>
+          <Fragment set:html={status} />
+          <div class="body">
+            <div class="top"><div class="round" set:html={back} /><b>{c.transferTop}</b></div>
+            <div class="bk-contacts">
+              {c.contacts.map((n, i) => <button type="button" class:list={['bk-cat', { on: i === 0 }]} data-rcp={i}>{n}</button>)}
+            </div>
+            <div class="bk-rcp" data-k="rcp"></div>
+            <div class="bk-call" data-k="call">
+              <div set:html={c.call} />
+              <div class="bk-call__btns">
+                <button type="button" data-k="call-cancel">{c.callCancel}</button>
+                <button type="button" data-k="call-ok">{c.callOk}</button>
+              </div>
+            </div>
+            <div class="bk-amount">
+              <small>{c.amountLabel}</small>
+              <div class="bk-amount__sum" data-k="amt"></div>
+              <div class="bk-amounts">
+                {[5000, 15000, 50000].map((v, i) => <button type="button" class:list={['bk-cat', { on: i === 1 }]} data-amt={v}>{v.toLocaleString(lang === 'en' ? 'en-US' : 'ru-RU').replace(/\s/g, '\u00a0') + '\u00a0₽'}</button>)}
+              </div>
+            </div>
+            <div class="bk-limit" data-k="limit">
+              <div class="bk-limit__bar"><i data-k="limit-bar"></i></div>
+              <small data-k="limit-text"></small>
+            </div>
+          </div>
+          <div class="sheet">
+            <div class="row">
+              <div><small data-k="fee"></small><div class="tot" data-k="t-tot"></div></div>
+            </div>
+            <button type="button" class="btn" data-k="t-go"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 · кредит наличными -->
+      <div class="sky-shot">
+        <div class="notes"><h3>{c.screens[2]!.title}</h3></div>
+        <div class="sky-phone" data-mockup>
+          <Fragment set:html={status} />
+          <div class="body">
+            <div class="top"><div class="round" set:html={back} /><b>{c.creditTop}</b></div>
+            <div class="bk-field">
+              <small>{c.sumLabel}</small>
+              <div class="bk-amounts">
+                {[30000, 150000, 300000].map((v, i) => <button type="button" class:list={['bk-cat', { on: i === 2 }]} data-sum={v}>{v.toLocaleString(lang === 'en' ? 'en-US' : 'ru-RU').replace(/\s/g, '\u00a0') + '\u00a0₽'}</button>)}
+              </div>
+            </div>
+            <div class="bk-field">
+              <small>{c.termLabel}</small>
+              <div class="bk-amounts">
+                {[12, 24, 36].map((v, i) => <button type="button" class:list={['bk-cat', { on: i === 1 }]} data-term={v}>{c.months(v)}</button>)}
+              </div>
+            </div>
+            <div class="bk-loan" data-k="psk">
+              <small>{c.payLabel}</small>
+              <div class="bk-sum" data-k="pay"></div>
+              <div class="bk-acc"><span>{c.rate}</span><b>24,9%</b></div>
+              <div class="bk-acc"><span>{c.psk}</span><b data-k="psk-v"></b></div>
+              <div class="bk-acc"><span>{c.over}</span><b data-k="over"></b></div>
+            </div>
+            <div class="addon" data-k="ins">
+              <div><span set:html={c.ins} /><small data-k="ins-sub"></small></div>
+              <button type="button" class="sw" data-k="ins-sw" aria-label={c.ariaIns}></button>
+            </div>
+            <div class="bk-cool" data-k="cool"></div>
+          </div>
+          <div class="sheet">
+            <button type="button" class="btn">{c.apply}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 · безопасность -->
+      <div class="sky-shot">
+        <div class="notes"><h3>{c.screens[3]!.title}</h3></div>
+        <div class="sky-phone" data-mockup>
+          <Fragment set:html={status} />
+          <div class="body">
+            <div class="top"><div class="round" set:html={back} /><b>{c.secTop}</b></div>
+            <div class="bk-block" data-k="block">
+              <div data-k="block-open">
+                <b class="bk-block__title">{c.blockTitle}</b>
+                <p set:html={c.blockWhy} />
+                <ol>
+                  {c.blockSteps.map((s) => <li>{s}</li>)}
+                </ol>
+                <div class="bk-call__btns">
+                  <button type="button" data-k="block-ok">{c.blockOk}</button>
+                  <button type="button" data-k="block-card">{c.blockCard}</button>
+                </div>
+              </div>
+              <p class="bk-block__done" data-k="block-done" hidden></p>
+            </div>
+            <button type="button" class="bk-fraud" data-k="fraud">
+              <span><b>{c.fraud}</b><small>{c.fraudSub}</small></span>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+            </button>
+            <div class="bk-fraud-done" data-k="fraud-done" hidden>
+              <span>✓ {c.fraudDone[0]}</span>
+              <span class="bk-pdf">{c.fraudDone[1]} ↓</span>
+            </div>
+            <div class="bk-card" data-k="guard">
+              <div class="bk-card__head"><b>{c.guardTitle}</b></div>
+              {
+                c.guard.map(([n, v], i) => (
+                  <div class="bk-guard">
+                    <span><b>{n}</b><small>{v}</small></span>
+                    {i === 0 && <span class="bk-chip">{c.on}</span>}
+                    {i === 1 && <button type="button" class="sw on" data-k="guard-sw" aria-label={c.ariaGuard} />}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sky-ctrl">
+      <button type="button" data-k="prev" aria-label={c.prev}><svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg></button>
+      <button type="button" data-k="next" aria-label={c.next}><svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg></button>
+    </div>
+  </div>
+  <Roast compact current="banking" />
+</div>

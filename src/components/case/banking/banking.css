@@ -1,0 +1,586 @@
+/* Кейс «Банковские приложения» — своя палитра отрасли и элементы экранов, под `.bnk`. Основа прожарки
+   (шапка, карточки, лента, рамка телефона, подсказки) — `.sky` из skyway.css. Межстрочные — через --lh. */
+
+/* Фон кейса — холодный светлый, сетка модалок та же (из skyway.css). */
+.case:has(.sky.bnk) {
+  --case-surface: #eef0f6;
+}
+
+.sky.bnk {
+  --page: #eef0f6;
+  --ink: #16182a;
+  --muted: #6c7084;
+  --line: #e2e5ef;
+  --screen: #f6f7fb;
+  --card: #fff;
+  --accent: #5b5bd6;
+  --accent-soft: #e9e9fb;
+  --err-soft: #fdecec;
+}
+
+/* Надпись над заголовком — темнее акцента, чтобы читалась на светлом фоне. */
+.sky.bnk .sky-eyebrow {
+  color: #3f3fb0;
+}
+
+.sky.bnk .round {
+  background: #eceef5;
+}
+
+.sky.bnk .sw {
+  background: #d9dce8;
+}
+
+.sky.bnk .sw.on {
+  background: var(--good);
+}
+
+/* Главная листается внутри экрана, полосы прокрутки нет. */
+.sky.bnk .bk-scroll {
+  padding-bottom: 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.sky.bnk .bk-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.sky.bnk .bk-hello {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sky.bnk .bk-hello b {
+  flex: 1;
+  font-size: 17px;
+}
+
+.sky.bnk .bk-ava {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.sky.bnk .bk-total,
+.sky.bnk .bk-card,
+.sky.bnk .bk-loan {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--card);
+}
+
+.sky.bnk .bk-total small,
+.sky.bnk .bk-loan small,
+.sky.bnk .bk-field small,
+.sky.bnk .bk-amount small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky.bnk .bk-sum {
+  margin: 2px 0 8px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sky.bnk .bk-acc {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.sky.bnk .bk-acc span {
+  color: var(--muted);
+}
+
+.sky.bnk .bk-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.sky.bnk .bk-act {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sky.bnk .bk-act i {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.sky.bnk .bk-act:hover i {
+  border-color: var(--accent);
+}
+
+.sky.bnk .bk-toast {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sky.bnk .bk-toast[hidden] {
+  display: none;
+}
+
+.sky.bnk .bk-card__head b {
+  font-size: 15px;
+}
+
+.sky.bnk .bk-card > small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sky.bnk .bk-card.done {
+  border-color: var(--good);
+}
+
+.sky.bnk .bk-card.done > small {
+  color: var(--good);
+  font-weight: 700;
+}
+
+.sky.bnk .bk-cats,
+.sky.bnk .bk-amounts,
+.sky.bnk .bk-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sky.bnk .bk-cats {
+  margin-top: 10px;
+}
+
+.sky.bnk .bk-amounts {
+  margin-top: 8px;
+}
+
+.sky.bnk .bk-cat {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sky.bnk .bk-cat.on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Скоро спишется */
+.sky.bnk .bk-up__row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.sky.bnk .bk-up__row:first-of-type {
+  margin-top: 8px;
+}
+
+.sky.bnk .bk-up__date {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky.bnk .bk-up__name b {
+  display: block;
+  font-size: 13px;
+}
+
+.sky.bnk .bk-up__name small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sky.bnk .bk-up__name small.warn {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.sky.bnk .bk-up__sum {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sky.bnk .bk-off {
+  grid-column: 2 / -1;
+  justify-self: start;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sky.bnk .bk-off.done {
+  background: var(--good-soft);
+  color: var(--good);
+  cursor: default;
+}
+
+/* Предложение банка — одной строкой внизу главной, скрывается. */
+.sky.bnk .bk-offer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+}
+
+.sky.bnk .bk-offer[hidden] {
+  display: none;
+}
+
+.sky.bnk .bk-offer span {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sky.bnk .bk-offer small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sky.bnk .bk-offer button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: var(--card);
+  cursor: pointer;
+}
+
+/* Перевод */
+.sky.bnk .bk-rcp {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+
+.sky.bnk .bk-rcp.fresh {
+  border-color: #f0c98f;
+  background: var(--warn-soft);
+}
+
+.sky.bnk .bk-rcp small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sky.bnk .bk-rcp b {
+  display: block;
+  margin: 2px 0;
+  font-size: 15px;
+}
+
+.sky.bnk .bk-rcp em {
+  display: block;
+  margin-top: 4px;
+  color: var(--good);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.sky.bnk .bk-rcp em.warn {
+  color: var(--warn);
+}
+
+.sky.bnk .bk-call {
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--err-soft);
+  color: #7a1f1f;
+  font-size: 12px;
+  --lh: 1.4;
+}
+
+.sky.bnk .bk-call[hidden] {
+  display: none;
+}
+
+.sky.bnk .bk-call b {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--err);
+  font-size: 13px;
+}
+
+.sky.bnk .bk-call__btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.sky.bnk .bk-call__btns button {
+  flex: 1;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sky.bnk .bk-call__btns button:first-child {
+  border-color: var(--err);
+  background: var(--err);
+  color: #fff;
+}
+
+.sky.bnk .bk-amount__sum {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sky.bnk .bk-limit__bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--line);
+}
+
+.sky.bnk .bk-limit__bar i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--good);
+  transition: width 0.3s;
+}
+
+.sky.bnk .bk-limit.over .bk-limit__bar i {
+  background: var(--warn);
+}
+
+.sky.bnk .bk-limit small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky.bnk .bk-limit.over small {
+  color: var(--warn);
+}
+
+/* Кредит */
+.sky.bnk .bk-field small {
+  margin-bottom: -2px;
+}
+
+.sky.bnk .bk-loan .bk-sum {
+  font-size: 28px;
+}
+
+.sky.bnk .bk-cool {
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--sky-soft);
+  color: #23408f;
+  font-size: 12px;
+  --lh: 1.4;
+}
+
+.sky.bnk .bk-cool b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 13px;
+}
+
+/* Безопасность */
+.sky.bnk .bk-block {
+  padding: 14px;
+  border: 1px solid #f0c98f;
+  border-radius: 18px;
+  background: var(--warn-soft);
+}
+
+.sky.bnk .bk-block.done {
+  border-color: transparent;
+  background: var(--good-soft);
+}
+
+.sky.bnk .bk-block [hidden] {
+  display: none;
+}
+
+.sky.bnk .bk-block__title {
+  display: block;
+  color: var(--warn);
+  font-size: 14px;
+}
+
+.case .case__body .sky .bk-block p {
+  margin: 6px 0;
+  font-size: 12px;
+  --lh: 1.4;
+}
+
+.sky.bnk .bk-block ol {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+}
+
+.sky.bnk .bk-block li {
+  margin: 2px 0;
+}
+
+.sky.bnk .bk-block .bk-call__btns button:first-child {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.case .case__body .sky .bk-block__done {
+  margin: 0;
+  color: #135c40;
+  font-size: 13px;
+}
+
+.sky.bnk .bk-fraud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--err-soft);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sky.bnk .bk-fraud span {
+  flex: 1;
+}
+
+.sky.bnk .bk-fraud b {
+  display: block;
+  color: var(--err);
+  font-size: 15px;
+}
+
+.sky.bnk .bk-fraud small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sky.bnk .bk-fraud-done {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky.bnk .bk-fraud-done[hidden] {
+  display: none;
+}
+
+.sky.bnk .bk-pdf {
+  color: var(--sky);
+}
+
+.sky.bnk .bk-guard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.sky.bnk .bk-guard:first-of-type {
+  margin-top: 8px;
+}
+
+.sky.bnk .bk-guard > span:first-child {
+  flex: 1;
+}
+
+.sky.bnk .bk-guard b {
+  display: block;
+  font-size: 13px;
+}
+
+.sky.bnk .bk-guard small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sky.bnk .bk-chip {
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--good-soft);
+  color: var(--good);
+  font-size: 11px;
+  font-weight: 800;
+}
