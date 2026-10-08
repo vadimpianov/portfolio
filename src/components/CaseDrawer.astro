@@ -502,7 +502,8 @@ const close = t('case.close');
   let openedByPointer = false;
   let closing = 0;
 
-  async function open(url: string, push: boolean) {
+  /** `push` — новая запись истории (с главной), `replace` — смена кейса в открытой модалке, `false` — «Назад»/«Вперёд». */
+  async function open(url: string, mode: 'push' | 'replace' | false) {
     const dialog = drawer();
     const body = dialog?.querySelector<HTMLElement>('[data-case-body]');
     if (!dialog || !body) return (location.href = url);
@@ -521,7 +522,13 @@ const close = t('case.close');
     body.scrollTop = 0;
     if (!dialog.open) pageTitle = document.title;
     document.title = doc.title;
-    if (push) history.pushState({ ...history.state, caseDrawer: url }, '', url);
+    if (mode === 'push') history.pushState({ ...history.state, caseDrawer: url }, '', url);
+    else if (mode === 'replace') {
+      // Кейс из «Других кейсов»: та же модалка и та же запись истории — модалки не копятся,
+      // и закрытие ведёт сразу на главную, а не в предыдущий кейс.
+      const state = (history.state ?? {}) as NonNullable<State>;
+      history.replaceState(state.caseDrawer ? { ...state, caseDrawer: url } : state, '', url);
+    }
     if (!dialog.open) {
       dialog.showModal();
       // Панель выезжает, только когда кейс уже разложен и обложка готова: иначе первые кадры
@@ -634,7 +641,7 @@ const close = t('case.close');
       // Фаза захвата — раньше слушателя ClientRouter: он не переходит, если событие уже отменено.
       event.preventDefault();
       openedByPointer = event.detail > 0;
-      open(link.href, true);
+      open(link.href, drawer()?.open ? 'replace' : 'push');
     },
     { capture: true },
   );
