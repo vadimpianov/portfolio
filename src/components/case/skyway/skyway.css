@@ -114,6 +114,19 @@
   --lh: 1.55;
 }
 
+.case .case__body .sky .sky-intro ul {
+  max-width: 640px;
+  margin: 8px 0 0;
+  padding-left: 20px;
+  font-size: 16px;
+  color: var(--muted);
+  --lh: 1.55;
+}
+
+.case .case__body .sky .sky-intro li + li {
+  margin-top: 4px;
+}
+
 .sky-problems {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -166,21 +179,15 @@
   --lh: 1.45;
 }
 
-.sky-sliderbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+.sky-slider {
   scroll-margin-top: 24px;
 }
 
-.case .case__body .sky .sky-sliderbar .sky-h2 {
-  margin: 0;
-}
-
 .sky-ctrl {
+  position: relative;
   display: flex;
+  /* Стрелки — по середине модалки под экранами. */
+  justify-content: center;
   align-items: center;
   gap: 8px;
   color: var(--muted);
@@ -254,7 +261,7 @@
 }
 
 .case .case__body .sky .notes h3 {
-  margin-bottom: 12px;
+  margin-bottom: 0;
   font-size: 18px;
   font-weight: 800;
 }

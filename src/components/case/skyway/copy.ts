@@ -10,7 +10,16 @@ type Screen = { title: string; pairs: Pair[] };
 const RU = {
   title: 'Агрегаторы авиабилетов',
   eyebrow: 'Case 02 · Travel booking',
-  lead: 'Покупка авиабилетов без неприятных сюрпризов. 15 типовых проблем покупки авиабилетов решены на четырёх экранах: цена на первом экране равна сумме оплаты, условия понятны до покупки, ошибки ловятся до аэропорта',
+  lead: [
+    'Мы разбираем проблемы, с которыми реальные люди сталкиваются при покупке билетов на агрегаторах.',
+    'Покупку билета бросают чаще, чем любую другую онлайн-покупку. В интернет-магазинах до оплаты не доходят около 70% корзин, а в путешествиях — больше 80%. Главная причина — неожиданные доплаты: почти половина покупателей уходит, когда к итоговой цене добавляются сборы, багаж и выбор места. Ещё четверть бросает покупку, если перед оплатой нужно завести аккаунт.',
+  ],
+  leadListTitle: 'Часть проблем всплывает уже после оплаты:',
+  leadList: [
+    'Сколько денег вернут за билет, человек узнаёт, только когда пытается его сдать',
+    'Опечатку в паспортных данных замечают на стойке регистрации в аэропорту',
+    'Карту мест, где свободные и занятые места отличаются только цветом, не может прочитать каждый двенадцатый мужчина: около 8% мужчин плохо различают цвета',
+  ],
   problemsTitle: '15 проблем — 4 экрана',
   problems: [
     ['Цена растёт к оплате', 'Багаж, сервисный сбор и место добавляются на последних шагах. Скрытые доплаты — главная причина брошенных бронирований в тревеле.', [1, 4]],
@@ -186,7 +195,16 @@ const RU = {
 const EN: typeof RU = {
   title: 'Flight booking aggregators',
   eyebrow: 'Case 02 · Travel booking',
-  lead: 'Buying plane tickets without nasty surprises. 15 typical problems of buying flights are solved on four screens: the price on the first screen equals the amount you pay, the terms are clear before you buy, and mistakes are caught before the airport',
+  lead: [
+    'We look at the problems real people run into when buying tickets on flight aggregators.',
+    'People abandon flight bookings more often than any other online purchase. In online stores about 70% of carts never reach payment; in travel it is over 80%. The main reason is surprise fees: almost half of shoppers leave when taxes, baggage and seat selection are added to the total. Another quarter give up if they have to create an account before paying.',
+  ],
+  leadListTitle: 'Some problems surface only after payment:',
+  leadList: [
+    'People find out how much they will get back for a ticket only when they try to return it',
+    'A typo in passport details is noticed at the airport check-in desk',
+    'One in twelve men cannot read a seat map where free and taken seats differ only by color: about 8% of men have color vision deficiency',
+  ],
   problemsTitle: '15 problems — 4 screens',
   problems: [
     ['The price grows at checkout', 'Baggage, a service fee and a seat get added at the last steps. Hidden extras are the main reason for abandoned bookings in travel.', [1, 4]],
