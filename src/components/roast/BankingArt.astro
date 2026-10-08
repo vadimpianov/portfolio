@@ -2,17 +2,42 @@
 /**
  * Обложка плитки «Банковские приложения» в «Прожарке» — стиль раздела «плоский постер» (как `SkywayArt`):
  * 3–4 цвета палитры кейса, крупные простые формы, горизонт на той же высоте, под ним — подложка для текста,
- * зерно поверх и живая деталь на наведении (монета-солнце встаёт, телефон со щитом выпрямляется).
+ * зерно поверх и одна живая деталь на наведении. Сюжет — «город из денег»: столбики монет разной высоты
+ * стоят на горизонте, как кварталы; на наведении сверху падает монета и ложится на золотой столбик.
  * Холст 300 × 400 (3:4), как сама плитка.
  */
 const uid = 'bnk-art';
+const GROUND = 300; // линия горизонта — низ столбиков
+const COIN = 10; // толщина монеты
+const RY = 6; // высота эллипса верхней монеты
+
+type Stack = { x: number; w: number; n: number; fill: string; edge: string; top: string };
+// Слева — низкие (там текст плитки не мешает, но небо остаётся свободным), справа и по центру — выше.
+const stacks: Stack[] = [
+  { x: 54, w: 46, n: 4, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
+  { x: 108, w: 54, n: 9, fill: '#5b5bd6', edge: '#4747c2', top: '#7a7ae0' },
+  { x: 172, w: 60, n: 16, fill: '#ffc23d', edge: '#e5a11a', top: '#ffd877' },
+  { x: 236, w: 54, n: 11, fill: '#3f3fb0', edge: '#30308f', top: '#5656c4' },
+  { x: 288, w: 46, n: 6, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
+];
+
+// Столбик: тело, грани монет и верхняя монета эллипсом.
+const stack = ({ x, w, n, fill, edge, top }: Stack) => {
+  const h = n * COIN;
+  const y = GROUND - h;
+  const l = x - w / 2;
+  const lines = Array.from({ length: n - 1 }, (_, i) => `<path d="M${l} ${y + (i + 1) * COIN} H ${l + w}" stroke="${edge}" stroke-width="2" />`).join('');
+  return `<rect x="${l}" y="${y}" width="${w}" height="${h}" fill="${fill}" />${lines}<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${RY}" fill="${top}" stroke="${edge}" stroke-width="2" />`;
+};
+const gold = stacks[2]!;
+const goldTop = GROUND - gold.n * COIN;
 ---
 
 <svg class="roast-art" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id={`${uid}-sky`} x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#f1f0ff" />
-      <stop offset="1" stop-color="#d3cdff" />
+      <stop offset="1" stop-color="#d6d0ff" />
     </linearGradient>
     <filter id={`${uid}-grain`} x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" />
@@ -24,40 +49,21 @@ const uid = 'bnk-art';
   <!-- небо -->
   <rect width="300" height="400" fill={`url(#${uid}-sky)`} />
 
-  <!-- монета-солнце: ореол, диск, ободок и знак рубля; нижняя половина уходит за горизонт -->
-  <g class="bnk-art__coin">
-    <circle cx="104" cy="232" r="104" fill="#ffd98a" opacity="0.55" />
-    <circle cx="104" cy="232" r="70" fill="#ffc23d" />
-    <circle cx="104" cy="232" r="56" fill="none" stroke="#e8a51c" stroke-width="4" />
-    <path d="M92 170 V 222 M92 172 H 112 Q 126 172 126 186 Q 126 200 112 200 H 84 M84 210 H 112" fill="none" stroke="#e8a51c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
-  </g>
+  <!-- тёплый ореол за золотым столбиком -->
+  <circle cx={gold.x} cy={goldTop + 30} r="92" fill="#ffe3a3" opacity="0.6" />
 
-  <!-- «море» и дорожка монеты -->
-  <rect y="232" width="300" height="80" fill="#5b5bd6" />
-  <g fill="#ffd27a">
-    <rect x="46" y="244" width="116" height="7" rx="3.5" />
-    <rect x="62" y="260" width="84" height="6" rx="3" />
-    <rect x="76" y="275" width="56" height="5" rx="2.5" />
-    <rect x="88" y="289" width="32" height="4" rx="2" />
-  </g>
-  <g fill="#8d8dea">
-    <rect x="196" y="252" width="42" height="4" rx="2" />
-    <rect x="214" y="270" width="30" height="4" rx="2" />
-    <rect x="10" y="276" width="26" height="3" rx="1.5" />
+  <!-- «город» из столбиков монет на горизонте -->
+  <g set:html={stacks.map(stack).join('')} />
+
+  <!-- падающая монета (видна на наведении): ложится на золотой столбик поверх его верхней монеты -->
+  <g class="bnk-art__drop">
+    <ellipse cx={gold.x} cy={goldTop - 40} rx={gold.w / 2} ry={RY} fill={gold.fill} stroke={gold.edge} stroke-width="2" />
+    <rect x={gold.x - gold.w / 2} y={goldTop - COIN - 40} width={gold.w} height={COIN} fill={gold.fill} />
+    <ellipse cx={gold.x} cy={goldTop - COIN - 40} rx={gold.w / 2} ry={RY} fill={gold.top} stroke={gold.edge} stroke-width="2" />
   </g>
 
   <!-- подложка под текст плитки -->
-  <path d="M0 300 C 60 288, 120 296, 170 304 S 260 300, 300 292 V 400 H 0 Z" fill="#eef0f6" />
-
-  <!-- телефон со щитом справа (текст плитки — слева на подложке) -->
-  <g class="bnk-art__phone">
-    <rect x="200" y="166" width="78" height="148" rx="16" fill="#16182a" />
-    <rect x="207" y="176" width="64" height="128" rx="10" fill="#fff" />
-    <path d="M239 206 L 259 214 V 232 Q 259 250 239 260 Q 219 250 219 232 V 214 Z" fill="#5b5bd6" />
-    <path d="M230 233 L 237 240 L 250 225" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-    <rect x="219" y="272" width="40" height="6" rx="3" fill="#d9dce8" />
-    <rect x="225" y="284" width="28" height="6" rx="3" fill="#d9dce8" />
-  </g>
+  <path d="M0 300 C 60 292, 120 298, 170 304 S 260 302, 300 296 V 400 H 0 Z" fill="#eef0f6" />
 
   <!-- зерно -->
   <rect width="300" height="400" fill="#fff" filter={`url(#${uid}-grain)`} opacity="0.22" style="mix-blend-mode: multiply" />
@@ -73,29 +79,21 @@ const uid = 'bnk-art';
     height: 100%;
   }
 
-  /* Живая деталь на наведении: монета встаёт, телефон выпрямляется от нижнего края. */
-  .bnk-art__coin {
-    transition: translate 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Живая деталь: на наведении монета падает сверху и ложится на золотой столбик. */
+  .bnk-art__drop {
+    opacity: 0;
+    transition:
+      translate 0.7s cubic-bezier(0.5, 0, 0.2, 1.4),
+      opacity 0.2s;
   }
 
-  .bnk-art__phone {
-    transform-box: view-box;
-    transform-origin: 239px 314px;
-    rotate: 8deg;
-    transition: rotate 0.8s cubic-bezier(0.3, 1.6, 0.5, 1);
-  }
-
-  :global(.roast__item:hover) .bnk-art__coin {
-    translate: 0 -12px;
-  }
-
-  :global(.roast__item:hover) .bnk-art__phone {
-    rotate: 0deg;
+  :global(.roast__item:hover) .bnk-art__drop {
+    opacity: 1;
+    translate: 0 40px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bnk-art__coin,
-    .bnk-art__phone {
+    .bnk-art__drop {
       transition: none !important;
     }
   }

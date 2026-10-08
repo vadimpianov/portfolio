@@ -13,11 +13,11 @@ const RU = {
   eyebrow: 'Кейс 1',
   lead: [
     'Мы разбираем проблемы, с которыми реальные люди сталкиваются в мобильных банках.',
-    'Мобильным банком пользуются 70% взрослых россиян. В 2025 году жалоб на банки в ЦБ стало на 15% больше — 235 тысяч. Чаще всего люди жаловались на отказы в операциях и блокировку карт и приложения: банк не объяснял, в чём причина и что делать. Мошенники за год украли со счетов 29,3 млрд ₽, а пострадавшим вернули только 5,9%.',
+    'Мобильным банком пользуются 70% взрослых россиян. В 2025 году жалоб на банки в ЦБ стало на 15% больше — 235 000. Чаще всего люди жаловались на отказы в операциях и блокировку карт и приложения: банк не объяснял, в чём причина и что делать. Мошенники за год украли со счетов 29,3 млрд ₽, а пострадавшим вернули только 5,9%.',
   ],
   leadListTitle: 'Часть проблем человек замечает, только когда уже поздно:',
   leadList: [
-    'Комиссия за перевод появляется, когда бесплатные 100 тысяч в месяц уже кончились, а сколько осталось — нигде не видно',
+    'Комиссия за перевод появляется, когда бесплатные 100 000 ₽ в месяц уже кончились, а сколько осталось — нигде не видно',
     'Платное уведомление за 99 ₽ в месяц списывается годами, а отключить его можно только через поддержку',
     'Деньги по кредиту не пришли: человек не знал про период охлаждения и 48 часов ожидания',
   ],
@@ -54,7 +54,7 @@ const RU = {
     ],
     [
       'Комиссия из ниоткуда',
-      'Бесплатно — 100 тысяч в месяц по СБП, дальше 0,5%. Сколько осталось, приложение не показывает',
+      'Бесплатно — 100 000 ₽ в месяц по СБП, дальше 0,5%. Сколько осталось, приложение не показывает',
       [2],
     ],
     [
@@ -71,7 +71,7 @@ const RU = {
     ],
     [
       'Деньги «пропали»',
-      'С сентября 2025 года кредит больше 200 тысяч выдают через 48 часов. Об этом узнают, когда денег нет',
+      'С сентября 2025 года кредит больше 200 000 ₽ выдают через 48 часов. Об этом узнают, когда денег нет',
       [3],
     ],
     [
@@ -299,11 +299,11 @@ const EN: BankCopy = {
   eyebrow: 'Case 1',
   lead: [
     'We look at the problems real people run into in mobile banking apps.',
-    '70% of adults in Russia use a mobile bank. In 2025, complaints about banks to the Bank of Russia grew by 15% to 235 thousand. Most often people complained about refused transactions and blocked cards and apps: the bank did not explain why or what to do. Fraudsters stole 29.3 billion rubles from accounts in a year, and victims got back only 5.9%.',
+    '70% of adults in Russia use a mobile bank. In 2025, complaints about banks to the Bank of Russia grew by 15% to 235,000. Most often people complained about refused transactions and blocked cards and apps: the bank did not explain why or what to do. Fraudsters stole 29.3 billion rubles from accounts in a year, and victims got back only 5.9%.',
   ],
   leadListTitle: 'Some problems show up only when it is too late:',
   leadList: [
-    'A transfer fee appears once the free 100 thousand a month is used up, and nowhere shows how much is left',
+    'A transfer fee appears once the free 100,000 ₽ a month is used up, and nowhere shows how much is left',
     'A paid notification of 99 rubles a month is charged for years and can only be turned off through support',
     'The loan money did not arrive: the person did not know about the cooling-off period and the 48-hour wait',
   ],
@@ -340,7 +340,7 @@ const EN: BankCopy = {
     ],
     [
       'A fee out of nowhere',
-      'Fast payments are free up to 100 thousand a month, then 0.5%. The app does not show how much is left',
+      'Fast payments are free up to 100,000 ₽ a month, then 0.5%. The app does not show how much is left',
       [2],
     ],
     [
@@ -361,7 +361,7 @@ const EN: BankCopy = {
     ],
     [
       'The money “went missing”',
-      'Since September 2025, loans over 200 thousand rubles are paid out after 48 hours. People learn this when the money is not there',
+      'Since September 2025, loans over 200,000 ₽ are paid out after 48 hours. People learn this when the money is not there',
       [3],
     ],
     [
