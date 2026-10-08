@@ -227,7 +227,8 @@
 .sky-shot {
   position: relative;
   display: flex;
-  flex: 0 0 312px;
+  /* Экраны на 15% крупнее страницы-образца: телефон 390px × 0.92 ≈ 360px (было × 0.8 = 312px). */
+  flex: 0 0 360px;
   flex-direction: column;
   align-items: center;
   gap: 20px;
@@ -245,7 +246,7 @@
   border-radius: 52px;
   background: var(--screen);
   box-shadow: 0 40px 80px -30px rgb(80 50 20 / 0.35);
-  zoom: 0.8;
+  zoom: 0.92;
 }
 
 .sky .notes {
