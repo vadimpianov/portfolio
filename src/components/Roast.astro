@@ -1,11 +1,18 @@
 ---
 /**
- * Раздел «Прожарка» под «Обо мне»: небольшие плитки кейсов, все четыре — в один ряд на ширину экрана
+ * Раздел «Отраслевая прожарка» под «Обо мне»: небольшие плитки кейсов, все четыре — в один ряд на ширину экрана
  * (на телефоне — 2 × 2). Пока кейсов нет — плитки-заготовки с меткой «Кейс в разработке».
  */
 import { getLocaleFromUrl, localePath, useTranslations } from '../i18n/utils';
 import SkywayArt from './roast/SkywayArt.astro';
 
+interface Props {
+  /** Блок «Другие кейсы» внизу кейса прожарки: те же плитки в два раза компактнее, без текущего кейса. */
+  compact?: boolean;
+  /** Слаг текущего кейса — его плитку не показываем. */
+  current?: string;
+}
+const { compact = false, current } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 // Плитки по порядку; у готового кейса — название, подпись и ссылка (открывается в модалке, как остальные кейсы).
@@ -16,13 +23,19 @@ const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: ty
   { n: '03' },
   { n: '04' },
 ];
+const items = ITEMS.filter((item) => !item.slug || item.slug !== current);
+const titleId = compact ? 'roast-others-title' : 'roast-title';
+// В кейсе — не h2: кейсы со своими стилями (`.sky`) сбрасывают заголовки.
+const Title = compact ? 'div' : 'h2';
 ---
 
-<section class="roast" data-snap aria-labelledby="roast-title">
-  <h2 class="roast__title" id="roast-title">{t('roast.title')}</h2>
+<section class:list={['roast', { 'roast--compact': compact }]} data-snap={compact ? undefined : ''} aria-labelledby={titleId}>
+  <Title class="roast__title" id={titleId} role={compact ? 'heading' : undefined} aria-level={compact ? 2 : undefined}>
+    {compact ? t('case.others') : t('roast.title')}
+  </Title>
   <ul class="roast__list">
     {
-      ITEMS.map((item) =>
+      items.map((item) =>
         item.slug ? (
           <li class="roast__item roast__item--case">
             {item.art && <item.art />}
@@ -179,6 +192,62 @@ const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: ty
     50% {
       opacity: 0.3;
     }
+  }
+
+  /* «Другие кейсы» внизу кейса: всё в два раза мельче, 4 плитки в ряд на половине ширины
+     (на узком контейнере кейса — по 3 в ряд на всю ширину). */
+  .roast--compact {
+    margin-top: 96px;
+    padding: 0;
+  }
+
+  .roast--compact .roast__title {
+    color: var(--color-text);
+    font-size: 24px;
+    --lh: var(--leading-title);
+    letter-spacing: var(--tracking-title);
+  }
+
+  .roast--compact .roast__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  @container case (min-width: 800px) {
+    .roast--compact .roast__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      width: calc(50% - 10px);
+    }
+  }
+
+  .roast--compact .roast__item {
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+  }
+
+  .roast--compact .roast__item--case:hover {
+    translate: 0 -4px;
+  }
+
+  .roast--compact .roast__num {
+    font-size: 24px;
+  }
+
+  .roast--compact .roast__link {
+    font-size: 16px;
+  }
+
+  .roast--compact .roast__soon {
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  .roast--compact .roast__soon i {
+    width: 6px;
+    height: 6px;
   }
 
   @media (prefers-reduced-motion: reduce) {

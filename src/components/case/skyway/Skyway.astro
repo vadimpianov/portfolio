@@ -7,6 +7,7 @@
 import { getLocaleFromUrl } from '../../../i18n/utils';
 import { COPY } from './copy';
 import Notes from './Notes.astro';
+import Roast from '../../Roast.astro';
 import './skyway.css';
 
 const lang = getLocaleFromUrl(Astro.url);
@@ -181,4 +182,5 @@ const back = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 5l-7 
       <button type="button" data-k="next" aria-label={c.next}><svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg></button>
     </div>
   </div>
+  <Roast compact current="skyway" />
 </div>
