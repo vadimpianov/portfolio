@@ -140,10 +140,19 @@ function setup(el: HTMLElement) {
   }
 
   /* ---------- 3. места ---------- */
-  const ROWS = 8;
+  // Салон A320: 30 рядов, аварийные выходы над крылом — ряды 12 и 13, крыло — ряды 9–17,
+  // спереди и сзади — двери, туалеты, кухни и места экипажа.
+  const ROWS = 30;
   const COLS = 'ABCDEF';
+  const EXIT_ROWS = [12, 13];
+  const WING = [9, 17];
   const taken = new Set(['1A', '1B', '2A', '2E', '3C', '3D', '3F', '4A', '4F', '5B', '5C', '6D', '6E', '7A', '7E', '8C', '8D', '8F']);
-  const isXL = (r: number) => r <= 2 || r === 6;
+  // Дальше — занятость детерминированно (около половины мест).
+  for (let r = 9; r <= ROWS; r++)
+    [...COLS].forEach((col, i) => {
+      if (((r * 7 + i * 13 + (r % 3) * i) % 11) < 5) taken.add(r + col);
+    });
+  const isXL = (r: number) => r <= 3 || EXIT_ROWS.includes(r);
   const rowOf = (id: string) => Number(id.slice(0, -1));
   const seatCost = (id: string | null) => (id && isXL(rowOf(id)) && !FARES[S.fare].xlFree ? 900 : 0);
   const isFree = (id: string) => !taken.has(id) && !S.seats.includes(id);
@@ -203,6 +212,16 @@ function setup(el: HTMLElement) {
     });
   }
 
+  // Крыло — от переднего края ряда 9 до заднего края ряда 17 (по факту раскладки).
+  function placeWing() {
+    const wing = el.querySelector<HTMLElement>('[data-k=wing]');
+    const a = el.querySelector<HTMLElement>(`.cabin .row[data-r="${WING[0]}"]`);
+    const b = el.querySelector<HTMLElement>(`.cabin .row[data-r="${WING[1]}"]`);
+    if (!wing || !a || !b) return;
+    wing.style.top = `${a.offsetTop - 8}px`;
+    wing.style.height = `${b.offsetTop + b.offsetHeight - a.offsetTop + 16}px`;
+  }
+
   function renderSeats() {
     const xlFree = FARES[S.fare].xlFree;
     $('xl-price').textContent = xlFree ? c.xlFree : c.xl;
@@ -223,24 +242,36 @@ function setup(el: HTMLElement) {
             renderAll();
           }),
       );
-    let h = '<div class="cols"><span>A</span><span>B</span><span>C</span><span></span><span>D</span><span>E</span><span>F</span></div>';
+    const door = `<div class="door"><span>${c.exitL}</span><span>${c.exitR}</span></div>`;
+    let h = '<div class="cols"><span>A</span><span>B</span><span>C</span><span></span><span>D</span><span>E</span><span>F</span></div><div class="fuselage">';
+    h += `<div class="wing" data-k="wing" aria-hidden="true"><i>${c.wing}</i><i>${c.wing}</i></div>`;
+    h += door;
+    h += `<div class="fac"><span class="wc">${c.wc}</span><span class="crew">${c.crew}</span><span></span><span class="galley">${c.galley}</span></div>`;
     for (let r = 1; r <= ROWS; r++) {
-      if (r === 6) h += `<div class="exit"><span>${c.exitL}</span><span>${c.exitR}</span></div>`;
-      h += '<div class="row">';
+      if (EXIT_ROWS.includes(r)) h += `<div class="exit"><span>${c.exitL}</span><span>${c.exitR}</span></div>`;
+      h += `<div class="row${r >= WING[0]! && r <= WING[1]! ? ' on-wing' : ''}" data-r="${r}">`;
       [...COLS].forEach((col, i) => {
         if (i === 3) h += `<span class="num">${r}</span>`;
         const id = r + col;
         const owner = S.seats.indexOf(id);
         const cls = taken.has(id) ? 'taken' : owner === S.active ? 'mine' : owner >= 0 ? 'other' : isXL(r) ? 'xl' : 'free';
         const paid = isXL(r) && !xlFree;
-        const label = taken.has(id) ? c.seatTaken(id) : owner >= 0 ? c.seatMine(id, c.names[owner]!) : c.seatFree(id, paid, r === 6);
+        const label = taken.has(id) ? c.seatTaken(id) : owner >= 0 ? c.seatMine(id, c.names[owner]!) : c.seatFree(id, paid, EXIT_ROWS.includes(r));
         h += `<button type="button" class="s ${cls}" data-id="${id}" ${taken.has(id) ? 'disabled' : ''} aria-label="${label}" title="${label}">${
           owner >= 0 ? c.names[owner]![0] : cls === 'xl' && paid ? '+' : ''
         }</button>`;
       });
       h += '</div>';
     }
-    $('cabin').innerHTML = h;
+    h += `<div class="fac"><span class="wc">${c.wc}</span><span></span><span></span><span></span><span class="wc">${c.wc}</span></div>`;
+    h += door;
+    h += `<div class="fac"><span class="crew">${c.crew}</span><span class="galley wide">${c.galley}</span><span class="crew">${c.crew}</span></div>`;
+    h += '</div>';
+    const cabin = $('cabin');
+    const top = cabin.scrollTop;
+    cabin.innerHTML = h;
+    cabin.scrollTop = top;
+    placeWing();
     $('cabin')
       .querySelectorAll<HTMLElement>('.s:not(.taken)')
       .forEach(
@@ -257,11 +288,11 @@ function setup(el: HTMLElement) {
           }),
       );
     renderTogether();
-    const ex = S.seats.filter((id): id is string => !!id && rowOf(id) === 6);
+    const ex = S.seats.filter((id): id is string => !!id && EXIT_ROWS.includes(rowOf(id)));
     $('exitwarn').className = 'exitwarn' + (ex.length ? ' show' : '');
     $('exitwarn').innerHTML = ex.length ? c.exitWarn(ex.join(', ')) : '';
     const extra = S.seats.reduce((s, id) => s + seatCost(id), 0);
-    $('s-line').textContent = c.seatsLine(c.fares[S.fare], S.seats.map((s) => s || '—').join(', ')) + (extra ? ` · +${fmt(extra)} ₽` : '');
+    $('s-line').textContent = c.seatsLine(c.fares[S.fare], S.seats.filter((s): s is string => !!s)) + (extra ? ` · +${fmt(extra)} ₽` : '');
     $('s-tot').innerHTML = `${fmt(FARES[S.fare].p * PAX + extra)} ₽<em>${c.total}</em>`;
     const missing = S.seats.map((s, i) => (s ? null : c.names[i])).filter(Boolean);
     const go = $<HTMLButtonElement>('s-go');
@@ -347,7 +378,7 @@ function setup(el: HTMLElement) {
   const HOTSPOTS: string[][] = [
     ['[data-k=bagsw]', '.tag.w', '[data-k=follow]', '.tag.a', '.flight .alert', '.arr-day'],
     ['[data-k=fares]', '[data-k=ftip]', '[data-k=f-go]'],
-    ['[data-k=together]', '.legend', '.exit', '.cabin .s.taken'],
+    ['[data-k=together]', '.legend', '.cabin .exit', '.cabin .s.taken'],
     ['[data-k=timer]', '[data-k=docf]', '.trip', '.fl.contact .chip', '.fine'],
   ];
   // Текст подсказки: с заглавной буквы, без точки в конце.
@@ -406,7 +437,10 @@ function setup(el: HTMLElement) {
       const r = target?.getBoundingClientRect();
       const x = r ? r.right - 4 : 0;
       const y = r ? r.top + 4 : 0;
-      const inside = !!r && r.width > 0 && x > p.left + 12 && x < p.right - 12 && y > p.top + 12 && y < p.bottom - 12;
+      // Внутри листаемой схемы салона — ещё и в видимой части схемы.
+      const clip = target?.closest<HTMLElement>('.cabin')?.getBoundingClientRect();
+      const inside =
+        !!r && r.width > 0 && x > p.left + 12 && x < p.right - 12 && y > p.top + 12 && y < p.bottom - 12 && (!clip || (y > clip.top + 4 && y < clip.bottom - 4));
       dot.hidden = !inside;
       if (!inside) continue;
       dot.style.left = `${Math.round(x - s.left)}px`;
@@ -420,6 +454,10 @@ function setup(el: HTMLElement) {
   };
   new MutationObserver(schedule).observe(track, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
   new ResizeObserver(schedule).observe(track);
+  $('cabin').addEventListener('scroll', () => {
+    tip.hidden = true;
+    schedule();
+  }, { passive: true });
   document.fonts?.ready.then(schedule);
 
   function renderAll() {
