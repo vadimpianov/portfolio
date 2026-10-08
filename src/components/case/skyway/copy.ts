@@ -9,7 +9,7 @@ type Screen = { title: string; pairs: Pair[] };
 
 const RU = {
   title: 'Агрегаторы авиабилетов',
-  eyebrow: 'Case 02 · Travel booking',
+  eyebrow: 'Кейс 2',
   lead: [
     'Мы разбираем проблемы, с которыми реальные люди сталкиваются при покупке билетов на агрегаторах.',
     'Покупку билета бросают чаще, чем любую другую онлайн-покупку. В интернет-магазинах до оплаты не доходят около 70% корзин, а в путешествиях — больше 80%. Главная причина — неожиданные доплаты: почти половина покупателей уходит, когда к итоговой цене добавляются сборы, багаж и выбор места. Ещё четверть бросает покупку, если перед оплатой нужно завести аккаунт.',
@@ -196,7 +196,7 @@ const RU = {
 
 const EN: typeof RU = {
   title: 'Flight booking aggregators',
-  eyebrow: 'Case 02 · Travel booking',
+  eyebrow: 'Case 2',
   lead: [
     'We look at the problems real people run into when buying tickets on flight aggregators.',
     'People abandon flight bookings more often than any other online purchase. In online stores about 70% of carts never reach payment; in travel it is over 80%. The main reason is surprise fees: almost half of shoppers leave when taxes, baggage and seat selection are added to the total. Another quarter give up if they have to create an account before paying.',
