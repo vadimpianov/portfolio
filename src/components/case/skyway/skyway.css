@@ -4,8 +4,12 @@
 /* Кейс целиком на светлом фоне страницы-образца; крестик модалки — тёмный. */
 .case:has(.sky) {
   --case-surface: #f4efe8;
-  /* Сетка фона — та же, что в модалках остальных кейсов (--case-bg-pattern). */
-  background-image: var(--case-bg-pattern);
+  /* Сетка фона — как в модалках остальных кейсов (--case-bg-pattern), но вдвое бледнее: чёрным 10% вместо 20%. */
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgb(0 0 0 / 0.1) 0 calc(6px * 0.7071 * 5 / 12),
+    transparent 0 calc(6px * 0.7071)
+  );
 }
 
 .case-drawer:has(.sky) .case-drawer__close {
@@ -34,8 +38,6 @@
   --warn-soft: #fff3e0;
   --err: #d93a3a;
   --lh: 1.3;
-  max-width: 1120px;
-  margin: 0 auto;
   color: var(--ink);
   font-family: 'Onest Variable', Onest, system-ui, sans-serif;
   font-size: 14px;
@@ -219,11 +221,11 @@
 .sky-screens {
   display: flex;
   gap: 40px;
-  /* Лента — до краёв модалки (за поля, как ленты других кейсов): листается в края, а не обрезается по полю.
-     100% — ширина .sky, 100cqi — ширина кейса без полей. Снизу — место под тени телефонов. */
-  margin-inline: calc((100% - 100cqi) / 2 - var(--gutter));
-  padding: 4px calc((100cqi - 100%) / 2 + var(--gutter)) 72px;
-  scroll-padding-inline: calc((100cqi - 100%) / 2 + var(--gutter));
+  /* Лента — до краёв модалки: в покое первый экран стоит по полю, как весь текст, а при прокрутке
+     экраны уходят за край модалки (не обрезаются по полю). Снизу — место под тени телефонов. */
+  margin-inline: calc(-1 * var(--gutter));
+  padding: 4px var(--gutter) 72px;
+  scroll-padding-inline: var(--gutter);
   margin-bottom: -48px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;

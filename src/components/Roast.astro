@@ -12,7 +12,7 @@ const t = useTranslations(locale);
 // Обложка плитки — постер в общем стиле раздела (см. `roast/SkywayArt.astro`): у каждого кейса своя картинка.
 const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: typeof SkywayArt }[] = [
   { n: '01' },
-  { n: '02', slug: 'skyway', title: 'Skyway', lead: t('roast.skyway'), art: SkywayArt },
+  { n: '02', slug: 'skyway', title: t('roast.skyway'), art: SkywayArt },
   { n: '03' },
   { n: '04' },
 ];
@@ -31,7 +31,7 @@ const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: ty
               <a class="roast__link" href={localePath(locale, `cases/${item.slug}`)} data-case-link>
                 {item.title}
               </a>
-              <small>{item.lead}</small>
+              {item.lead && <small>{item.lead}</small>}
             </span>
           </li>
         ) : (

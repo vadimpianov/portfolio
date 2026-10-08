@@ -8,6 +8,7 @@ type Pair = { no: string; problem: string; solution: string };
 type Screen = { title: string; pairs: Pair[] };
 
 const RU = {
+  title: 'Агрегатор авиабилетов',
   eyebrow: 'Case 02 · Travel booking',
   lead: 'Покупка авиабилетов без неприятных сюрпризов. 15 типовых проблем покупки авиабилетов решены на четырёх экранах: цена на первом экране равна сумме оплаты, условия понятны до покупки, ошибки ловятся до аэропорта',
   problemsTitle: '15 проблем — 4 экрана',
@@ -183,6 +184,7 @@ const RU = {
 };
 
 const EN: typeof RU = {
+  title: 'Flight booking aggregator',
   eyebrow: 'Case 02 · Travel booking',
   lead: 'Buying plane tickets without nasty surprises. 15 typical problems of buying flights are solved on four screens: the price on the first screen equals the amount you pay, the terms are clear before you buy, and mistakes are caught before the airport',
   problemsTitle: '15 problems — 4 screens',
