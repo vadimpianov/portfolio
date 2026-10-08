@@ -16,7 +16,7 @@ interface Props {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, period, tags, theme, cover, slides } = entry.data;
+const { title, period, tags, theme, cover, slides, bare } = entry.data;
 
 // Размеры обложки (WebP с альфой, заголовок VP8X) — чтобы место под картинку было сразу, без скачка.
 const coverSize = (() => {
@@ -30,7 +30,7 @@ const coverSize = (() => {
 <article class:list={['case', `case--${theme}`]} data-bleed>
   {/* Обложка на широком кейсе — справа, обтекается: верх — по верху годов, рядом с ней идут
       годы, заголовок, теги и первый текст кейса, а под ней текст снова во всю ширину (см. стили). */}
-  <header class:list={['case__hero', { 'case__hero--cover': cover || slides }]}>
+  {!bare && (<header class:list={['case__hero', { 'case__hero--cover': cover || slides }]}>
     {slides ? (
       <div class="case__cover">
         <CoverSlider slides={slides} />
@@ -60,7 +60,7 @@ const coverSize = (() => {
         ))}
       </ul>
     )}
-  </header>
+  </header>)}
   <div class="case__body">
     <Content />
   </div>

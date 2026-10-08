@@ -1,0 +1,1406 @@
+/* Кейс Skyway — стили со страницы пользователя «Skyway Tickets», под префиксом .sky (разметку экранов
+   дорисовывает скрипт, поэтому стили глобальные). Межстрочные — через --lh, как везде на сайте. */
+
+/* Кейс целиком на светлом фоне страницы-образца; крестик модалки — тёмный. */
+.case:has(.sky) {
+  --case-surface: #f4efe8;
+}
+
+.case-drawer:has(.sky) .case-drawer__close {
+  background: rgb(26 26 31 / 0.08);
+  color: #1a1a1f;
+}
+
+.case-drawer:has(.sky) .case-drawer__close:hover {
+  background: rgb(26 26 31 / 0.14);
+}
+
+.sky {
+  --page: #f4efe8;
+  --ink: #1a1a1f;
+  --muted: #7b7770;
+  --line: #ebe5dc;
+  --screen: #fbf8f4;
+  --card: #fff;
+  --accent: #ff5b36;
+  --accent-soft: #ffe8e1;
+  --good: #1f9d6b;
+  --good-soft: #e2f5ec;
+  --sky: #3d6bff;
+  --sky-soft: #e6ecff;
+  --warn: #b86200;
+  --warn-soft: #fff3e0;
+  --err: #d93a3a;
+  --lh: 1.3;
+  max-width: 1120px;
+  margin: 0 auto;
+  color: var(--ink);
+  font-family: 'Onest Variable', Onest, system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sky *,
+.sky *::before,
+.sky *::after {
+  box-sizing: border-box;
+}
+
+/* Стили текста кейсов сайта (отступы заголовков, красная строка, подпись капсом после h2) сюда не действуют. */
+.case .case__body .sky :is(h1, h2, h3, p) {
+  margin: 0;
+  color: inherit;
+  text-indent: 0;
+  text-transform: none;
+  letter-spacing: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.sky button,
+.sky input {
+  font: inherit;
+  color: inherit;
+}
+
+.sky svg {
+  display: inline-block;
+  stroke: var(--ink);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sky-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.sky-eyebrow {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.case .case__body .sky .sky-h1 {
+  margin-top: 8px;
+  font-size: 44px;
+  font-weight: 800;
+  --lh: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.case .case__body .sky .sky-h2 {
+  margin-bottom: 16px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.case .case__body .sky .sky-intro p {
+  max-width: 440px;
+  color: var(--muted);
+  --lh: 1.55;
+}
+
+.sky-problems {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 64px;
+}
+
+@container case (max-width: 899px) {
+  .sky-problems {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sky-pr {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.sky-pr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -18px rgb(0 0 0 / 0.35);
+}
+
+.sky-pr .n {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.sky-pr b {
+  display: block;
+  margin: 4px 0 6px;
+  font-size: 16px;
+}
+
+.case .case__body .sky .sky-pr p {
+  color: var(--muted);
+  font-size: 13px;
+  --lh: 1.45;
+}
+
+.sky-pr em {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--good-soft);
+  color: var(--good);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.sky-sliderbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  scroll-margin-top: 24px;
+}
+
+.case .case__body .sky .sky-sliderbar .sky-h2 {
+  margin: 0;
+}
+
+.sky-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sky-ctrl button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.sky-ctrl button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.sky-screens {
+  display: flex;
+  gap: 40px;
+  margin: 0 -4px;
+  padding: 4px 4px 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.sky-screens::-webkit-scrollbar {
+  display: none;
+}
+
+.sky-shot {
+  display: flex;
+  flex: 0 0 312px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  scroll-snap-align: start;
+}
+
+.sky-phone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 390px;
+  aspect-ratio: 390 / 844;
+  overflow: hidden;
+  border: 10px solid #1a1a1f;
+  border-radius: 52px;
+  background: var(--screen);
+  box-shadow: 0 40px 80px -30px rgb(80 50 20 / 0.35);
+  zoom: 0.8;
+}
+
+.sky .notes {
+  width: 100%;
+}
+
+.case .case__body .sky .notes h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.sky .notes .pair {
+  margin-bottom: 12px;
+  font-size: 14px;
+  --lh: 1.45;
+}
+
+.sky .notes .pb {
+  color: var(--muted);
+}
+
+.sky .notes .lbl {
+  font-weight: 700;
+}
+
+.sky .notes .pb .lbl {
+  color: var(--err);
+}
+
+.sky .notes .sl .lbl {
+  color: var(--good);
+}
+
+.sky .notes .no2 {
+  display: inline-block;
+  margin-right: 4px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Телефон */
+.sky .status {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
+  padding: 14px 26px 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sky .body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 8px 18px 0;
+  overflow: hidden;
+}
+
+.sky .body > * {
+  flex-shrink: 0;
+}
+
+.sky .round {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #f3eee7;
+}
+
+.sky .top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sky .top b {
+  flex: 1;
+  font-size: 17px;
+}
+
+.sky .top small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky .steps {
+  display: flex;
+  gap: 4px;
+}
+
+.sky .steps i {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: #e6dfd4;
+}
+
+.sky .steps i.on {
+  background: var(--accent);
+}
+
+.sky .muted-line {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 1 · выдача */
+.sky .route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+
+.sky .route .txt {
+  flex: 1;
+}
+
+.sky .route b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.sky .route small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sky .dates {
+  display: flex;
+  gap: 6px;
+  margin: 0 -18px;
+  padding: 8px 18px 0;
+  overflow: hidden;
+}
+
+.sky .day {
+  position: relative;
+  flex: 0 0 58px;
+  padding: 7px 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  text-align: center;
+  cursor: pointer;
+}
+
+.sky .day small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sky .day b {
+  display: block;
+  margin: 1px 0;
+  font-size: 15px;
+}
+
+.sky .day span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sky .day.min span {
+  color: var(--good);
+}
+
+.sky .day.min::after {
+  content: attr(data-min);
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--good);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  transform: translateX(-50%);
+}
+
+.sky .day.on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+.sky .day.on small {
+  color: #bbb;
+}
+
+.sky .insight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: -4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sky .insight b {
+  color: var(--good);
+}
+
+.sky .follow {
+  flex-shrink: 0;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sky .follow.on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+.sky .bagbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.sky .bagbar div {
+  flex: 1;
+}
+
+.sky .bagbar b {
+  display: block;
+  font-size: 14px;
+}
+
+.sky .bagbar small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sky .sw {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 28px;
+  border: 0;
+  border-radius: 20px;
+  background: #ddd5ca;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sky .sw::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+  transition: transform 0.2s;
+}
+
+.sky .sw.on {
+  background: var(--good);
+}
+
+.sky .sw.on::after {
+  transform: translateX(18px);
+}
+
+.sky .flights {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sky .flight {
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--card);
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.sky .flight:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -16px rgb(0 0 0 / 0.3);
+}
+
+.sky .flight.best {
+  border: 2px solid var(--ink);
+}
+
+.sky .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 9px;
+}
+
+.sky .tag {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sky .tag.g {
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.sky .tag.s {
+  background: var(--sky-soft);
+  color: var(--sky);
+}
+
+.sky .tag.a {
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+}
+
+.sky .tag.w {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.sky .tag.m {
+  background: #f1ece5;
+  color: var(--muted);
+}
+
+.sky .why {
+  margin: -2px 0 9px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: #f6f3ee;
+  color: var(--muted);
+  font-size: 11px;
+  --lh: 1.4;
+}
+
+.sky .why b {
+  color: var(--ink);
+}
+
+.sky .leg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sky .leg .t b {
+  display: block;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.sky .leg .t small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sky .leg .t:last-child {
+  text-align: right;
+}
+
+.sky .mid {
+  flex: 1;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.sky .line {
+  position: relative;
+  height: 2px;
+  margin: 5px 0;
+  background: repeating-linear-gradient(90deg, #d8d1c6 0 4px, transparent 4px 8px);
+}
+
+.sky .line i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--warn);
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+}
+
+.sky .mid .warn {
+  color: var(--warn);
+  font-weight: 700;
+}
+
+.sky .arr-day {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.sky .foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.sky .air {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky .air i {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.sky .price {
+  font-size: 19px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.sky .price small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.sky .alert {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--warn-soft);
+  color: #7a4300;
+  font-size: 11px;
+  --lh: 1.4;
+}
+
+.sky .alert b {
+  color: var(--warn);
+}
+
+/* 2 · тариф */
+.sky .fares {
+  display: grid;
+  grid-template-columns: 96px repeat(3, 1fr);
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--card);
+  font-size: 11px;
+}
+
+.sky .fares .c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+  --lh: 1.25;
+}
+
+.sky .fares .l {
+  justify-content: flex-start;
+  padding-left: 8px;
+  color: var(--muted);
+  font-weight: 600;
+  text-align: left;
+}
+
+.sky .fares .h {
+  min-height: 34px;
+  border: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.sky .fares .p {
+  flex-direction: column;
+  border: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.sky .fares .p small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.sky .fares .c.sel {
+  background: var(--accent-soft);
+}
+
+.sky .fares .c.sel.h {
+  border-radius: 14px 14px 0 0;
+  color: #c23a1a;
+}
+
+.sky .fares .c.sel.p {
+  border-radius: 0 0 14px 14px;
+}
+
+.sky .fares .c[data-f] {
+  cursor: pointer;
+}
+
+.sky .yes {
+  color: var(--good);
+  font-weight: 800;
+}
+
+.sky .no {
+  color: #b9b1a5;
+}
+
+.sky .cost {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.sky .tip {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--sky-soft);
+  color: #23408f;
+  font-size: 12px;
+  --lh: 1.45;
+}
+
+.sky .tip b {
+  color: var(--sky);
+}
+
+.sky .honest {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  --lh: 1.4;
+}
+
+.sky .honest svg {
+  flex-shrink: 0;
+  stroke: var(--good);
+}
+
+/* 3 · места */
+.sky .together {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--good-soft);
+  color: #11573b;
+  font-size: 12px;
+  --lh: 1.35;
+}
+
+.sky .together div {
+  flex: 1;
+}
+
+.sky .together b {
+  display: block;
+  color: var(--good);
+  font-size: 13px;
+}
+
+.sky .together svg {
+  flex-shrink: 0;
+  stroke: var(--good);
+}
+
+.sky .together button {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--good);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sky .together.done {
+  background: #f1ece5;
+  color: var(--muted);
+}
+
+.sky .together.done b {
+  color: var(--ink);
+}
+
+.sky .pax {
+  display: flex;
+  gap: 8px;
+}
+
+.sky .px {
+  flex: 1;
+  padding: 7px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sky .px small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sky .px b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.sky .px.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.sky .px .seat {
+  color: var(--good);
+}
+
+.sky .px .need {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.sky .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sky .legend > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sky .legend i {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+}
+
+.sky .lg-free {
+  background: #eef1ff;
+  box-shadow: inset 0 -2px 0 #d3dbff;
+}
+
+.sky .lg-xl {
+  background: #fff1d6;
+  box-shadow: inset 0 -2px 0 #ffd88c;
+}
+
+.sky .lg-taken {
+  background: #efebe5;
+}
+
+.sky .cabin {
+  padding: 22px 16px 6px;
+  border: 1px solid var(--line);
+  border-radius: 80px 80px 22px 22px;
+  background: var(--card);
+}
+
+.sky .cabin .cols,
+.sky .cabin .row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 24px repeat(3, 1fr);
+  align-items: center;
+  gap: 6px;
+}
+
+.sky .cabin .cols {
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sky .cabin .row {
+  margin-bottom: 5px;
+}
+
+.sky .cabin .num {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sky .exit {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px -10px 5px;
+  color: var(--good);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.sky .s {
+  height: 27px;
+  border: 0;
+  border-radius: 7px 7px 9px 9px;
+  color: transparent;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.sky .s.free {
+  background: #eef1ff;
+  box-shadow: inset 0 -3px 0 #d3dbff;
+}
+
+.sky .s.xl {
+  background: #fff1d6;
+  box-shadow: inset 0 -3px 0 #ffd88c;
+  color: #b07a12;
+}
+
+.sky .s.taken {
+  background: #efebe5;
+  background-image: linear-gradient(45deg, transparent 45%, #d9d2c7 45% 55%, transparent 55%);
+  cursor: not-allowed;
+}
+
+.sky .s.mine {
+  background: var(--accent);
+  box-shadow: inset 0 -3px 0 #d63f1d;
+  color: #fff;
+}
+
+.sky .s.other {
+  background: var(--ink);
+  color: #fff;
+}
+
+.sky .s.free:hover,
+.sky .s.xl:hover {
+  transform: scale(1.08);
+}
+
+.sky .s:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
+}
+
+.sky .skip {
+  width: 100%;
+  margin-top: 8px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.sky .exitwarn {
+  display: none;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--warn-soft);
+  color: #7a4300;
+  font-size: 11px;
+  --lh: 1.4;
+}
+
+.sky .exitwarn b {
+  color: var(--warn);
+}
+
+.sky .exitwarn.show {
+  display: block;
+}
+
+/* 4 · оформление */
+.sky .trip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+}
+
+.sky .trip b {
+  font-size: 13px;
+}
+
+.sky .trip span {
+  opacity: 0.7;
+}
+
+.sky .lock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 12px;
+  --lh: 1.35;
+}
+
+.sky .lock.slim {
+  padding: 8px 12px;
+}
+
+.sky .lock b {
+  color: var(--ink);
+}
+
+.sky .lock .tm {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #f1ece5;
+  color: var(--ink);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.sky .pcard {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+
+.sky .pcard.slim {
+  padding: 9px 14px;
+}
+
+.sky .pcard .hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sky .pcard .hd small {
+  margin-left: auto;
+  color: var(--good);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sky .pcard .sub {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sky .scan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0 12px;
+  border: 1.5px dashed #cfc6b8;
+  border-radius: 12px;
+  background: #fbf8f4;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sky .fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sky .fl {
+  display: block;
+  padding: 6px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+}
+
+.sky .fl small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.sky .fl input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sky .fl:focus-within {
+  border-color: var(--sky);
+}
+
+.sky .fl.bad {
+  border-color: var(--err);
+  background: #fff6f6;
+}
+
+.sky .fl.contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+}
+
+.sky .fl.contact > span:first-child {
+  flex: 1;
+}
+
+.sky .ferr {
+  grid-column: 1 / -1;
+  margin-top: -2px;
+  color: var(--err);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sky .ferr.ok {
+  color: var(--good);
+}
+
+.sky .chip {
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--good-soft);
+  color: var(--good);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.sky .addon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.sky .addon div {
+  flex: 1;
+}
+
+.sky .addon b {
+  display: block;
+  font-size: 13px;
+}
+
+.sky .addon small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sky .sheet {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 12px 18px 24px;
+  border-top: 1px solid var(--line);
+  border-radius: 26px 26px 0 0;
+  background: var(--card);
+  box-shadow: 0 -12px 30px -18px rgb(0 0 0 / 0.25);
+}
+
+.sky .sheet .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sky .sheet small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sky .sheet .right {
+  text-align: right;
+}
+
+.sky .sheet .tot {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.sky .sheet .tot em {
+  margin-left: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.sky .toggle {
+  border: 0;
+  background: none;
+  color: var(--sky);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sky .brk {
+  max-height: 0;
+  overflow: hidden;
+  font-size: 12px;
+  transition: max-height 0.25s;
+}
+
+.sky .brk.open {
+  max-height: 140px;
+}
+
+.sky .brk div {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: var(--muted);
+}
+
+.sky .brk div span:last-child {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.sky .brk div:first-child {
+  margin-top: 8px;
+}
+
+.sky .btn {
+  width: 100%;
+  height: 52px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sky .btn:disabled {
+  background: #e6dfd4;
+  color: #8f897f;
+  cursor: not-allowed;
+}
+
+.sky .fine {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.sky .fine b {
+  color: var(--good);
+}

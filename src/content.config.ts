@@ -23,6 +23,8 @@ const cases = defineCollection({
     cover: z.string().optional(),
     /** Обложка-слайдер вместо картинки: экраны слева направо (`public/images/cases/<имя>.webp`), первым показан средний. */
     slides: z.array(z.string()).optional(),
+    /** Своя вёрстка кейса целиком (раздел «Прожарка»): без стандартной шапки — годы, заголовок, теги, обложка. */
+    bare: z.boolean().default(false),
   }),
 });
 
