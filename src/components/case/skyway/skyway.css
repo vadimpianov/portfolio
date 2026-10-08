@@ -1462,7 +1462,7 @@
 }
 
 /* Подсказка: всегда справа от точки — её левый верхний угол у правого верхнего угла точки.
-   Строки: «Проблема · 01», текст проблемы (белым), «Решение», текст решения. */
+   Белая карточка. Строки: «Проблема · 01», текст проблемы, «Решение», текст решения. */
 .sky .hs-tip {
   position: absolute;
   z-index: 5;
@@ -1470,10 +1470,11 @@
   gap: 4px;
   width: 280px;
   padding: 14px 16px;
+  border: 1px solid var(--line);
   border-radius: 14px;
-  background: var(--ink);
-  box-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.45);
-  color: #fff;
+  background: #fff;
+  box-shadow: 0 16px 40px -12px rgb(26 26 31 / 0.3);
+  color: var(--ink);
   font-size: 14px;
   --lh: 1.45;
   pointer-events: none;
@@ -1489,12 +1490,12 @@
 }
 
 .sky .hs-pb {
-  color: #ff8a73;
+  color: var(--err);
 }
 
 .sky .hs-sl {
   margin-top: 8px;
-  color: #5fd6a4;
+  color: var(--good);
 }
 
 @media (prefers-reduced-motion: reduce) {
