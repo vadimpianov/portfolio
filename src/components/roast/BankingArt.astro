@@ -3,7 +3,7 @@
  * Обложка плитки «Банковские приложения» в «Прожарке» — стиль раздела «плоский постер» (как `SkywayArt`):
  * 3–4 цвета палитры кейса, крупные простые формы, горизонт на той же высоте, под ним — подложка для текста,
  * зерно поверх и одна живая деталь на наведении. Сюжет — «город из денег»: столбики монет разной высоты
- * стоят на горизонте, как кварталы; на наведении сверху падает монета и ложится на золотой столбик.
+ * стоят на горизонте, как кварталы; на наведении верхние монеты по очереди немного подпрыгивают.
  * Холст 300 × 400 (3:4), как сама плитка.
  */
 const uid = 'bnk-art';
@@ -21,13 +21,16 @@ const stacks: Stack[] = [
   { x: 288, w: 46, n: 6, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
 ];
 
-// Столбик: тело, грани монет и верхняя монета эллипсом.
-const stack = ({ x, w, n, fill, edge, top }: Stack) => {
-  const h = n * COIN;
-  const y = GROUND - h;
+// Столбик: тело с гранями монет и верхняя монета отдельной группой (она подпрыгивает на наведении).
+// Под верхней монетой — эллипс тела, чтобы в прыжке столбик не был срезан плоско.
+const stack = ({ x, w, n, fill, edge, top }: Stack, i: number) => {
+  const y = GROUND - n * COIN;
   const l = x - w / 2;
-  const lines = Array.from({ length: n - 1 }, (_, i) => `<path d="M${l} ${y + (i + 1) * COIN} H ${l + w}" stroke="${edge}" stroke-width="2" />`).join('');
-  return `<rect x="${l}" y="${y}" width="${w}" height="${h}" fill="${fill}" />${lines}<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${RY}" fill="${top}" stroke="${edge}" stroke-width="2" />`;
+  const b = y + COIN; // верх тела под верхней монетой
+  const lines = Array.from({ length: n - 2 }, (_, k) => `<path d="M${l} ${b + (k + 1) * COIN} H ${l + w}" stroke="${edge}" stroke-width="2" />`).join('');
+  const body = `<rect x="${l}" y="${b}" width="${w}" height="${GROUND - b}" fill="${fill}" />${lines}<ellipse cx="${x}" cy="${b}" rx="${w / 2}" ry="${RY}" fill="${top}" stroke="${edge}" stroke-width="2" />`;
+  const coin = `<g class="bnk-art__coin" style="animation-delay: ${i * 0.12}s"><ellipse cx="${x}" cy="${b}" rx="${w / 2}" ry="${RY}" fill="${fill}" stroke="${edge}" stroke-width="2" /><rect x="${l}" y="${y}" width="${w}" height="${COIN}" fill="${fill}" /><ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${RY}" fill="${top}" stroke="${edge}" stroke-width="2" /></g>`;
+  return body + coin;
 };
 const gold = stacks[2]!;
 const goldTop = GROUND - gold.n * COIN;
@@ -53,14 +56,7 @@ const goldTop = GROUND - gold.n * COIN;
   <circle cx={gold.x} cy={goldTop + 30} r="92" fill="#ffe3a3" opacity="0.6" />
 
   <!-- «город» из столбиков монет на горизонте -->
-  <g set:html={stacks.map(stack).join('')} />
-
-  <!-- падающая монета (видна на наведении): ложится на золотой столбик поверх его верхней монеты -->
-  <g class="bnk-art__drop">
-    <ellipse cx={gold.x} cy={goldTop - 40} rx={gold.w / 2} ry={RY} fill={gold.fill} stroke={gold.edge} stroke-width="2" />
-    <rect x={gold.x - gold.w / 2} y={goldTop - COIN - 40} width={gold.w} height={COIN} fill={gold.fill} />
-    <ellipse cx={gold.x} cy={goldTop - COIN - 40} rx={gold.w / 2} ry={RY} fill={gold.top} stroke={gold.edge} stroke-width="2" />
-  </g>
+  <g set:html={stacks.map((st, i) => stack(st, i)).join('')} />
 
   <!-- подложка под текст плитки -->
   <path d="M0 300 C 60 292, 120 298, 170 304 S 260 302, 300 296 V 400 H 0 Z" fill="#eef0f6" />
@@ -79,22 +75,26 @@ const goldTop = GROUND - gold.n * COIN;
     height: 100%;
   }
 
-  /* Живая деталь: на наведении монета падает сверху и ложится на золотой столбик. */
-  .bnk-art__drop {
-    opacity: 0;
-    transition:
-      translate 0.7s cubic-bezier(0.5, 0, 0.2, 1.4),
-      opacity 0.2s;
+  /* Живая деталь: на наведении верхние монеты столбиков по очереди немного подпрыгивают. */
+  :global(.roast__item:hover) .roast-art :global(.bnk-art__coin) {
+    animation: bnk-hop 0.9s cubic-bezier(0.3, 0, 0.4, 1) infinite;
   }
 
-  :global(.roast__item:hover) .bnk-art__drop {
-    opacity: 1;
-    translate: 0 40px;
+  @keyframes bnk-hop {
+    0%,
+    60%,
+    100% {
+      translate: 0 0;
+    }
+
+    30% {
+      translate: 0 -10px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bnk-art__drop {
-      transition: none !important;
+    :global(.roast__item:hover) .roast-art :global(.bnk-art__coin) {
+      animation: none;
     }
   }
 </style>

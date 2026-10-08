@@ -12,6 +12,8 @@ const paragraphs = KEYS.map((key) => t(key).split(/\*\*(.+?)\*\*/));
 
 // Контакты справа от текста: LinkedIn, телефон и QR-коды мессенджеров (по нажатию — открывают чат).
 const LINKEDIN = 'https://www.linkedin.com/in/vadimpianov/';
+// LinkedIn пока скрыт (пользователь попросил не удалять — вернуть: true).
+const SHOW_LINKEDIN = false;
 const PHONE = { href: 'tel:+79162946526', text: '+7 916 294-65-26' };
 const QR = [
   { name: 'Telegram', href: 'https://t.me/V_PIANOV', src: '/images/contacts/telegram-qr.webp', width: 720, height: 720 },
@@ -32,10 +34,12 @@ const QR = [
     <aside class="about__contacts" aria-label={t('about.contacts')}>
       <p class="about__label">{t('about.contacts')}</p>
       <a class="about__phone" href={PHONE.href} aria-label={`${t('about.phone.label')} ${PHONE.text}`}>{PHONE.text}</a>
-      <a class="about__row" href={LINKEDIN} target="_blank" rel="noopener">
-        <span>LinkedIn</span>
-        <svg class="about__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
-      </a>
+      {SHOW_LINKEDIN && (
+        <a class="about__row" href={LINKEDIN} target="_blank" rel="noopener">
+          <span>LinkedIn</span>
+          <svg class="about__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+        </a>
+      )}
       <div class="about__qrs">
         {QR.map((qr) => (
           <a class="about__qr" href={qr.href} target="_blank" rel="noopener">

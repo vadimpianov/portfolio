@@ -197,7 +197,7 @@ const RU = {
     },
   ] as Screen[],
   // Экран 1 — главная
-  name: 'Анна',
+  name: 'Анастасия',
   totalLabel: 'Все деньги',
   accounts: [
     ['Дебетовая ·· 4821', '52 340 ₽'],
@@ -225,12 +225,12 @@ const RU = {
   hideOffer: 'Скрыть предложение',
   // Экран 2 — перевод
   transferTop: 'Перевод по телефону',
-  contacts: ['Иван К.', 'Новый номер'],
+  contacts: ['Вадим К.', 'Новый номер'],
   phoneLabel: 'Номер телефона',
   phones: ['+7 916 123-45-67', '+7 999 765-43-21'],
   recipients: [
     {
-      name: 'Иван Петрович К.',
+      name: 'Вадим Петрович К.',
       bank: 'Банк «Северный»',
       note: 'Переводили 3 раза, последний — 2 октября',
       fresh: false,
@@ -491,7 +491,7 @@ const EN: BankCopy = {
       ],
     },
   ],
-  name: 'Anna',
+  name: 'Anastasia',
   totalLabel: 'All money',
   accounts: [
     ['Debit ·· 4821', '52,340 ₽'],
@@ -518,12 +518,12 @@ const EN: BankCopy = {
   offerLabel: 'Bank offer',
   hideOffer: 'Hide the offer',
   transferTop: 'Transfer by phone',
-  contacts: ['Ivan K.', 'New number'],
+  contacts: ['Vadim K.', 'New number'],
   phoneLabel: 'Phone number',
   phones: ['+7 916 123-45-67', '+7 999 765-43-21'],
   recipients: [
     {
-      name: 'Ivan Petrovich K.',
+      name: 'Vadim Petrovich K.',
       bank: 'Severny Bank',
       note: 'Sent 3 times, last on October 2',
       fresh: false,

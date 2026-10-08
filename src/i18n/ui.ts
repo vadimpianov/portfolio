@@ -42,7 +42,7 @@ export const ui = {
       'Выстроил дизайн-процесс и пересобрал ключевые revenue-сценарии — повысил конверсию в завершённую регистрацию и первое пополнение на 48% и 44% соответственно',
     'tiles.3.title': 'Quantori',
     'tiles.3.lead':
-      'Привёл десятки таблиц и графиков базы знаний о лекарствах к единой системе и свёл данные FDA и EMA — аналитики работают без перерыва 41 минуту вместо 18',
+      'Собрал дизайн-систему из 150+ отчётов о 9\u00a0770 препаратах и свёл данные FDA и EMA — аналитики работают без перерыва 41 минуту вместо 27, а оценка удобства SUS выросла с 52 до 81',
     'tiles.4.title': 'Метр квадратный',
     'tiles.4.lead':
       'Объединил пять разрозненных сервисов недвижимости в экосистему и за 4 месяца вывел MVP — сократил ипотечную анкету на 40% и поднял retention на 27%',
@@ -108,7 +108,7 @@ export const ui = {
       'Built the design process and reworked the key revenue flows — lifting conversion to completed registration and first deposit by 48% and 44% respectively',
     'tiles.3.title': 'Quantori',
     'tiles.3.lead':
-      'Brought dozens of tables and charts in a drug knowledge base into one system and unified FDA and EMA data — analysts now work 41 minutes without a break instead of 18',
+      'Built a design system from 150+ reports on 9,770 drugs and unified FDA and EMA data — analysts now work 41 minutes without a break instead of 27, and the SUS usability score rose from 52 to 81',
     'tiles.4.title': 'Metr Kvadratny',
     'tiles.4.lead':
       'Brought five disparate real-estate services into one ecosystem and shipped the MVP in 4 months — cut the mortgage form by 40% and lifted retention by 27%',
