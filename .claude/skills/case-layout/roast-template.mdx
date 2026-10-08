@@ -1,0 +1,13 @@
+---
+# Шаблон кейса «Прожарки». Копия → src/content/ru/cases/<slug>.mdx и src/content/en/cases/<slug>.mdx (EN — параллельно).
+# Всё содержимое — в компоненте src/components/case/<slug>/<Name>.astro (по образцу skyway/Skyway.astro),
+# тексты RU/EN — в src/components/case/<slug>/copy.ts. Правила — roast.md.
+title: Название отрасли во множественном числе
+description: "Название — какие проблемы пользователей разобраны и на скольких экранах"
+date: 2026-01-01
+bare: true
+---
+
+import Name from '../../../components/case/<slug>/Name.astro';
+
+<Name />
