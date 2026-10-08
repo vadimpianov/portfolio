@@ -58,6 +58,7 @@ export const ui = {
     'tiles.9.lead': 'Переработал iOS- и Android-приложения крупного букмекера на основе анализа рынка',
     'tiles.10.lead': 'Строил стратегию и дизайн клиентских продуктов на основе исследований и видения',
     'about.title': 'Обо мне',
+    'roast.title': 'Прожарка',
     'about.contacts': 'Контакты',
     'about.phone.label': 'Телефон',
     'about.p1':
@@ -120,6 +121,7 @@ export const ui = {
     'tiles.9.lead': 'Redesigned the iOS and Android apps of a major bookmaker based on market analysis',
     'tiles.10.lead': 'Shaped product strategy and design for agency clients, from research to interfaces',
     'about.title': 'About me',
+    'roast.title': 'Roast',
     'about.contacts': 'Contacts',
     'about.phone.label': 'Phone',
     'about.p1':

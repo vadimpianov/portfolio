@@ -1,0 +1,110 @@
+---
+/**
+ * Раздел «Прожарка» под «Обо мне»: небольшие плитки кейсов, все четыре — в один ряд на ширину экрана
+ * (на телефоне — 2 × 2). Пока кейсов нет — плитки-заготовки с меткой «Кейс в разработке».
+ */
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const t = useTranslations(getLocaleFromUrl(Astro.url));
+const ITEMS = ['01', '02', '03', '04'];
+---
+
+<section class="roast" data-snap aria-labelledby="roast-title">
+  <h2 class="roast__title" id="roast-title">{t('roast.title')}</h2>
+  <ul class="roast__list">
+    {
+      ITEMS.map((n) => (
+        <li class="roast__item">
+          <span class="roast__num">{n}</span>
+          <span class="roast__soon">
+            <i aria-hidden="true" />
+            {t('case.soon')}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  /* Слайд на том же фоне, что «Обо мне»; доводка ставит его верх на --tiles-final-top. */
+  .roast {
+    padding: 0 var(--gutter) var(--tile-gap);
+  }
+
+  .roast__title {
+    color: #fff;
+    font-size: var(--text-display);
+    font-weight: var(--weight-heavy);
+    --lh: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  /* Все четыре плитки — в ряд на ширину между полями; на телефоне — 2 × 2. */
+  .roast__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin: round(clamp(24px, 16px + 1.5vw, 48px), 2px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .roast__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: round(clamp(16px, 8px + 1vw, 24px), 2px);
+    }
+  }
+
+  /* Плитка — тёмная карточка, как контакты на «Обо мне». */
+  .roast__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    aspect-ratio: 3 / 4;
+    padding: round(clamp(16px, 8px + 1vw, 24px), 2px);
+    border-radius: 24px;
+    background: rgb(20 20 20 / 0.92);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.16);
+    color: #fff;
+  }
+
+  .roast__num {
+    color: var(--case-accent);
+    font-size: round(clamp(28px, 16px + 1.6vw, 48px), 1px);
+    font-weight: var(--weight-heavy);
+    --lh: var(--leading-title);
+  }
+
+  .roast__soon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgb(255 255 255 / 0.72);
+    font-size: var(--text-chip);
+    --lh: var(--leading-tight);
+  }
+
+  .roast__soon i {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--case-accent);
+    animation: roast-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes roast-pulse {
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roast__soon i {
+      animation: none;
+    }
+  }
+</style>

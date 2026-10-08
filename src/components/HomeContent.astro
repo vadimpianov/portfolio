@@ -1,6 +1,7 @@
 ---
-/** Содержимое главной: hero с плитками и «Обо мне». Общее для главной и адресов кейсов. */
+/** Содержимое главной: hero с плитками, «Обо мне» и «Прожарка». Общее для главной и адресов кейсов. */
 import About from './About.astro';
+import Roast from './Roast.astro';
 import Hero from './Hero.astro';
 import Tiles from './Tiles.astro';
 import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
@@ -12,4 +13,5 @@ const chips = (['1', '2', '3', '4', '5', '6'] as const).map((n) => t(`home.intro
 <Hero title={t('home.intro.title')} flip={t('home.intro.flip').split('|')} lead={t('home.intro.lead')} chips={chips} portraitAlt={t('site.title')}>
   <Tiles />
   <About />
+  <Roast />
 </Hero>
