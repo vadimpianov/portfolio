@@ -11,6 +11,8 @@ type Screen = { title: string; pairs: Pair[] };
 const RU = {
   title: 'Банковские приложения',
   eyebrow: 'Кейс 1',
+  problemsTitle: 'Проблемы',
+  screensTitle: 'Решение',
   lead: [
     'Мы разбираем проблемы, с которыми реальные люди сталкиваются в мобильных банках.',
     'Мобильным банком пользуются 70% взрослых россиян. В 2025 году жалоб на банки в ЦБ стало на 15% больше — 235 000. Чаще всего люди жаловались на отказы в операциях и блокировку карт и приложения: банк не объяснял, в чём причина и что делать. Мошенники за год украли со счетов 29,3 млрд ₽, а пострадавшим вернули только 5,9%.',
@@ -71,7 +73,7 @@ const RU = {
     ],
     [
       'Деньги «пропали»',
-      'С сентября 2025 года кредит больше 200 000 ₽ выдают через 48 часов. Об этом узнают, когда денег нет',
+      'С сентября 2025 года кредит больше 200 000 ₽ приходит на счёт только через 48 часов. Банк об этом не предупреждает — человек думает, что деньги пропали',
       [3],
     ],
     [
@@ -297,6 +299,8 @@ export type BankCopy = typeof RU;
 const EN: BankCopy = {
   title: 'Banking apps',
   eyebrow: 'Case 1',
+  problemsTitle: 'Problems',
+  screensTitle: 'Solution',
   lead: [
     'We look at the problems real people run into in mobile banking apps.',
     '70% of adults in Russia use a mobile bank. In 2025, complaints about banks to the Bank of Russia grew by 15% to 235,000. Most often people complained about refused transactions and blocked cards and apps: the bank did not explain why or what to do. Fraudsters stole 29.3 billion rubles from accounts in a year, and victims got back only 5.9%.',
@@ -361,7 +365,7 @@ const EN: BankCopy = {
     ],
     [
       'The money “went missing”',
-      'Since September 2025, loans over 200,000 ₽ are paid out after 48 hours. People learn this when the money is not there',
+      'Since September 2025, a loan over 200,000 ₽ reaches the account only after 48 hours. The bank does not warn about it, so people think the money is lost',
       [3],
     ],
     [

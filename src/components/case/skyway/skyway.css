@@ -73,7 +73,8 @@
   padding: 0;
 }
 
-.sky svg {
+/* Иконки экранов. Обложки плиток «Других кейсов» (`.roast-art`) не трогаем — у них свои цвета. */
+.sky svg:not(.roast-art) {
   display: inline-block;
   stroke: var(--ink);
   fill: none;
@@ -108,10 +109,13 @@
 }
 
 .case .case__body .sky .sky-h2 {
-  margin-bottom: 16px;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  /* Как заголовки разделов в кейсах (и «Отраслевая прожарка» внизу): отступ сверху даёт блок выше. */
+  margin: 0 0 var(--case-tabs-heading-text-gap);
+  font-size: var(--text-tile-title);
+  font-weight: 600;
+  --lh: var(--leading-title);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-text);
 }
 
 .case .case__body .sky .sky-lead {

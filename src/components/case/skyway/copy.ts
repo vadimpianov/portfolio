@@ -20,7 +20,7 @@ const RU = {
     'Опечатку в паспортных данных замечают на стойке регистрации в аэропорту',
     'Карту мест, где свободные и занятые места отличаются только цветом, не может прочитать каждый двенадцатый мужчина: около 8% мужчин плохо различают цвета',
   ],
-  problemsTitle: '15 проблем — 4 экрана',
+  problemsTitle: 'Проблемы',
   problems: [
     ['Цена растёт к оплате', 'Багаж, сервисный сбор и место добавляются на последних шагах. Скрытые доплаты — главная причина брошенных бронирований в тревеле.', [1, 4]],
     ['Тарифы — шифровка', '«Возврат с удержанием» без суммы. Условия становятся понятны, когда планы уже поменялись.', [2]],
@@ -207,7 +207,7 @@ const EN: typeof RU = {
     'A typo in passport details is noticed at the airport check-in desk',
     'One in twelve men cannot read a seat map where free and taken seats differ only by color: about 8% of men have color vision deficiency',
   ],
-  problemsTitle: '15 problems — 4 screens',
+  problemsTitle: 'Problems',
   problems: [
     ['The price grows at checkout', 'Baggage, a service fee and a seat get added at the last steps. Hidden extras are the main reason for abandoned bookings in travel.', [1, 4]],
     ['Fares are a cipher', '“Refund with a deduction” with no amount. The terms become clear only after your plans have changed.', [2]],
