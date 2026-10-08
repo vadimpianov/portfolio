@@ -59,6 +59,7 @@ export const ui = {
     'tiles.10.lead': 'Строил стратегию и дизайн клиентских продуктов на основе исследований и видения',
     'about.title': 'Обо мне',
     'roast.title': 'Прожарка',
+    'roast.skyway': 'Агрегатор авиабилетов',
     'about.contacts': 'Контакты',
     'about.phone.label': 'Телефон',
     'about.p1':
@@ -122,6 +123,7 @@ export const ui = {
     'tiles.10.lead': 'Shaped product strategy and design for agency clients, from research to interfaces',
     'about.title': 'About me',
     'roast.title': 'Roast',
+    'roast.skyway': 'Flight booking aggregator',
     'about.contacts': 'Contacts',
     'about.phone.label': 'Phone',
     'about.p1':

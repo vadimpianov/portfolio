@@ -1,0 +1,131 @@
+---
+/**
+ * Обложка плитки Skyway в «Прожарке» — стиль раздела «плоский постер»: 3–4 цвета из палитры кейса,
+ * крупные простые формы, горизонт на одной высоте у всех плиток (под ним — подложка для текста),
+ * лёгкое зерно поверх и одна живая деталь на наведении (здесь — пальмы качаются, солнце встаёт).
+ * Холст 300 × 400 (3:4), как сама плитка.
+ */
+const uid = 'sky-art';
+// Лист пальмы: от точки крепления вправо; разворачиваем поворотом.
+const leaf = 'M0 0 C 18 -22 52 -24 78 -6 C 52 -10 24 -6 0 0 Z';
+const big = [-150, -115, -70, -25, 15];
+const small = [-160, -120, -75, -35, 5];
+---
+
+<svg class="roast-art" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id={`${uid}-sky`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffeedd" />
+      <stop offset="1" stop-color="#ffc9a6" />
+    </linearGradient>
+    <filter id={`${uid}-grain`} x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" />
+      <feColorMatrix values="0 0 0 0 0.1  0 0 0 0 0.1  0 0 0 0 0.12  0 0 0 0.55 0" />
+      <feComposite in2="SourceGraphic" operator="in" />
+    </filter>
+  </defs>
+
+  <!-- небо -->
+  <rect width="300" height="400" fill={`url(#${uid}-sky)`} />
+
+  <!-- самолётик и пунктир следа -->
+  <path class="roast-art__trail" d="M-10 150 C 60 110, 140 70, 222 66" fill="none" stroke="#1a1a1f" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round" />
+  <g class="roast-art__plane" transform="translate(236 62) rotate(-12)">
+    <path d="M-16 0 L14 -2 Q20 0 14 2 L-16 0 Z M0 -1 L-8 -13 L-3 -13 L8 -1 Z M0 1 L-8 13 L-3 13 L8 1 Z M-14 0 L-19 -6 L-16 -6 L-10 0 Z" fill="#1a1a1f" />
+  </g>
+
+  <!-- солнце: ореол и диск, нижняя половина уходит за горизонт -->
+  <g class="roast-art__sun">
+    <circle cx="112" cy="232" r="104" fill="#ffb38c" opacity="0.55" />
+    <circle cx="112" cy="232" r="70" fill="#ff5b36" />
+  </g>
+
+  <!-- море и дорожка солнца -->
+  <rect y="232" width="300" height="80" fill="#3d6bff" />
+  <g fill="#ff8f6e">
+    <rect x="54" y="244" width="116" height="7" rx="3.5" />
+    <rect x="70" y="260" width="84" height="6" rx="3" />
+    <rect x="84" y="275" width="56" height="5" rx="2.5" />
+    <rect x="96" y="289" width="32" height="4" rx="2" />
+  </g>
+  <g fill="#7f9bff">
+    <rect x="14" y="268" width="34" height="4" rx="2" />
+    <rect x="196" y="252" width="42" height="4" rx="2" />
+    <rect x="186" y="284" width="26" height="3" rx="1.5" />
+  </g>
+
+  <!-- песок — подложка под текст плитки -->
+  <path d="M0 300 C 60 288, 120 296, 170 304 S 260 300, 300 292 V 400 H 0 Z" fill="#f4efe8" />
+
+  <!-- пальмы справа (текст плитки — слева на песке): ствол дугой, листья веером -->
+  <g class="roast-art__palm roast-art__palm--big">
+    <path d="M232 318 C 228 270, 220 226, 198 182" fill="none" stroke="#1a1a1f" stroke-width="9" stroke-linecap="round" />
+    <g transform="translate(198 182) scale(-1 1)" fill="#1a1a1f">
+      {big.map((a) => <path d={leaf} transform={`rotate(${a})`} />)}
+    </g>
+  </g>
+  <g class="roast-art__palm roast-art__palm--small">
+    <path d="M272 322 C 272 292, 268 266, 256 242" fill="none" stroke="#1a1a1f" stroke-width="6" stroke-linecap="round" />
+    <g transform="translate(256 242) scale(-0.68 0.68)" fill="#1a1a1f">
+      {small.map((a) => <path d={leaf} transform={`rotate(${a})`} />)}
+    </g>
+  </g>
+
+  <!-- зерно -->
+  <rect width="300" height="400" fill="#fff" filter={`url(#${uid}-grain)`} opacity="0.22" style="mix-blend-mode: multiply" />
+</svg>
+
+<style>
+  /* Под текстом плитки (у плитки — свой контекст наложения, isolation). */
+  .roast-art {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Живая деталь на наведении: пальмы качаются от основания, солнце чуть встаёт, самолёт летит дальше. */
+  .roast-art__palm {
+    transform-box: view-box;
+    transition: rotate 0.8s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .roast-art__palm--big {
+    transform-origin: 232px 318px;
+  }
+
+  .roast-art__palm--small {
+    transform-origin: 272px 322px;
+  }
+
+  .roast-art__sun {
+    transition: translate 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .roast-art__plane {
+    transition: translate 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  :global(.roast__item:hover) .roast-art__palm--big {
+    rotate: 3deg;
+  }
+
+  :global(.roast__item:hover) .roast-art__palm--small {
+    rotate: -4deg;
+  }
+
+  :global(.roast__item:hover) .roast-art__sun {
+    translate: 0 -10px;
+  }
+
+  :global(.roast__item:hover) .roast-art__plane {
+    translate: 10px -4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roast-art * {
+      transition: none !important;
+    }
+  }
+</style>

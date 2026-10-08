@@ -4,13 +4,15 @@
  * (на телефоне — 2 × 2). Пока кейсов нет — плитки-заготовки с меткой «Кейс в разработке».
  */
 import { getLocaleFromUrl, localePath, useTranslations } from '../i18n/utils';
+import SkywayArt from './roast/SkywayArt.astro';
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 // Плитки по порядку; у готового кейса — название, подпись и ссылка (открывается в модалке, как остальные кейсы).
-const ITEMS: { n: string; slug?: string; title?: string; lead?: string }[] = [
+// Обложка плитки — постер в общем стиле раздела (см. `roast/SkywayArt.astro`): у каждого кейса своя картинка.
+const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: typeof SkywayArt }[] = [
   { n: '01' },
-  { n: '02', slug: 'skyway', title: 'Skyway', lead: 'Travel booking' },
+  { n: '02', slug: 'skyway', title: 'Skyway', lead: t('roast.skyway'), art: SkywayArt },
   { n: '03' },
   { n: '04' },
 ];
@@ -23,6 +25,7 @@ const ITEMS: { n: string; slug?: string; title?: string; lead?: string }[] = [
       ITEMS.map((item) =>
         item.slug ? (
           <li class="roast__item roast__item--case">
+            {item.art && <item.art />}
             <span class="roast__num">{item.n}</span>
             <span class="roast__name">
               <a class="roast__link" href={localePath(locale, `cases/${item.slug}`)} data-case-link>
@@ -93,6 +96,8 @@ const ITEMS: { n: string; slug?: string; title?: string; lead?: string }[] = [
   /* Готовый кейс: ссылка растянута на всю плитку; на наведении плитка приподнимается. */
   .roast__item--case {
     position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: #f4efe8;
     color: #1a1a1f;
     transition:
