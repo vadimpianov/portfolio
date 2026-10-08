@@ -20,7 +20,7 @@ const size = (name: string) => {
 };
 ---
 
-<figure class="case-screens">
+<figure class="case-screens" data-edge>
   {caption && <figcaption class="case-screens__label">{typograph(caption)}</figcaption>}
   <div class="case-screens__row" tabindex="0">
     {items.map(({ src, alt }) => {

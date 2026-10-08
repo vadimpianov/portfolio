@@ -68,6 +68,11 @@
   color: inherit;
 }
 
+/* Стрелки слайдера — без браузерных отступов по умолчанию (1px 6px): размер задан явно. */
+.sky .sky-ctrl button {
+  padding: 0;
+}
+
 .sky svg {
   display: inline-block;
   stroke: var(--ink);

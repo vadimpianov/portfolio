@@ -174,7 +174,7 @@ const more = (
   {tiles.map(({ year, title, lead, image, href, inProgress }, i) => (
     <>
       {i === MARQUEE_AFTER && (
-        <div class="tiles__marquee" data-bleed>
+        <div class="tiles__marquee" data-bleed data-edge>
           <div class="tiles__marquee-track">
             {[0, 1].map((copy) => (
               <ul class="tiles__marquee-group" aria-hidden={copy === 1 ? 'true' : undefined}>

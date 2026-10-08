@@ -33,7 +33,7 @@ const t = useTranslations(getLocaleFromUrl(Astro.url));
 
 <figure class="case-figure dr">
   {caption && <figcaption>{typograph(caption)}</figcaption>}
-  <div class="dr__window">
+  <div class="dr__window" data-mockup>
     <div class="dr__frame" data-drug-report tabindex="0" aria-label={alt} data-lenis-prevent>
       <div class="dr__page" style={`width: ${data.width}px`}>
         {data.nodes.map((n) => <DrugReportNode node={n as any} data={data} dir={dir} wireframe={wireframe} />)}
