@@ -873,20 +873,6 @@
   color: var(--sky);
 }
 
-.sky .honest {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 11px;
-  --lh: 1.4;
-}
-
-.sky .honest svg {
-  flex-shrink: 0;
-  stroke: var(--good);
-}
-
 /* 3 · места */
 .sky .together {
   display: flex;
