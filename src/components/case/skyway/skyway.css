@@ -1203,16 +1203,31 @@
 }
 
 .sky .skip {
+  /* Не выше кнопки над ней (52px): «Пропустить» — кеглем кнопки, под ним подпись мельче. */
+  display: flex;
   width: 100%;
-  margin-top: 8px;
+  max-height: 52px;
+  margin-top: 6px;
+  padding: 4px 0;
+  flex-direction: column;
+  align-items: center;
   border: 0;
   background: none;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: var(--ink);
   cursor: pointer;
+}
+
+.sky .skip b {
+  font-size: 15px;
+  font-weight: 800;
+  --lh: 1.3;
+}
+
+.sky .skip small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  --lh: 1.4;
 }
 
 .sky .exitwarn {
