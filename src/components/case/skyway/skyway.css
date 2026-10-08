@@ -165,18 +165,6 @@
   --lh: 1.45;
 }
 
-.sky-pr em {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  background: var(--good-soft);
-  color: var(--good);
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 700;
-}
-
 .sky-sliderbar {
   display: flex;
   align-items: center;
@@ -236,6 +224,7 @@
 }
 
 .sky-shot {
+  position: relative;
   display: flex;
   flex: 0 0 312px;
   flex-direction: column;
@@ -1409,4 +1398,112 @@
 
 .sky .fine b {
   color: var(--good);
+}
+
+/* Точки на экранах: пульсируют; по наведению (и фокусу) — проблема и решение из описания под экраном. */
+.sky .hs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sky .hs-dot {
+  position: absolute;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  cursor: help;
+  pointer-events: auto;
+}
+
+.sky .hs-dot::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: sky-pulse 1.8s ease-out infinite;
+  z-index: -1;
+}
+
+@keyframes sky-pulse {
+  0% {
+    opacity: 0.6;
+    scale: 1;
+  }
+
+  100% {
+    opacity: 0;
+    scale: 2.6;
+  }
+}
+
+.sky .hs-dot:hover,
+.sky .hs-dot:focus-visible {
+  z-index: 3;
+  outline: none;
+}
+
+.sky .hs-tip {
+  position: absolute;
+  top: 14px;
+  left: -12px;
+  display: none;
+  width: 260px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--ink);
+  box-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.45);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 400;
+  --lh: 1.45;
+  text-align: left;
+  cursor: auto;
+}
+
+.sky .hs-dot--left .hs-tip {
+  right: -12px;
+  left: auto;
+}
+
+.sky .hs-dot:hover .hs-tip,
+.sky .hs-dot:focus .hs-tip {
+  display: grid;
+  gap: 8px;
+}
+
+.sky .hs-tip .lbl {
+  font-weight: 700;
+}
+
+.sky .hs-tip .pb {
+  color: rgb(255 255 255 / 0.72);
+}
+
+.sky .hs-tip .pb .lbl {
+  color: #ff8a73;
+}
+
+.sky .hs-tip .sl .lbl {
+  color: #5fd6a4;
+}
+
+.sky .hs-tip .no2 {
+  margin-right: 4px;
+  color: #ff8a73;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky .hs-dot::before {
+    animation: none;
+  }
 }

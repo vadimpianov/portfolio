@@ -346,6 +346,58 @@ function setup(el: HTMLElement) {
       }),
   );
 
+  /* ---------- точки на экранах: проблема и решение по наведению ---------- */
+  // Для каждого экрана — пункты описания под ним (по порядку) и элемент экрана, к которому ставим точку.
+  const HOTSPOTS: string[][] = [
+    ['[data-k=bagsw]', '.tag.w', '[data-k=follow]', '.tag.a', '.flight .alert', '.arr-day'],
+    ['[data-k=fares]', '[data-k=ftip]', '[data-k=f-go]'],
+    ['[data-k=together]', '.legend', '.exit', '.cabin .s.taken'],
+    ['[data-k=timer]', '[data-k=docf]', '.trip', '.fl.contact .chip', '.fine'],
+  ];
+  const dots: { shot: HTMLElement; phone: HTMLElement; sel: string; dot: HTMLElement }[] = [];
+  shots.forEach((shot, i) => {
+    const phone = shot.querySelector<HTMLElement>('.sky-phone')!;
+    const layer = document.createElement('div');
+    layer.className = 'hs';
+    shot.append(layer);
+    HOTSPOTS[i]!.forEach((sel, j) => {
+      const pair = c.screens[i]!.pairs[j]!;
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'hs-dot';
+      dot.setAttribute('aria-label', `${c.problem}${pair.no} ${pair.problem.replace(/<[^>]+>/g, '')}`);
+      dot.innerHTML = `<span class="hs-tip" role="tooltip"><span class="pb"><span class="lbl">${c.problem}</span><span class="no2">${pair.no}</span>${pair.problem}</span><span class="sl"><span class="lbl">${c.solution}</span>${pair.solution}</span></span>`;
+      layer.append(dot);
+      dots.push({ shot, phone, sel, dot });
+    });
+  });
+  // Точка — у правого верхнего угла своего элемента; если элемент сейчас не виден на экране телефона — скрыта.
+  function placeDots() {
+    for (const { shot, phone, sel, dot } of dots) {
+      const target = phone.querySelector<HTMLElement>(sel);
+      const s = shot.getBoundingClientRect();
+      const p = phone.getBoundingClientRect();
+      const r = target?.getBoundingClientRect();
+      const x = r ? r.right - 4 : 0;
+      const y = r ? r.top + 4 : 0;
+      const inside = !!r && r.width > 0 && x > p.left + 12 && x < p.right - 12 && y > p.top + 12 && y < p.bottom - 12;
+      dot.hidden = !inside;
+      if (!inside) continue;
+      dot.style.left = `${Math.round(x - s.left)}px`;
+      dot.style.top = `${Math.round(y - s.top)}px`;
+      // Подсказка — в сторону середины экрана, чтобы не уходила за край ленты.
+      dot.classList.toggle('hs-dot--left', x - s.left > s.width / 2);
+    }
+  }
+  let placing = 0;
+  const schedule = () => {
+    cancelAnimationFrame(placing);
+    placing = requestAnimationFrame(placeDots);
+  };
+  new MutationObserver(schedule).observe(track, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  new ResizeObserver(schedule).observe(track);
+  document.fonts?.ready.then(schedule);
+
   function renderAll() {
     renderFares();
     renderSeats();
@@ -354,4 +406,5 @@ function setup(el: HTMLElement) {
   renderFlights();
   renderAll();
   updateSlider();
+  schedule();
 }
