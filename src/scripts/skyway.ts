@@ -36,7 +36,7 @@ function setup(el: HTMLElement) {
 
   /* ---------- 1. выдача ---------- */
   $('dates').innerHTML = c.days
-    .map(([w, d, p, min, on]) => `<div class="day${min ? ' min' : ''}${on ? ' on' : ''}" data-min="${c.dayMin}"><small>${w}</small><b>${d}</b><span>${p}</span></div>`)
+    .map(([w, d, p, min, on]) => `<div class="day${min ? ' min' : ''}${on ? ' on' : ''}"><small>${w}</small><b>${d}</b><span>${p}</span></div>`)
     .join('');
   const days = [...el.querySelectorAll<HTMLElement>('.day')];
   days.forEach((d) => (d.onclick = () => days.forEach((x) => x.classList.toggle('on', x === d))));
@@ -376,14 +376,16 @@ function setup(el: HTMLElement) {
       dot.className = 'hs-dot';
       dot.setAttribute('aria-label', `${c.problem}${pair.no}`);
       const html = `<span class="hs-pb">${c.problem}${pair.no}</span><span class="hs-text">${clean(pair.problem)}</span><span class="hs-sl">${solutionLabel}</span><span class="hs-text">${clean(pair.solution)}</span>`;
-      // Левый верхний угол подсказки — у правого верхнего угла точки.
+      // Левый верхний угол подсказки — у правого верхнего угла точки. У последнего экрана (справа места нет) —
+      // над точкой: правый нижний угол подсказки — у правого верхнего угла точки.
+      const above = i === shots.length - 1;
       const show = () => {
         tip.innerHTML = html;
         tip.hidden = false;
         const d = dot.getBoundingClientRect();
         const box = el.getBoundingClientRect();
-        tip.style.left = `${Math.round(d.right - box.left)}px`;
-        tip.style.top = `${Math.round(d.top - box.top)}px`;
+        tip.style.left = `${Math.round(d.right - box.left - (above ? tip.offsetWidth : 0))}px`;
+        tip.style.top = `${Math.round(d.top - box.top - (above ? tip.offsetHeight : 0))}px`;
       };
       const hide = () => (tip.hidden = true);
       dot.addEventListener('pointerenter', show);

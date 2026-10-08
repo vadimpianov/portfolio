@@ -477,20 +477,6 @@
   color: var(--good);
 }
 
-.sky .day.min::after {
-  content: attr(data-min);
-  position: absolute;
-  top: -7px;
-  left: 50%;
-  padding: 1px 6px;
-  border-radius: 6px;
-  background: var(--good);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 800;
-  transform: translateX(-50%);
-}
-
 .sky .day.on {
   border-color: var(--ink);
   background: var(--ink);
