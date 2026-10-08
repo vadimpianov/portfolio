@@ -1401,7 +1401,11 @@
   color: var(--good);
 }
 
-/* Точки на экранах: пульсируют; по наведению (и фокусу) — проблема и решение из описания под экраном. */
+/* Точки на экранах: пульсируют; по наведению (и фокусу) — проблема и решение. */
+.sky {
+  position: relative;
+}
+
 .sky .hs {
   position: absolute;
   inset: 0;
@@ -1411,26 +1415,33 @@
 .sky .hs-dot {
   position: absolute;
   z-index: 2;
-  width: 16px;
-  height: 16px;
-  margin: -8px 0 0 -8px;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
   padding: 0;
-  border: 2px solid #fff;
+  border: 1px solid #fff;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
   cursor: help;
   pointer-events: auto;
+}
+
+/* Зона наведения больше самой точки. */
+.sky .hs-dot::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
 }
 
 .sky .hs-dot::before {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: -1px;
+  z-index: -1;
   border-radius: 50%;
   background: var(--accent);
   animation: sky-pulse 1.8s ease-out infinite;
-  z-index: -1;
 }
 
 @keyframes sky-pulse {
@@ -1445,62 +1456,45 @@
   }
 }
 
-.sky .hs-dot:hover,
 .sky .hs-dot:focus-visible {
-  z-index: 3;
-  outline: none;
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
 }
 
+/* Подсказка: всегда справа от точки — её левый верхний угол у правого верхнего угла точки.
+   Строки: «Проблема · 01», текст проблемы (белым), «Решение», текст решения. */
 .sky .hs-tip {
   position: absolute;
-  top: 14px;
-  left: -12px;
-  display: none;
-  width: 260px;
-  padding: 12px 14px;
+  z-index: 5;
+  display: grid;
+  gap: 4px;
+  width: 280px;
+  padding: 14px 16px;
   border-radius: 14px;
   background: var(--ink);
   box-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.45);
   color: #fff;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 14px;
   --lh: 1.45;
-  text-align: left;
-  cursor: auto;
+  pointer-events: none;
 }
 
-.sky .hs-dot--left .hs-tip {
-  right: -12px;
-  left: auto;
+.sky .hs-tip[hidden] {
+  display: none;
 }
 
-.sky .hs-dot:hover .hs-tip,
-.sky .hs-dot:focus .hs-tip {
-  display: grid;
-  gap: 8px;
-}
-
-.sky .hs-tip .lbl {
+.sky .hs-pb,
+.sky .hs-sl {
   font-weight: 700;
 }
 
-.sky .hs-tip .pb {
-  color: rgb(255 255 255 / 0.72);
-}
-
-.sky .hs-tip .pb .lbl {
+.sky .hs-pb {
   color: #ff8a73;
 }
 
-.sky .hs-tip .sl .lbl {
+.sky .hs-sl {
+  margin-top: 8px;
   color: #5fd6a4;
-}
-
-.sky .hs-tip .no2 {
-  margin-right: 4px;
-  color: #ff8a73;
-  font-size: 11px;
-  font-weight: 800;
 }
 
 @media (prefers-reduced-motion: reduce) {

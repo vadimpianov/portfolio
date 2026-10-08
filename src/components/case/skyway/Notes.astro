@@ -1,5 +1,5 @@
 ---
-/** Пояснения под экраном кейса Skyway: «Проблема · …» и «Решение · …». */
+/** Подпись под экраном кейса: заголовок экрана (пояснения «Проблема / Решение» — в подсказках точек на экране). */
 import type { SkyCopy } from './copy';
 
 interface Props {
@@ -12,19 +12,4 @@ const screen = c.screens[i]!;
 
 <div class="notes">
   <h3>{screen.title}</h3>
-  {
-    screen.pairs.map((p) => (
-      <div class="pair">
-        <div class="pb">
-          <span class="lbl">{c.problem}</span>
-          <span class="no2">{p.no}</span>
-          {p.problem}
-        </div>
-        <div class="sl">
-          <span class="lbl">{c.solution}</span>
-          {p.solution}
-        </div>
-      </div>
-    ))
-  }
 </div>

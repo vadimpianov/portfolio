@@ -324,10 +324,6 @@ function setup(el: HTMLElement) {
   const shots = [...track.children] as HTMLElement[];
   const step = () => shots[1]!.offsetLeft - shots[0]!.offsetLeft;
   function updateSlider() {
-    const i = Math.round(track.scrollLeft / step());
-    const visible = Math.max(1, Math.floor((track.clientWidth + 40) / step()));
-    const last = Math.min(shots.length, i + visible);
-    $('pos').textContent = c.pos(visible > 1 ? `${i + 1}–${last}` : String(i + 1), shots.length);
     $<HTMLButtonElement>('prev').disabled = track.scrollLeft <= 2;
     $<HTMLButtonElement>('next').disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
   }
@@ -354,6 +350,19 @@ function setup(el: HTMLElement) {
     ['[data-k=together]', '.legend', '.exit', '.cabin .s.taken'],
     ['[data-k=timer]', '[data-k=docf]', '.trip', '.fl.contact .chip', '.fine'],
   ];
+  // Текст подсказки: с заглавной буквы, без точки в конце.
+  const clean = (t: string) => {
+    const x = t.trim().replace(/\.$/, '');
+    const i = x.search(/\p{L}/u);
+    return i < 0 ? x : x.slice(0, i) + x[i]!.toUpperCase() + x.slice(i + 1);
+  };
+  const solutionLabel = c.solution.replace(/[\s·]+$/u, '');
+  // Одна подсказка на весь кейс — внутри .sky, а не в ленте экранов (лента обрезает всё, что за её краем).
+  const tip = document.createElement('div');
+  tip.className = 'hs-tip';
+  tip.setAttribute('role', 'tooltip');
+  tip.hidden = true;
+  el.append(tip);
   const dots: { shot: HTMLElement; phone: HTMLElement; sel: string; dot: HTMLElement }[] = [];
   shots.forEach((shot, i) => {
     const phone = shot.querySelector<HTMLElement>('.sky-phone')!;
@@ -365,12 +374,27 @@ function setup(el: HTMLElement) {
       const dot = document.createElement('button');
       dot.type = 'button';
       dot.className = 'hs-dot';
-      dot.setAttribute('aria-label', `${c.problem}${pair.no} ${pair.problem.replace(/<[^>]+>/g, '')}`);
-      dot.innerHTML = `<span class="hs-tip" role="tooltip"><span class="pb"><span class="lbl">${c.problem}</span><span class="no2">${pair.no}</span>${pair.problem}</span><span class="sl"><span class="lbl">${c.solution}</span>${pair.solution}</span></span>`;
+      dot.setAttribute('aria-label', `${c.problem}${pair.no}`);
+      const html = `<span class="hs-pb">${c.problem}${pair.no}</span><span class="hs-text">${clean(pair.problem)}</span><span class="hs-sl">${solutionLabel}</span><span class="hs-text">${clean(pair.solution)}</span>`;
+      // Левый верхний угол подсказки — у правого верхнего угла точки.
+      const show = () => {
+        tip.innerHTML = html;
+        tip.hidden = false;
+        const d = dot.getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        tip.style.left = `${Math.round(d.right - box.left)}px`;
+        tip.style.top = `${Math.round(d.top - box.top)}px`;
+      };
+      const hide = () => (tip.hidden = true);
+      dot.addEventListener('pointerenter', show);
+      dot.addEventListener('pointerleave', hide);
+      dot.addEventListener('focus', show);
+      dot.addEventListener('blur', hide);
       layer.append(dot);
       dots.push({ shot, phone, sel, dot });
     });
   });
+  track.addEventListener('scroll', () => (tip.hidden = true), { passive: true });
   // Точка — у правого верхнего угла своего элемента; если элемент сейчас не виден на экране телефона — скрыта.
   function placeDots() {
     for (const { shot, phone, sel, dot } of dots) {
@@ -385,8 +409,6 @@ function setup(el: HTMLElement) {
       if (!inside) continue;
       dot.style.left = `${Math.round(x - s.left)}px`;
       dot.style.top = `${Math.round(y - s.top)}px`;
-      // Подсказка — в сторону середины экрана, чтобы не уходила за край ленты.
-      dot.classList.toggle('hs-dot--left', x - s.left > s.width / 2);
     }
   }
   let placing = 0;
