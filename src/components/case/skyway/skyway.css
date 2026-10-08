@@ -78,25 +78,28 @@
 }
 
 /* Шапка: надпись, заголовок и под ним описание. */
+/* Кегли и отступы — как в остальных кейсах портфолио (токены `--case-*`, `--text-*` модалки):
+   надпись — как годы, заголовок — как заголовок кейса, описание — текст кейса, отступы между блоками — 80px. */
 .sky-intro {
-  margin-bottom: 36px;
+  margin-bottom: var(--case-tabs-section-gap);
 }
 
 .sky-eyebrow {
   /* Темнее акцента — контрастнее на светлом фоне. */
   color: #c2361a;
-  font-size: 13px;
+  font-size: var(--text-case-body);
   font-weight: 700;
-  letter-spacing: 0.12em;
+  --lh: var(--leading-body);
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .case .case__body .sky .sky-h1 {
-  margin-top: 8px;
-  font-size: 44px;
-  font-weight: 800;
-  --lh: 1.1;
-  letter-spacing: -0.03em;
+  margin-top: var(--case-hero-gap);
+  font-size: round(min(var(--text-display), 11cqi), 1px);
+  font-weight: 600;
+  --lh: var(--leading-display);
+  letter-spacing: var(--tracking-display);
 }
 
 .case .case__body .sky .sky-h2 {
@@ -107,10 +110,10 @@
 }
 
 .case .case__body .sky .sky-lead {
-  margin-top: 16px;
-  font-size: 16px;
+  margin-top: var(--case-lead-gap);
+  font-size: var(--text-case-body);
   color: var(--muted);
-  --lh: 1.6;
+  --lh: var(--leading-body);
 }
 
 /* Описание — как текст в кейсах (Flow): от 800px контейнера перетекает в две колонки, абзацы без пустой
@@ -155,9 +158,9 @@
 .sky-problems {
   display: grid;
   /* Не больше трёх в ряд; на узком — сколько поместится, карточки не растягиваются в одну колонку. */
-  grid-template-columns: repeat(auto-fill, minmax(max(220px, calc((100% - 24px) / 3)), 1fr));
-  gap: 12px;
-  margin-bottom: 64px;
+  grid-template-columns: repeat(auto-fill, minmax(max(220px, calc((100% - 2 * var(--case-col-gap)) / 3)), 1fr));
+  gap: var(--case-col-gap);
+  margin-bottom: var(--case-tabs-section-gap);
 }
 
 .sky-pr {
@@ -190,13 +193,15 @@
 .sky-pr b {
   display: block;
   margin: 4px 0 6px;
-  font-size: 16px;
+  font-size: var(--text-case-body);
+  font-weight: 600;
+  --lh: var(--leading-tight);
 }
 
 .case .case__body .sky .sky-pr p {
   color: var(--muted);
-  font-size: 15px;
-  --lh: 1.45;
+  font-size: var(--case-label-size);
+  --lh: var(--leading-lead);
 }
 
 /* Телефон — по две карточки в ряд, поля и текст плотнее. */
@@ -279,7 +284,8 @@
   flex: 0 0 360px;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  /* Подпись → экран — как подпись → картинка в кейсах. */
+  gap: var(--case-caption-gap);
   scroll-snap-align: start;
 }
 
@@ -303,8 +309,10 @@
 
 .case .case__body .sky .notes h3 {
   margin-bottom: 0;
-  font-size: 18px;
-  font-weight: 800;
+  /* Как подписи картинок в кейсах. */
+  font-size: var(--text-case-body);
+  font-weight: 500;
+  --lh: var(--leading-body);
 }
 
 .sky .notes .pair {

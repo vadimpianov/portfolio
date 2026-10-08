@@ -196,22 +196,24 @@ const Title = compact ? 'div' : 'h2';
 
   /* «Другие кейсы» внизу кейса: 3 плитки в ряд на всю ширину текста кейса; размеры — от ширины
      контейнера кейса (на 1728 — почти как на главной, на телефоне — мельче). */
+  /* Заголовок — как заголовки разделов в кейсах: --text-tile-title, вес 600, сверху 80px, до плиток 24px. */
   .roast--compact {
-    margin-top: 96px;
+    margin-top: var(--case-tabs-section-gap);
     padding: 0;
   }
 
   .roast--compact .roast__title {
     color: var(--color-text);
-    font-size: 24px;
+    font-size: var(--text-tile-title);
+    font-weight: 600;
     --lh: var(--leading-title);
     letter-spacing: var(--tracking-title);
   }
 
   .roast--compact .roast__list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: round(clamp(10px, 2cqi, 20px), 2px);
-    margin-top: 20px;
+    gap: var(--case-col-gap);
+    margin-top: var(--case-tabs-heading-text-gap);
   }
 
   .roast--compact .roast__item {
