@@ -20,7 +20,7 @@ export const ui = {
     // Первое слово заголовка по очереди переворачивается и меняется на эти (через «|»).
     'home.intro.flip': 'Senior UI/UX|Ведущий|Lead|Senior Product',
     'home.intro.lead':
-      'Проектирую архитектуру и ежедневно работаю над продуктовыми задачами, выстраиваю дизайн-процессы, принимаю участие в формировании фич и довожу решения до реализации. Использую ИИ как полноценный рабочий инструмент на всём пути — от идеи и исследования до дизайна, прототипирования и кода.',
+      'Проектирую архитектуру и ежедневно работаю над продуктовыми задачами, выстраиваю дизайн-процессы, принимаю участие в формировании фич и довожу решения до реализации. Использую ИИ как полноценный рабочий инструмент на всём пути — от идеи и исследования до дизайна, прототипирования и кода',
     'home.intro.chip.1': 'Продуктовый дизайн',
     'home.intro.chip.2': 'Построение процессов вокруг дизайна',
     'home.intro.chip.3': 'Внедрение ИИ',
@@ -71,9 +71,9 @@ export const ui = {
     'about.p3':
       'Конечно, всегда приятно получить точное техническое задание со всеми артефактами, но в целом для меня это не критично. **У меня хорошие аналитические навыки**, и я всегда легко нахожу всю нужную информацию.',
     'about.p4':
-      '**Я использую аналитику и пользовательские тесты**, которые провожу сам, напрямую общаясь с пользователями. А если в компании этих инструментов ещё нет, я изучу лучшие практики рынка, **применю LEAN-методологию и запущу MVP**, чтобы проверить гипотезы. Особенно это актуально для стартапов.',
+      '**Я использую аналитику и пользовательские тесты**, которые провожу сам, напрямую общаясь с пользователями. А если в компании этих инструментов ещё нет, я изучу лучшие практики рынка, **применю LEAN-методологию и запущу MVP**, чтобы проверить гипотезы. Особенно это актуально для стартапов',
     'tiles.placeholder.lead':
-      'Короткое описание кейса: какая была задача, что я сделал и к какому результату это привело.',
+      'Короткое описание кейса: какая была задача, что я сделал и к какому результату это привело',
   },
   en: {
     'site.title': 'Vadim Pianov',
@@ -86,7 +86,7 @@ export const ui = {
     'home.intro.title': 'Product designer and much more',
     'home.intro.flip': 'Senior UI/UX|Lead|Senior Product',
     'home.intro.lead':
-      'I design architecture and work on product tasks every day, build design processes, help shape features and see solutions through to implementation. I use AI as a full-fledged working tool along the whole way — from idea and research to design, prototyping and code.',
+      'I design architecture and work on product tasks every day, build design processes, help shape features and see solutions through to implementation. I use AI as a full-fledged working tool along the whole way — from idea and research to design, prototyping and code',
     'home.intro.chip.1': 'Product design',
     'home.intro.chip.2': 'Building processes around design',
     'home.intro.chip.3': 'AI adoption',
@@ -137,8 +137,8 @@ export const ui = {
     'about.p3':
       'Of course, it’s always nice to get a precise brief with all the artefacts, but in general it’s not critical for me. **I have strong analytical skills** and can always find the information I need.',
     'about.p4':
-      '**I use analytics and user tests**, which I run myself by talking directly to users. And if the company doesn’t have these tools yet, I study the market’s best practices, **apply the LEAN methodology and launch an MVP** to test hypotheses. This is especially relevant for startups.',
-    'tiles.placeholder.lead': 'A short case summary: what the problem was, what I did and what it led to.',
+      '**I use analytics and user tests**, which I run myself by talking directly to users. And if the company doesn’t have these tools yet, I study the market’s best practices, **apply the LEAN methodology and launch an MVP** to test hypotheses. This is especially relevant for startups',
+    'tiles.placeholder.lead': 'A short case summary: what the problem was, what I did and what it led to',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 

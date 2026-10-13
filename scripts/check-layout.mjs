@@ -5,7 +5,7 @@
 // Ошибки:
 //  - горизонтальная прокрутка страницы или панели кейса (что-то вылезло за край);
 //  - правая колонка двухколоночного текста (Flow, описание прожарки) начинается с 1–2 слов — хвоста абзаца или пункта;
-//  - точка или «;» в конце заголовка, пункта списка, подписи, плашки;
+//  - точка или «;» в конце заголовка, пункта списка, подписи, плашки, последнего абзаца блока (дальше нет текста);
 //  - подпись столбика воронки (Metrics) длиннее 2 строк;
 //  - дробный кегль или нечётный / дробный межстрочный интервал.
 import { execSync } from 'node:child_process';
@@ -102,6 +102,20 @@ const audit = (abbrSrc) => {
     const t = (el.textContent ?? '').trim();
     if (!t || t.length > 400) continue;
     if (/[.;]$/.test(t) && !/\.\.\.$|…$/.test(t) && !abbr.test(t)) out.push(`точка/«;» в конце: ${name(el)}`);
+  }
+
+  // 3б. Точка в конце абзаца, после которого нет текста (конец блока, дальше картинка или схема).
+  for (const el of scope.querySelectorAll('p')) {
+    if (!visible(el) || el.closest('svg, button, [data-mockup]')) continue;
+    const t = (el.textContent ?? '').trim();
+    if (!t.endsWith('.') || /\.\.\.$|…$/.test(t) || abbr.test(t)) continue;
+    let next = el.nextElementSibling;
+    while (next && !visible(next)) next = next.nextElementSibling;
+    // Обёртка (колонки и т. п.) — смотрим на её первый элемент: текст внутри — тоже текст после абзаца.
+    let first = next;
+    while (first && first.tagName === 'DIV' && first.firstElementChild) first = first.firstElementChild;
+    const textAfter = first && /^(P|UL|OL|BLOCKQUOTE|H[1-6]|DL)$/.test(first.tagName);
+    if (!textAfter) out.push(`точка в конце последнего абзаца: ${name(el)}`);
   }
 
   // 4. Подписи воронки — не длиннее 2 строк.
@@ -215,7 +229,7 @@ if (process.argv.includes('--self-test')) {
     box.innerHTML = `<h2>Заголовок с точкой.</h2>
       <div style="columns:2;column-gap:20px;width:600px;font:16px/24px sans-serif">
         <p>${'слово '.repeat(10)}<span style="display:block;break-before:column">хвост</span></p><p>Следующий абзац начинается во второй колонке</p></div>
-      <p style="font-size:15.5px">дробный кегль</p><p style="font-size:16px;line-height:23px">нечётный интервал</p><p style="padding-top:7px">нечётный отступ</p><p style="margin-left:-60px">текст за полем</p>
+      <div><p>Последний абзац с точкой.</p></div><p style="font-size:15.5px">дробный кегль</p><p style="font-size:16px;line-height:23px">нечётный интервал</p><p style="padding-top:7px">нечётный отступ</p><p style="margin-left:-60px">текст за полем</p>
       <div style="width:4000px;height:2px"></div>`;
     document.body.append(box);
   });
@@ -225,6 +239,7 @@ if (process.argv.includes('--self-test')) {
     'шире экрана',
     'правая колонка',
     'точка',
+    'последнего абзаца',
     'дробный кегль',
     'интервал',
     'отступ',
