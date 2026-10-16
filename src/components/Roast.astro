@@ -1,7 +1,7 @@
 ---
 /**
- * Раздел «Отраслевая прожарка» под «Обо мне»: небольшие плитки кейсов, все четыре — в один ряд на ширину экрана
- * (на телефоне — 2 × 2). Пока кейсов нет — плитки-заготовки с меткой «Кейс в разработке».
+ * Раздел «Отраслевая прожарка» под «Обо мне»: готовые кейсы — широкими плитками (3:2) в ряд на ширину между полями
+ * (на телефоне — одна под другой). Плитки-заготовки («Кейс в разработке», без `slug`) пока не показываем.
  */
 import { getLocaleFromUrl, localePath, useTranslations } from '../i18n/utils';
 import SkywayArt from './roast/SkywayArt.astro';
@@ -21,8 +21,6 @@ const t = useTranslations(locale);
 const ITEMS: { n: string; slug?: string; title?: string; lead?: string; art?: typeof SkywayArt; accent?: string }[] = [
   { n: '01', slug: 'banking', title: t('roast.banking'), art: BankingArt, accent: '#5b5bd6' },
   { n: '02', slug: 'skyway', title: t('roast.skyway'), art: SkywayArt, accent: '#ff5b36' },
-  { n: '03' },
-  { n: '04' },
 ];
 const items = ITEMS.filter((item) => !item.slug || item.slug !== current);
 const titleId = compact ? 'roast-others-title' : 'roast-title';
@@ -76,10 +74,10 @@ const Title = compact ? 'div' : 'h2';
     letter-spacing: var(--tracking-display);
   }
 
-  /* Все четыре плитки — в ряд на ширину между полями; на телефоне — 2 × 2. */
+  /* Плитки — широкие (3:2) на ширину между полями: от 768px две в ряд, на телефоне — одна под другой. */
   .roast__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 20px;
     margin: round(clamp(24px, 16px + 1.5vw, 48px), 2px) 0 0;
     padding: 0;
@@ -88,9 +86,10 @@ const Title = compact ? 'div' : 'h2';
 
   @media (min-width: 768px) {
     .roast__list {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: round(clamp(16px, 8px + 1vw, 24px), 2px);
     }
+
   }
 
   /* Плитка — тёмная карточка, как контакты на «Обо мне». */
@@ -105,6 +104,11 @@ const Title = compact ? 'div' : 'h2';
     background: rgb(20 20 20 / 0.92);
     box-shadow: 0 12px 32px rgb(0 0 0 / 0.16);
     color: #fff;
+  }
+
+  /* Широкая плитка главной (холст картинки 600 × 400); в «Других кейсах» — 3:4. */
+  .roast:not(.roast--compact) .roast__item {
+    aspect-ratio: 3 / 2;
   }
 
   /* Готовый кейс: ссылка растянута на всю плитку; на наведении плитка приподнимается. */

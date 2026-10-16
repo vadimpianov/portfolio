@@ -4,7 +4,8 @@
  * 3–4 цвета палитры кейса, крупные простые формы, горизонт на той же высоте, под ним — подложка для текста,
  * зерно поверх и одна живая деталь на наведении. Сюжет — «город из денег»: столбики монет разной высоты
  * стоят на горизонте, как кварталы; на наведении верхние монеты по очереди немного подпрыгивают.
- * Холст 300 × 400 (3:4), как сама плитка.
+ * Холст 600 × 400 (`viewBox -150 0 600 400`): в центре — сюжет на 300 × 400 (3:4, плитка «Других кейсов» видит
+ * только его), по бокам «город» продолжен для широкой плитки на главной (3:2).
  */
 const uid = 'bnk-art';
 const GROUND = 300; // линия горизонта — низ столбиков
@@ -12,13 +13,17 @@ const COIN = 10; // толщина монеты
 const RY = 6; // высота эллипса верхней монеты
 
 type Stack = { x: number; w: number; n: number; fill: string; edge: string; top: string };
-// Слева — низкие (там текст плитки не мешает, но небо остаётся свободным), справа и по центру — выше.
+// Центр (видно в плитке 3:4): слева низкие, по центру и справа выше. Крайние — только в широкой плитке.
 const stacks: Stack[] = [
+  { x: -96, w: 46, n: 3, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
+  { x: -40, w: 50, n: 7, fill: '#3f3fb0', edge: '#30308f', top: '#5656c4' },
   { x: 54, w: 46, n: 4, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
   { x: 108, w: 54, n: 9, fill: '#5b5bd6', edge: '#4747c2', top: '#7a7ae0' },
   { x: 172, w: 60, n: 16, fill: '#ffc23d', edge: '#e5a11a', top: '#ffd877' },
   { x: 236, w: 54, n: 11, fill: '#3f3fb0', edge: '#30308f', top: '#5656c4' },
   { x: 288, w: 46, n: 6, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
+  { x: 342, w: 50, n: 8, fill: '#5b5bd6', edge: '#4747c2', top: '#7a7ae0' },
+  { x: 398, w: 46, n: 4, fill: '#a9a8f0', edge: '#8f8ee6', top: '#c4c3f6' },
 ];
 
 // Столбик: тело с гранями монет и верхняя монета отдельной группой (она подпрыгивает на наведении).
@@ -32,11 +37,11 @@ const stack = ({ x, w, n, fill, edge, top }: Stack, i: number) => {
   const coin = `<g class="bnk-art__coin" style="animation-delay: ${i * 0.12}s"><ellipse cx="${x}" cy="${b}" rx="${w / 2}" ry="${RY}" fill="${fill}" stroke="${edge}" stroke-width="2" /><rect x="${l}" y="${y}" width="${w}" height="${COIN}" fill="${fill}" /><ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${RY}" fill="${top}" stroke="${edge}" stroke-width="2" /></g>`;
   return body + coin;
 };
-const gold = stacks[2]!;
+const gold = stacks[4]!;
 const goldTop = GROUND - gold.n * COIN;
 ---
 
-<svg class="roast-art" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<svg class="roast-art" viewBox="-150 0 600 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id={`${uid}-sky`} x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#f1f0ff" />
@@ -50,7 +55,7 @@ const goldTop = GROUND - gold.n * COIN;
   </defs>
 
   <!-- небо -->
-  <rect width="300" height="400" fill={`url(#${uid}-sky)`} />
+  <rect x="-150" width="600" height="400" fill={`url(#${uid}-sky)`} />
 
   <!-- тёплый ореол за золотым столбиком -->
   <circle cx={gold.x} cy={goldTop + 30} r="92" fill="#ffe3a3" opacity="0.6" />
@@ -59,10 +64,10 @@ const goldTop = GROUND - gold.n * COIN;
   <g set:html={stacks.map((st, i) => stack(st, i)).join('')} />
 
   <!-- подложка под текст плитки -->
-  <path d="M0 300 C 60 292, 120 298, 170 304 S 260 302, 300 296 V 400 H 0 Z" fill="#eef0f6" />
+  <path d="M-150 298 C -100 292, -50 296, 0 300 C 60 292, 120 298, 170 304 S 260 302, 300 296 C 350 290, 400 296, 450 300 V 400 H -150 Z" fill="#eef0f6" />
 
   <!-- зерно -->
-  <rect width="300" height="400" fill="#fff" filter={`url(#${uid}-grain)`} opacity="0.22" style="mix-blend-mode: multiply" />
+  <rect x="-150" width="600" height="400" fill="#fff" filter={`url(#${uid}-grain)`} opacity="0.22" style="mix-blend-mode: multiply" />
 </svg>
 
 <style>
