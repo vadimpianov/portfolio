@@ -37,7 +37,7 @@ export const ui = {
     'case.design': 'Дизайн',
     'case.compare': 'Сравнить вайрфрейм и дизайн',
     'tiles.1.title': 'Альфа Банк',
-    'tiles.2.title': 'Betting app',
+    'tiles.2.title': 'iGaming',
     'tiles.2.lead':
       'Выстроил дизайн-процесс и пересобрал ключевые revenue-сценарии — повысил конверсию в завершённую регистрацию и первое пополнение на 48% и 44% соответственно',
     'tiles.3.title': 'Quantori',
@@ -103,7 +103,7 @@ export const ui = {
     'case.design': 'Design',
     'case.compare': 'Compare wireframe and design',
     'tiles.1.title': 'Alfa-Bank',
-    'tiles.2.title': 'Betting app',
+    'tiles.2.title': 'iGaming',
     'tiles.2.lead':
       'Built the design process and reworked the key revenue flows — lifting conversion to completed registration and first deposit by 48% and 44% respectively',
     'tiles.3.title': 'Quantori',
