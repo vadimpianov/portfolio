@@ -81,3 +81,4 @@
 
 ### 2026-10-28 — Betting app → iGaming
 - Название кейса на плитке главной (`tiles.2.title`, RU и EN): «Betting app» → «iGaming»; начало `description` кейса `betting.mdx` (RU и EN) — «iGaming — …»; резюме: `design/cv/cv-ru.html` → пересобран PDF (Chromium `page.pdf` A4 + `fill-bg.py`) → `public/cv/Pianov_Vadim_CV.pdf` и `design/cv/Pianov_Vadim_CV_ru.pdf`. Слаг `betting`, теги «Беттинг/Betting» и названия компонентов не менялись.
+- 2026-10-29: в резюме «iGaming» → «iGaming App» (`design/cv/cv-ru.html`, PDF пересобран тем же способом). На плитке сайта — по-прежнему «iGaming».
