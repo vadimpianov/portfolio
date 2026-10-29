@@ -184,10 +184,10 @@ pnpm deploy:yandex
 - `src/content/{ru,en}/cases/*.mdx` — кейсы: `betting`, `metr-kvadratny`, `quantori` (продуктовые), `banking`, `skyway` (прожарка; общая часть экранов — `src/scripts/roast-frame.ts`)
 - `src/scripts/` — `motion.ts` (Lenis + GSAP, `onPage()`), скрипты кейсов и графиков
 - `src/utils/asset.ts` — ссылки на картинки с меткой версии
-- `design/` — исходники картинок и сборочные скрипты, `design/cv/` — резюме
+- `design/` — исходники картинок и сборочные скрипты, `design/cv/` — резюме (`cv-ru.html`, `cv-en.html` → PDF в `public/cv/`)
 - `site` в `astro.config.mjs` — заглушка, заменить на реальный домен
 
-Задеплоено (2026-10-29, последний — в CV «iGaming App»; + зеркало Яндекс): https://vadimpianov.pages.dev — `/ru/`, `/en/` отдают 200, `/` редиректит (302) по cookie/стране.
+Задеплоено (2026-10-29, последний — английское резюме, «CV» на языке страницы; + зеркало Яндекс): https://vadimpianov.pages.dev — `/ru/`, `/en/` отдают 200, `/` редиректит (302) по cookie/стране.
 
 ## Следующий шаг
 

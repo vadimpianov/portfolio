@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Vadim Pianov — CV</title>
+<style>
+  @font-face { font-family: Onest; src: url(onest-cyrillic-wght-normal.woff2) format('woff2'); font-weight: 100 900; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: Onest; src: url(onest-latin-wght-normal.woff2) format('woff2'); font-weight: 100 900; }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --y: #f8e84a; --ink: #1c1c1c; --muted: #5f5f5f; --line: #e6e6e6; --blue: #2f5fe0; }
+  html, body { background: var(--y); }
+  body { font-family: Onest, sans-serif; color: var(--ink); font-size: 7.7pt; line-height: 1.42; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: var(--blue); text-decoration: none; }
+  .page { width: 210mm; height: 297mm; padding: 8mm; display: grid; grid-template-columns: 56mm 1fr; gap: 5mm; overflow: hidden; }
+
+  /* Левая колонка — карточки */
+  aside { display: flex; flex-direction: column; gap: 3mm; }
+  .card { background: #fff; padding: 4mm; }
+  .card h3 { font-size: 9.4pt; font-weight: 700; margin-bottom: 2mm; }
+  .photo { width: 26mm; height: 26mm; border-radius: 50%; background: var(--ink); overflow: hidden; display: grid; place-items: end center; }
+  .photo img { width: 104%; display: block; }
+  .name { margin-top: 3mm; font-size: 13pt; font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; }
+  .title { margin-top: 1.6mm; font-size: 8.2pt; }
+  .title mark { background: var(--ink); color: var(--y); padding: 0 1mm; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .facts { list-style: none; margin-top: 2.4mm; display: grid; gap: 1mm; }
+  .facts li { position: relative; padding-left: 3.2mm; }
+  .facts li::before { content: ''; position: absolute; left: 0.4mm; top: calc(0.71em - 0.6mm); width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--ink); }
+  .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6mm; margin-bottom: 2mm; }
+  .thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: top; background: #f3f1ea; display: block; }
+  .links { display: grid; gap: 1mm; }
+  .phone { font-size: 9pt; font-weight: 700; margin-bottom: 1mm; }
+  .chips { display: flex; flex-wrap: wrap; gap: 1.3mm; }
+  /* Навыки — строками по два чипса, пока помещаются, дальше по одному */
+  .chips--rows { flex-direction: column; align-items: flex-start; }
+  .chips--rows > div { display: flex; gap: 1.3mm; }
+  .chips span { background: var(--ink); color: var(--y); padding: 0.6mm 1.7mm; font-size: 6.9pt; white-space: nowrap; }
+
+  /* Правая колонка */
+  main { display: flex; flex-direction: column; gap: 3mm; }
+  .about h2, .exp > h2 { font-size: 12pt; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 1.6mm; }
+  .about p { font-size: 8pt; }
+  .exp { background: #fff; padding: 4mm 5mm; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+  .job { padding: 2.3mm 0; border-top: 1px solid var(--line); }
+  .job:first-of-type { border-top: 0; padding-top: 0; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 3mm; }
+  .co { display: flex; align-items: center; gap: 2mm; height: 5mm; }
+  .co img { height: 4.2mm; width: auto; display: block; }
+  .co b { font-size: 9.6pt; font-weight: 800; }
+  .date { font-size: 7pt; color: var(--muted); white-space: nowrap; }
+  .role { margin-top: 0.8mm; font-size: 8.6pt; font-weight: 700; }
+  .job p, .early p { margin-top: 1mm; padding-left: 3mm; }
+  .job p b { font-weight: 700; }
+  .early { padding-top: 2.3mm; border-top: 1px solid var(--line); }
+  .early .role { margin-top: 0; }
+</style>
+</head>
+<body>
+<section class="page">
+  <aside>
+    <div class="card">
+      <div class="photo"><img src="../../public/images/portrait-600.webp" alt="" /></div>
+      <div class="name">Vadim Pianov</div>
+      <p class="title"><mark>Senior Product Designer and Team Lead</mark> — I design complex interfaces from idea to code and build processes around design</p>
+      <ul class="facts">
+        <li>14 years in product design</li>
+        <li>Banking, biotech, real estate, carsharing, maps, iGaming</li>
+        <li>I use AI all the way through</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Portfolio</h3>
+      <div class="thumbs">
+        <img src="../../public/images/cases/betting-tile-600.webp" alt="" />
+        <img src="../../public/images/cases/quantori-tile-600.webp" alt="" />
+        <img src="../../public/images/cases/metr-kvadratny-600.webp" alt="" />
+      </div>
+      <div class="links">
+        <a href="https://vadimpianov.pages.dev/en/">Portfolio ↗</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Contacts</h3>
+      <div class="phone">+7 916 294-65-26</div>
+      <div class="links">
+        <a href="https://t.me/V_PIANOV">Telegram @V_PIANOV</a>
+        <a href="https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA">MAX</a>
+      </div>
+    </div>
+
+    <div class="card" style="flex: 1">
+      <h3>Skills</h3>
+      <div class="chips chips--rows">
+        <div><span>Product design</span><span>UX/UI</span></div>
+        <div><span>Design processes</span><span>English B2</span></div>
+        <div><span>Design systems</span><span>Hypotheses &amp; MVP</span></div>
+        <div><span>Prototyping</span><span>AI adoption</span></div>
+        <div><span>Complex B2B interfaces</span><span>Figma</span></div>
+        <div><span>Mobile apps</span><span>User flow</span></div>
+        <div><span>Data visualization</span><span>Analytics</span></div>
+        <div><span>Usability testing</span><span>Legacy</span></div>
+        <div><span>Team management</span><span>Interviews</span></div>
+        <div><span>Competitor analysis</span></div>
+        <div><span>Product sessions</span></div>
+        <div><span>Mentoring</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="about">
+      <h2>About me</h2>
+      <p>Product designer with 14 years of experience, from agencies and startups to market leaders — Alfa‑Bank, MAPS.ME, BelkaCar. I design architecture and work on product tasks every day, help shape features and see solutions through to implementation. In recent years I have led design teams and built processes around design. Incomplete briefs don’t scare me: I find the data myself, run interviews and tests, and validate hypotheses through MVPs.</p>
+    </div>
+
+    <div class="exp">
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/alfa-bank.svg" alt="Alfa-Bank" /></div><span class="date">2024 — present</span></div>
+        <div class="role">Senior Product Designer</div>
+        <p><b>What I do:</b> product design of banking services at one of Russia’s largest private banks — from research and user flows to mockups in the bank’s design system and support during development.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><b>iGaming App</b></div><span class="date">2023 — 2024</span></div>
+        <div class="role">Lead Product Designer</div>
+        <p><b>What I did:</b> set up the design process and rebuilt the key revenue flows of a betting company’s mobile app: merged registration and identity verification into one step, moved the platforms to a single UI, designed deposits and modals for every case. Worked with legacy and stakeholders, mentored designers.</p>
+        <p><b>Results:</b> conversion to completed registration <b>+48%</b>, to first deposit <b>+44%</b>; registration takes under 2 minutes instead of 3+.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/quantori.svg" alt="Quantori" /></div><span class="date">2022 — 2023</span></div>
+        <div class="role">Senior Product Designer</div>
+        <p><b>What I did:</b> improved the experience of a big data platform on drug development for pharma analysts and investors. Interviewed 12 analysts, created a design system, redesigned charts, tables, search, favorites, collections and alerts.</p>
+        <p><b>Results:</b> uninterrupted work time grew from 27 to <b>41 minutes</b>, analysts find the right metric <b>3&nbsp;times</b> faster, SUS rose from 52 to <b>81</b>, empty search results — <b>9%</b> instead of 38%. After the redesign, license sales grew by <b>27.5%</b>.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/m2.svg" alt="Metr Kvadratny" /></div><span class="date">2020 — 2022</span></div>
+        <div class="role">Senior Product Designer, Team Lead of 3 designers</div>
+        <p><b>What I did:</b> brought five real estate services into one ecosystem on iOS and Android: home search, mortgage, deal and renovation. Built the end-to-end user journey and communication model, designed about 100 search screens, tested hypotheses and planned the roadmap.</p>
+        <p><b>Results:</b> MVP in <b>4 months</b>, mortgage form <b>40%</b> shorter, retention <b>+27%</b>, MVP scope 35% smaller; 36,400+ MAU, 4.78 rating in the App Store.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/mapsme.svg" alt="MAPS.ME" /><b>×</b><img src="../../public/logos/parity.svg" alt="Parity" /></div><span class="date">2019 — 2020</span></div>
+        <div class="role">Senior Product Designer, Team Lead</div>
+        <p><b>What I did:</b> led the design of Parity, a crypto service inside MAPS.ME — secure storage and real-time money transfers worldwide. Created the brand from scratch, researched competitors and the market, launched the website and apps.</p>
+        <p><b>Results:</b> app rating <b>4.7</b> in the App Store and 4.4 in Google Play.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/belkacar.svg" alt="BelkaCar" /></div><span class="date">2018 — 2019</span></div>
+        <div class="role">Senior Product Designer</div>
+        <p><b>What I did:</b> redesigned the website and apps of the second-largest carsharing service based on support feedback and UX test results, maintained documentation for development.</p>
+        <p><b>Results:</b> rating <b>4.6</b> in the App Store and 4.0 in Google Play.</p>
+      </div>
+
+      <div class="early">
+        <div class="head"><div class="role">Early experience</div><span class="date">2012 — 2018</span></div>
+        <p><b>Revo Technologies</b> — installment flows on partner websites, from choosing a product to payment; <b>Hyperboloid Agency</b> — research-based strategy and design of client products; <b>Liga Stavok</b> — designed the mobile app of Russia’s No. 1 bookmaker; <b>LEXION development</b> — designed the website of a property developer</p>
+      </div>
+    </div>
+  </main>
+</section>
+<script>
+  // No hanging short words: after 1–2-letter words and short function words — a non-breaking space, before a dash too
+  const SHORT = /(^|[\s(“])((?:[A-Za-z]{1,2})|the|and|for|but|nor|via|per|its|our) (?=\S)/g;
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+    let t = n.nodeValue;
+    for (let i = 0; i < 2; i++) t = t.replace(SHORT, '$1$2\u00a0');
+    n.nodeValue = t.replace(/ ([—–])/g, '\u00a0$1');
+  }
+</script>
+</body>
+</html>

@@ -7,8 +7,10 @@
 import { asset } from '../utils/asset';
 import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 
-const t = useTranslations(getLocaleFromUrl(Astro.url));
-const CV = asset('/cv/Pianov_Vadim_CV.pdf');
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+// Резюме на языке страницы: исходники — `design/cv/cv-ru.html` и `cv-en.html`.
+const CV = asset(locale === 'en' ? '/cv/Pianov_Vadim_CV_en.pdf' : '/cv/Pianov_Vadim_CV.pdf');
 const CONTACTS = [
   { text: '+7 916 294-65-26', href: 'tel:+79162946526' },
   { text: 'Telegram', href: 'https://t.me/V_PIANOV', external: true },
