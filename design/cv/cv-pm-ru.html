@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Вадим Пьянов — CV Product Manager</title>
+<style>
+  @font-face { font-family: Onest; src: url(onest-cyrillic-wght-normal.woff2) format('woff2'); font-weight: 100 900; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: Onest; src: url(onest-latin-wght-normal.woff2) format('woff2'); font-weight: 100 900; }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --y: #f8e84a; --ink: #1c1c1c; --muted: #5f5f5f; --line: #e6e6e6; --blue: #2f5fe0; }
+  html, body { background: var(--y); }
+  body { font-family: Onest, sans-serif; color: var(--ink); font-size: 7.7pt; line-height: 1.42; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: var(--blue); text-decoration: none; }
+  .page { width: 210mm; height: 297mm; padding: 8mm; display: grid; grid-template-columns: 56mm 1fr; gap: 5mm; overflow: hidden; }
+
+  /* Левая колонка — карточки */
+  aside { display: flex; flex-direction: column; gap: 3mm; }
+  .card { background: #fff; padding: 4mm; }
+  .card h3 { font-size: 9.4pt; font-weight: 700; margin-bottom: 2mm; }
+  .photo { width: 26mm; height: 26mm; border-radius: 50%; background: var(--ink); overflow: hidden; display: grid; place-items: end center; }
+  .photo img { width: 104%; display: block; }
+  .name { margin-top: 3mm; font-size: 13pt; font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; }
+  .title { margin-top: 1.6mm; font-size: 8.2pt; }
+  .title mark { background: var(--ink); color: var(--y); padding: 0 1mm; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .facts { list-style: none; margin-top: 2.4mm; display: grid; gap: 1mm; }
+  .facts li { position: relative; padding-left: 3.2mm; }
+  .facts li::before { content: ''; position: absolute; left: 0.4mm; top: calc(0.71em - 0.6mm); width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--ink); }
+  .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6mm; margin-bottom: 2mm; }
+  .thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: top; background: #f3f1ea; display: block; }
+  .links { display: grid; gap: 1mm; }
+  .phone { font-size: 9pt; font-weight: 700; margin-bottom: 1mm; }
+  .chips { display: flex; flex-wrap: wrap; gap: 1.3mm; }
+  /* Навыки — строками по два чипса, пока помещаются, дальше по одному */
+  .chips--rows { flex-direction: column; align-items: flex-start; }
+  .chips--rows > div { display: flex; gap: 1.3mm; }
+  .chips span { background: var(--ink); color: var(--y); padding: 0.6mm 1.7mm; font-size: 6.9pt; white-space: nowrap; }
+
+  /* Правая колонка */
+  main { display: flex; flex-direction: column; gap: 3mm; }
+  .about h2, .exp > h2 { font-size: 12pt; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 1.6mm; }
+  .about p { font-size: 8pt; }
+  .exp { background: #fff; padding: 4mm 5mm; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+  .job { padding: 2.3mm 0; border-top: 1px solid var(--line); }
+  .job:first-of-type { border-top: 0; padding-top: 0; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 3mm; }
+  .co { display: flex; align-items: center; gap: 2mm; height: 5mm; }
+  .co img { height: 4.2mm; width: auto; display: block; }
+  .co b { font-size: 9.6pt; font-weight: 800; }
+  .date { font-size: 7pt; color: var(--muted); white-space: nowrap; }
+  .role { margin-top: 0.8mm; font-size: 8.6pt; font-weight: 700; }
+  .job p, .early p { margin-top: 1mm; padding-left: 3mm; }
+  .job p b { font-weight: 700; }
+  .early { padding-top: 2.3mm; border-top: 1px solid var(--line); }
+  .early .role { margin-top: 0; }
+</style>
+</head>
+<body>
+<section class="page">
+  <aside>
+    <div class="card">
+      <div class="photo"><img src="../../public/images/portrait-600.webp" alt="" /></div>
+      <div class="name">Вадим Пьянов</div>
+      <p class="title"><mark>Senior Product Manager</mark> — запускаю и развиваю B2C- и B2B-продукты на стыке исследований, данных и разработки</p>
+      <ul class="facts">
+        <li>14 лет в продуктовой разработке</li>
+        <li>Финтех, iGaming, B2B SaaS, недвижимость, каршеринг</li>
+        <li>Использую ИИ на всём пути — от анализа до прототипа в коде</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Портфолио</h3>
+      <div class="thumbs">
+        <img src="../../public/images/cases/betting-tile-600.webp" alt="" />
+        <img src="../../public/images/cases/quantori-tile-600.webp" alt="" />
+        <img src="../../public/images/cases/metr-kvadratny-600.webp" alt="" />
+      </div>
+      <div class="links">
+        <a href="https://vadimpianov.website.yandexcloud.net/ru/">Портфолио ↗</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Контакты</h3>
+      <div class="phone">+7 916 294-65-26</div>
+      <div class="links">
+        <a href="https://t.me/V_PIANOV">Telegram @V_PIANOV</a>
+        <a href="https://max.ru/u/f9LHodD0cOLIhe5GYj0MB-fjlALlV6RZFHeCcu9iy5OBGh9YrfBTmLg7MTA">MAX</a>
+      </div>
+    </div>
+
+    <div class="card" style="flex: 1">
+      <h3>Навыки</h3>
+      <div class="chips chips--rows">
+        <div><span>Продуктовая стратегия</span><span>Roadmap</span></div>
+        <div><span>Приоритизация бэклога</span><span>Jira</span></div>
+        <div><span>Discovery и CustDev</span><span>A/B-тесты</span></div>
+        <div><span>Продуктовые метрики</span><span>MVP</span></div>
+        <div><span>Гипотезы</span><span>Запуск продуктов</span></div>
+        <div><span>UX-исследования в B2B</span></div>
+        <div><span>Анализ рынка и конкурентов</span></div>
+        <div><span>Работа со стейкхолдерами</span></div>
+        <div><span>Требования и регуляторика</span></div>
+        <div><span>LLM и ИИ в процессах</span><span>Figma</span></div>
+        <div><span>Управление командой</span></div>
+        <div><span>Английский B2</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="about">
+      <h2>Обо мне</h2>
+      <p>Отвечаю за ключевые сценарии и их метрики в финтехе, iGaming, недвижимости и биотехе — от стартапов до Альфа‑Банка и MAPS.ME. Веду продукт от исследования до релиза: нахожу проблему в данных и интервью, формулирую гипотезы, режу scope до MVP, договариваюсь со стейкхолдерами и довожу до результата. Руководил командой из 3 дизайнеров, работал с разработкой до 15 человек.</p>
+    </div>
+
+    <div class="exp">
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/alfa-bank.svg" alt="Альфа-Банк" /></div><span class="date">2024 — настоящее время</span></div>
+        <div class="role">Senior продуктовый дизайнер · продукт «Аккредитивы» для крупного бизнеса</div>
+        <p><b>Что делаю:</b> цифровизация аккредитивов — безопасных расчётов крупного бизнеса, в том числе по внешнеторговым контрактам. Провожу UX-исследования с финдиректорами и казначеями клиентов, собираю требования с менеджеров, документарного бизнеса и юристов банка. Перевожу ручные операции в цифровые сценарии интернет-банка, приоритизирую бэклог и веду фичи от гипотезы до релиза.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><b>iGaming App</b></div><span class="date">2023 — 2024</span></div>
+        <div class="role">Ведущий продуктовый дизайнер</div>
+        <p><b>Что делал:</b> по итогам анализа конкурентов и смежных отраслей инициировал регистрацию через банковский ID — вход «в один клик» для 70% новых пользователей. Провёл 30+ встреч с бизнес-аналитиком, банками и ЦУПИС, выстроил процесс, где команда по каждой фиче согласует гипотезы и метрики успеха. Перевёл платформы на единый UI.</p>
+        <p><b>Что получилось:</b> за 3 месяца отток до идентификации ниже в <b>2,5&nbsp;раза</b>, конверсия в завершённую регистрацию <b>+48%</b> (+26,7 п. п.), в первое пополнение — <b>+44%</b> (+9,4 п. п.); регистрация занимает меньше 2 минут вместо 3+.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/quantori.svg" alt="Quantori" /></div><span class="date">2022 — 2023</span></div>
+        <div class="role">Senior продуктовый дизайнер · B2B SaaS для фармы</div>
+        <p><b>Что делал:</b> discovery — интервью с 12 аналитиками из 5 компаний-клиентов и аудит 150+ отчётов: 64% сессий заканчивались выгрузкой в Excel, треть поисковых запросов — пустой выдачей. За полгода перевёл все три типа отчётов и поиск на новую систему, эффект мерил по продуктовой аналитике до и после релиза.</p>
+        <p><b>Что получилось:</b> продажи лицензий <b>+27,5%</b>, непрерывная работа с продуктом — с 27 до <b>41&nbsp;минуты</b>, нужный показатель находят <b>в 3&nbsp;раза</b> быстрее, пустых выдач <b>9%</b> вместо 38%, SUS с 52 до <b>81</b>.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/m2.svg" alt="Метр квадратный" /></div><span class="date">2020 — 2022</span></div>
+        <div class="role">Senior продуктовый дизайнер, тимлид команды из 3 дизайнеров</div>
+        <p><b>Что делал:</b> объединил 5 бизнес-юнитов — поиск, ипотеку, сделку, ремонт и переезд — в мобильную экосистему с кросс-сценариями для роста LTV. Провёл 20+ продуктовых сессий со стейкхолдерами, сократил scope MVP на 35% и разблокировал команду разработки из 15 человек.</p>
+        <p><b>Что получилось:</b> MVP за <b>4&nbsp;месяца</b>; анкета ипотеки короче на 40% — completion rate <b>+18%</b>; time-to-action <b>−22%</b>; «Сохранённый поиск» — retention <b>+27%</b>; 36 400+ MAU, рейтинг 4,78 в App&nbsp;Store.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/mapsme.svg" alt="MAPS.ME" /><b>×</b><img src="../../public/logos/parity.svg" alt="Parity" /></div><span class="date">2019 — 2020</span></div>
+        <div class="role">Senior продуктовый дизайнер, тимлид</div>
+        <p><b>Что делал:</b> запустил с нуля криптосервис Parity внутри MAPS.ME — хранение и переводы денег по всему миру: исследовал рынок и конкурентов, создал бренд, вывел сайт и приложения. <b>Что получилось:</b> рейтинг <b>4,7</b> в App&nbsp;Store и 4,4 в Google&nbsp;Play.</p>
+      </div>
+
+      <div class="job">
+        <div class="head"><div class="co"><img src="../../public/logos/belkacar.svg" alt="BelkaCar" /></div><span class="date">2018 — 2019</span></div>
+        <div class="role">Senior продуктовый дизайнер</div>
+        <p><b>Что делал:</b> приоритизировал доработки сайта и приложений второго по величине каршеринга по обращениям в поддержку и UX-тестам. <b>Что получилось:</b> рейтинг <b>4,6</b> в App&nbsp;Store и 4,0 в Google&nbsp;Play.</p>
+      </div>
+
+      <div class="early">
+        <div class="head"><div class="role">Ранний опыт</div><span class="date">2012 — 2018</span></div>
+        <p><b>Revo Технологии</b> — сценарии рассрочки на сайтах партнёров; <b>Hyperboloid Agency</b> — стратегия клиентских продуктов; <b>Лига Ставок</b> — мобильное приложение букмекера №1 в России; <b>LEXION development</b> — сайт компании-девелопера</p>
+      </div>
+    </div>
+  </main>
+</section>
+<script>
+  // Без висячих предлогов: после слов из 1–2 букв и служебных из 3 — неразрывный пробел, перед тире — тоже
+  const SHORT = /(^|[\s(«])((?:[А-Яа-яЁёA-Za-z]{1,2})|для|без|над|под|при|про|или|что|как|чем|где|это) (?=\S)/g;
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+    let t = n.nodeValue;
+    for (let i = 0; i < 2; i++) t = t.replace(SHORT, '$1$2\u00a0');
+    n.nodeValue = t.replace(/ ([—–])/g, '\u00a0$1');
+  }
+</script>
+</body>
+</html>

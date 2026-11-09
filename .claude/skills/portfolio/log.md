@@ -86,3 +86,7 @@
 ### 2026-10-29 — английское резюме
 - `design/cv/cv-en.html` — перевод `cv-ru.html` (та же вёрстка; ссылка «Portfolio» → https://vadimpianov.pages.dev/en/; свой список коротких слов для неразрывных пробелов). PDF — так же (Chromium `page.pdf` A4 + `fill-bg.py`) → `public/cv/Pianov_Vadim_CV_en.pdf` и `design/cv/Pianov_Vadim_CV_en.pdf`.
 - «CV» в шапке (`HeaderNav.astro`) — резюме на языке страницы: `/en/` — английское, `/ru/` — русское. Правка резюме — в обоих HTML и пересборка обоих PDF.
+
+### 2026-11-09 — резюме Product Manager (черновик)
+- `design/cv/cv-pm-ru.html` → `design/cv/cv-pm-ru.pdf`: та же вёрстка, что у CV дизайнера; позиция «Senior Product Manager», в опыте — реальные должности + продуктовая зона, результаты в формате «что делал → что получилось» (цифры только из кейсов и резюме, ничего не придумано; у Альфа-Банка — аккредитивы, без цифр, ждём данные от коллег). На сайт пока не выложено.
+- `design/cv/build-pdf.mjs` — сборка PDF из HTML (`node design/cv/build-pdf.mjs cv-ru cv-en cv-pm-ru`), предупреждает, если блок опыта не помещается на лист; затем `python3 design/cv/fill-bg.py design/cv/<имя>.pdf`.
